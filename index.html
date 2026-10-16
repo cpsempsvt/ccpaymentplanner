@@ -1,0 +1,1042 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
+<title>Card Payment Planner</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: header with greeting, colour strip and tabs; each tab is inputs on the left, live results on the right; stacks on phones.
+   Every card and account gets one colour from an 8-colour palette (--p1..--p8). Installments open in a modal. */
+:root {
+  --bg: #f4f6fb;
+  --surface: #ffffff;
+  --ink: #181c32;
+  --muted: #566078;
+  --line: #dce1ee;
+  --accent: #3d4ae0;
+  --on-accent: #ffffff;
+  --good: #138a54;
+  --crit: #c0392f;
+  --warn: #a35a00;
+  --p1: #ee5446; --p2: #e8940c; --p3: #10a186; --p4: #2d79e0;
+  --p5: #7a58ee; --p6: #dd3f8c; --p7: #64a812; --p8: #0ca3c2;
+  --font-display: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --font-ui: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1020; --surface: #171b30; --ink: #e9ecfa; --muted: #98a2c0; --line: #2a3050;
+    --accent: #9aa2ff; --on-accent: #12163a;
+    --good: #5cc88e; --crit: #ff8b80; --warn: #ffbb4d;
+    --p1: #ff8277; --p2: #ffbb4d; --p3: #3fd1b3; --p4: #6ea8ff;
+    --p5: #a58bff; --p6: #ff7ab8; --p7: #9bd44a; --p8: #46cde8;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d1020; --surface: #171b30; --ink: #e9ecfa; --muted: #98a2c0; --line: #2a3050;
+  --accent: #9aa2ff; --on-accent: #12163a;
+  --good: #5cc88e; --crit: #ff8b80; --warn: #ffbb4d;
+  --p1: #ff8277; --p2: #ffbb4d; --p3: #3fd1b3; --p4: #6ea8ff;
+  --p5: #a58bff; --p6: #ff7ab8; --p7: #9bd44a; --p8: #46cde8;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body {
+  background: var(--bg); color: var(--ink);
+  font-family: var(--font-ui); font-size: 15px; line-height: 1.5;
+  padding-block: 24px 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1100px; margin: 0 auto; display: grid; gap: 20px; }
+.num { font-variant-numeric: tabular-nums; }
+.hide .num, .hide input[type="number"] { filter: blur(7px); }
+.hide input[type="number"]:focus { filter: none; }
+
+header { display: grid; gap: 12px; }
+.hello-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; min-height: 32px; }
+#hello { font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; }
+.title-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+h1 { font-family: var(--font-display); font-weight: 750; font-size: clamp(1.7rem, 4.5vw, 2.3rem); line-height: 1.1; letter-spacing: -0.02em; margin: 0; text-wrap: balance; }
+.lede { color: var(--muted); margin: 6px 0 0; max-width: 60ch; }
+.strip { display: flex; height: 6px; border-radius: 99px; overflow: hidden; }
+.strip i { flex: 1; }
+.strip i:nth-child(1) { background: var(--p1); } .strip i:nth-child(2) { background: var(--p2); }
+.strip i:nth-child(3) { background: var(--p7); } .strip i:nth-child(4) { background: var(--p3); }
+.strip i:nth-child(5) { background: var(--p8); } .strip i:nth-child(6) { background: var(--p4); }
+.strip i:nth-child(7) { background: var(--p5); } .strip i:nth-child(8) { background: var(--p6); }
+
+.tabs { display: inline-flex; gap: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 99px; padding: 4px; justify-self: start; }
+.tabs button { border: 0; background: transparent; color: var(--muted); border-radius: 99px; padding: 9px 20px; font-weight: 600; }
+.tabs button[aria-selected="true"] { background: var(--accent); color: var(--on-accent); }
+
+.cols { display: grid; gap: 20px; grid-template-columns: minmax(0, 1fr); align-items: start; }
+@media (min-width: 900px) { .cols { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); } }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: grid; gap: 16px; min-width: 0; }
+.panel-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+h2 { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; margin: 0; letter-spacing: -0.01em; }
+h3 { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 0; font-weight: 700; }
+
+.notice { background: color-mix(in srgb, var(--p2) 16%, var(--surface)); border: 1px solid color-mix(in srgb, var(--p2) 45%, var(--surface)); border-radius: 10px; padding: 10px 12px; font-size: 0.9rem; }
+.notice.bad { background: color-mix(in srgb, var(--p1) 14%, var(--surface)); border-color: color-mix(in srgb, var(--p1) 45%, var(--surface)); }
+
+label { display: grid; gap: 4px; font-size: 0.78rem; color: var(--muted); font-weight: 600; min-width: 0; }
+input, select {
+  font: inherit; font-size: 0.95rem; font-weight: 500; color: var(--ink); background: var(--bg);
+  border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; width: 100%; min-width: 0;
+}
+input:disabled { opacity: 0.6; }
+input:focus-visible, select:focus-visible, button:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.big input { font-family: var(--font-display); font-size: 1.35rem; font-weight: 700; padding: 8px 12px; }
+
+button { font: inherit; font-weight: 600; cursor: pointer; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); padding: 8px 14px; }
+button:hover { border-color: var(--accent); }
+button.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+button.ghost { color: var(--muted); font-weight: 500; }
+button.danger:hover { border-color: var(--crit); color: var(--crit); }
+button.small { padding: 6px 10px; font-size: 0.82rem; }
+.hint { color: var(--muted); font-size: 0.82rem; margin: 0; }
+.row-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+.top-fields { display: grid; gap: 12px; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.strategy { display: grid; gap: 12px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 560px) { .strategy.manual { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+
+.pays { display: grid; gap: 12px; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (max-width: 560px) { .pays { grid-template-columns: minmax(0, 1fr); } }
+.pay-box { border: 1px solid var(--line); border-radius: 12px; padding: 12px; display: grid; gap: 10px; min-width: 0; }
+.pay-fields { display: grid; gap: 8px; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.4fr); align-items: end; }
+
+.badge { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; flex: none; overflow: hidden;
+  background: color-mix(in srgb, var(--cc) 22%, var(--surface)); color: color-mix(in srgb, var(--cc) 55%, var(--ink)); }
+.badge b { font-family: var(--font-display); font-weight: 750; font-size: 0.86rem; letter-spacing: 0.01em; }
+.badge b.sm { font-size: 0.64rem; }
+.badge img { width: 100%; height: 100%; object-fit: contain; background: #fff; padding: 4px; }
+.badgebtn { position: relative; padding: 0; border: 0; background: none; border-radius: 12px; display: block; line-height: 0; }
+.badgebtn:hover .badge { outline: 2px solid var(--accent); }
+.cnt { position: absolute; top: -6px; right: -6px; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 99px; background: var(--accent); color: var(--on-accent);
+  font: 700 0.72rem/20px var(--font-ui); font-style: normal; text-align: center; }
+
+.list { display: grid; gap: 12px; }
+.item { border: 1px solid var(--line); border-radius: 12px; padding: 12px; display: grid; gap: 10px; min-width: 0; }
+.cr-head { display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: 10px; align-items: end; }
+.cr-bank { display: grid; gap: 8px; grid-template-columns: minmax(0, 1fr); align-items: end; }
+@media (min-width: 520px) { .cr-bank { grid-template-columns: minmax(0, 1fr) auto; } }
+.logo-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.inst-line { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.nums { display: grid; gap: 8px; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: end; }
+.mid { display: grid; gap: 8px; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.worth { display: grid; gap: 4px; font-size: 0.78rem; color: var(--muted); font-weight: 600; min-width: 0; }
+.worth .av { font-family: var(--font-display); font-size: 1.05rem; font-weight: 700; color: var(--ink); padding: 7px 0; overflow-wrap: anywhere; }
+
+.summary { display: grid; gap: 10px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.stat { background: color-mix(in srgb, var(--cc, var(--p4)) 14%, var(--surface)); border-radius: 12px; padding: 10px 12px; min-width: 0; }
+.stat .k { font-size: 0.74rem; color: var(--muted); font-weight: 600; }
+.stat .v { font-family: var(--font-display); font-weight: 700; font-size: 1.12rem; overflow-wrap: anywhere; }
+@media (max-width: 460px) { .summary { grid-template-columns: minmax(0, 1fr); } }
+
+.alloc { display: grid; gap: 22px; }
+.period { display: grid; gap: 12px; }
+.period-head { display: flex; justify-content: space-between; align-items: baseline; gap: 4px 12px; flex-wrap: wrap; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+.period-head .tot { font-family: var(--font-display); font-weight: 700; }
+.alloc-row { border: 1px solid var(--line); border-radius: 12px; padding: 12px; display: grid; gap: 10px; }
+.alloc-top { display: flex; align-items: center; gap: 12px; }
+.alloc-id { flex: 1; min-width: 0; }
+.alloc-name { font-weight: 700; overflow-wrap: anywhere; }
+.alloc-pay { font-family: var(--font-display); font-weight: 700; font-size: 1.25rem; text-align: right; }
+.chip { display: inline-block; font-size: 0.72rem; font-weight: 700; padding: 2px 9px; border-radius: 99px; margin-left: 6px; vertical-align: 1px; }
+.chip.focus { background: var(--accent); color: var(--on-accent); }
+.chip.extra { background: color-mix(in srgb, var(--p4) 20%, var(--surface)); color: color-mix(in srgb, var(--p4) 60%, var(--ink)); }
+.chip.min { background: var(--bg); color: var(--muted); }
+.chip.paid { background: color-mix(in srgb, var(--good) 20%, var(--surface)); color: var(--good); }
+.chip.short { background: color-mix(in srgb, var(--crit) 20%, var(--surface)); color: var(--crit); }
+.bar { height: 10px; border-radius: 99px; background: var(--bg); display: flex; overflow: hidden; }
+.bar i { display: block; height: 100%; transition: width 0.25s ease; }
+.alloc-meta { display: flex; justify-content: space-between; gap: 4px 12px; flex-wrap: wrap; font-size: 0.82rem; color: var(--muted); }
+.legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 0.8rem; color: var(--muted); }
+.legend b { display: inline-block; width: 22px; height: 8px; border-radius: 99px; margin-right: 6px; vertical-align: 0; }
+
+.hero { background: color-mix(in srgb, var(--p3) 16%, var(--surface)); border-radius: 14px; padding: 16px; display: grid; gap: 4px; }
+.hero .k { font-size: 0.8rem; color: var(--muted); font-weight: 600; }
+.hero .v { font-family: var(--font-display); font-weight: 750; font-size: clamp(1.9rem, 6vw, 2.5rem); line-height: 1.1; overflow-wrap: anywhere; letter-spacing: -0.02em; }
+.stack { display: flex; height: 14px; border-radius: 99px; overflow: hidden; background: var(--bg); }
+.stack i { display: block; height: 100%; }
+.brk { display: grid; gap: 8px; }
+.brk-row { display: grid; grid-template-columns: 12px minmax(0, 1fr) auto auto; gap: 10px; align-items: center; font-size: 0.9rem; }
+.brk-row .dot { width: 12px; height: 12px; border-radius: 4px; background: var(--cc); }
+.brk-row .pct { color: var(--muted); min-width: 3.2ch; text-align: right; font-size: 0.82rem; }
+.brk-row .amt { font-weight: 600; text-align: right; overflow-wrap: anywhere; }
+
+details.backup { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; background: var(--surface); }
+details.backup summary { cursor: pointer; font-weight: 600; }
+.backup-body { display: grid; gap: 10px; margin-top: 12px; }
+textarea { font: inherit; font-size: 0.8rem; width: 100%; min-height: 90px; background: var(--bg); color: var(--ink); border: 1px solid var(--line); border-radius: 10px; padding: 9px 11px; resize: vertical; }
+
+.overlay {
+  position: fixed; inset: 0; z-index: 50; overflow: auto;
+  background: color-mix(in srgb, var(--ink) 55%, transparent);
+  display: grid; place-items: center;
+  padding-top: max(16px, env(safe-area-inset-top, 0px));
+  padding-bottom: max(16px, env(safe-area-inset-bottom, 0px));
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.dialog { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; width: min(560px, 100%); max-height: 100%; overflow: auto; padding: 18px; display: grid; gap: 14px; }
+.dlg-head { display: flex; align-items: center; gap: 12px; }
+.dlg-head > div { flex: 1; min-width: 0; }
+.dlg-head h2 { overflow-wrap: anywhere; }
+.plan { display: grid; gap: 8px; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; align-items: end; border: 1px solid var(--line); border-radius: 12px; padding: 10px; }
+.plan .p-name { grid-column: 1 / -1; }
+@media (prefers-reduced-motion: reduce) { .bar i { transition: none; } }
+</style>
+
+<div class="wrap" id="wrap">
+  <header>
+    <div class="hello-row">
+      <span id="hello"></span>
+      <button id="name-edit" type="button" class="ghost small">Add your name</button>
+    </div>
+    <div class="title-row">
+      <div>
+        <h1>Card Payment Planner</h1>
+        <p class="lede">Split your pay between your credit cards for each cut-off, and keep track of your money across banks and wallets.</p>
+      </div>
+      <button id="hide-btn" type="button" class="ghost">Hide amounts</button>
+    </div>
+    <div class="strip" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="tabs" role="tablist" aria-label="Sections">
+      <button id="tab-cards" role="tab" type="button" data-tab="cards" aria-selected="true">Pay cards</button>
+      <button id="tab-assets" role="tab" type="button" data-tab="assets" aria-selected="false">My assets</button>
+    </div>
+  </header>
+
+  <div id="panel-cards" class="cols" role="tabpanel" aria-labelledby="tab-cards">
+    <section class="panel" aria-labelledby="in-h">
+      <div class="panel-head"><h2 id="in-h">Your cards</h2></div>
+      <div id="example-note" class="notice" hidden>These are example numbers. Change any field to use your own.</div>
+
+      <div class="pays">
+        <div class="pay-box">
+          <h3>First pay day</h3>
+          <div class="pay-fields">
+            <label>Day of month<input id="p1day" class="num" type="number" inputmode="numeric" min="1" max="31" step="1"></label>
+            <label class="big">Set aside for cards<input id="p1amt" class="num" type="number" inputmode="decimal" min="0" step="any"></label>
+          </div>
+        </div>
+        <div class="pay-box">
+          <h3>Second pay day</h3>
+          <div class="pay-fields">
+            <label>Day of month<input id="p2day" class="num" type="number" inputmode="numeric" min="1" max="31" step="1"></label>
+            <label class="big">Set aside for cards<input id="p2amt" class="num" type="number" inputmode="decimal" min="0" step="any"></label>
+          </div>
+        </div>
+      </div>
+      <p class="hint">Each card is paid on the pay day just before its due date. Use 30 or 31 for an end-of-month pay day. Any extra goes to the card you want to clear first, even if it is due later.</p>
+
+      <div class="top-fields">
+        <label>Currency symbol
+          <input id="cur" type="text" maxlength="4" placeholder="₱, $, ¥">
+        </label>
+      </div>
+
+      <div id="strategy-wrap" class="strategy">
+        <label>Which card to pay off first
+          <select id="strategy">
+            <option value="smallest">Smallest amount due (finishes fastest)</option>
+            <option value="apr">Highest interest rate (costs least)</option>
+            <option value="manual">I will choose</option>
+          </select>
+        </label>
+        <label id="focus-wrap" hidden>Card to pay off
+          <select id="focus"></select>
+        </label>
+      </div>
+
+      <div>
+        <h3>Cards</h3>
+        <p class="hint" style="margin-top:4px">Enter the Total Amount Due and Minimum Amount Due from your latest statement. Tap a card's badge or "Installment plans" to add its installments. They always count toward both amounts.</p>
+      </div>
+      <div id="cards" class="list"></div>
+      <div class="row-actions"><button id="add" class="primary" type="button">Add card</button></div>
+    </section>
+
+    <section class="panel" aria-labelledby="out-h" aria-live="polite">
+      <div class="panel-head">
+        <h2 id="out-h">Payment split</h2>
+        <button id="copy" type="button" class="ghost small">Copy plan</button>
+      </div>
+      <div id="summary" class="summary"></div>
+      <div id="flag" class="list"></div>
+      <div id="alloc" class="alloc"></div>
+      <div class="legend">
+        <span><b style="background:color-mix(in srgb,var(--muted) 35%,var(--surface))"></b>Minimum due</span>
+        <span><b style="background:var(--muted)"></b>Extra payment</span>
+      </div>
+      <p class="hint">Anything left unpaid carries over to next month and may add interest.</p>
+    </section>
+  </div>
+
+  <div id="panel-assets" class="cols" role="tabpanel" aria-labelledby="tab-assets" hidden>
+    <section class="panel" aria-labelledby="as-h">
+      <div class="panel-head"><h2 id="as-h">Banks and wallets</h2></div>
+      <div id="aexample-note" class="notice" hidden>These are example accounts and rates. Change any field to use your own.</div>
+      <div class="top-fields">
+        <label>Main currency code
+          <input id="base" type="text" maxlength="8" placeholder="PHP">
+        </label>
+        <label>Currency symbol
+          <input id="cur2" type="text" maxlength="4" placeholder="₱, $, ¥">
+        </label>
+      </div>
+      <p class="hint">For money in another currency or crypto, type its code (USD, USDT, BTC) and enter the rate: how much 1 unit is worth in your main currency. Rates are typed by you and do not update by themselves.</p>
+      <div id="assets" class="list"></div>
+      <div class="row-actions"><button id="add-asset" class="primary" type="button">Add account</button></div>
+      <datalist id="inst"></datalist>
+    </section>
+
+    <section class="panel" aria-labelledby="tot-h" aria-live="polite">
+      <div class="panel-head"><h2 id="tot-h">Total assets</h2></div>
+      <div id="hero" class="hero"></div>
+      <div id="net" class="summary"></div>
+      <div id="stack" class="stack" aria-hidden="true"></div>
+      <div id="brk" class="brk"></div>
+    </section>
+  </div>
+
+  <details class="backup">
+    <summary>Backup and restore</summary>
+    <div class="backup-body">
+      <p class="hint">Your entries are saved in this browser only. To move them to another device or keep a safe copy, copy the backup text and paste it into a note. To restore, paste it below and tap Restore.</p>
+      <textarea id="bk-text" aria-label="Backup text" placeholder="Backup text appears here, or paste a backup to restore"></textarea>
+      <div class="row-actions">
+        <button id="bk-copy" type="button">Copy backup</button>
+        <button id="bk-restore" type="button">Restore</button>
+      </div>
+      <p id="bk-msg" class="hint"></p>
+    </div>
+  </details>
+</div>
+
+<div id="modal" class="overlay" hidden>
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="dlg-title">
+    <div class="dlg-head">
+      <span id="dlg-badge"></span>
+      <div>
+        <h2 id="dlg-title">Installment plans</h2>
+        <p class="hint">Add each installment that is still being billed on this card.</p>
+      </div>
+      <button id="dlg-close" type="button" class="ghost small">Close</button>
+    </div>
+    <div id="dlg-body" class="list"></div>
+    <div id="dlg-sum" class="summary"></div>
+    <div class="row-actions">
+      <button id="dlg-add" type="button" class="primary">Add installment</button>
+      <button id="dlg-done" type="button">Done</button>
+    </div>
+  </div>
+</div>
+
+<div id="welcome" class="overlay" hidden>
+  <form id="welcome-form" class="dialog" aria-labelledby="w-title">
+    <h2 id="w-title">Welcome! What should I call you?</h2>
+    <label>Your name
+      <input id="name-in" type="text" maxlength="40" autocomplete="given-name" placeholder="Your first name">
+    </label>
+    <div class="row-actions">
+      <button type="submit" class="primary">Continue</button>
+      <button id="name-skip" type="button" class="ghost">Skip for now</button>
+    </div>
+  </form>
+</div>
+
+<script>
+(function () {
+  var KEY = 'card-payment-planner-v2', OLD = 'card-payment-planner-v1';
+  var uid = 0;
+  function nid(p) { uid += 1; return (p || 'c') + uid; }
+
+  var BANKS = [
+    ['BDO', 'BDO Unibank'], ['BPI', 'BPI'], ['MBTC', 'Metrobank'], ['SBC', 'Security Bank'],
+    ['RCBC', 'RCBC'], ['UB', 'UnionBank'], ['EW', 'EastWest'], ['CBC', 'China Bank'],
+    ['PNB', 'PNB'], ['LBP', 'Landbank'], ['AUB', 'AUB'], ['MB', 'Maybank'],
+    ['HSBC', 'HSBC'], ['RB', 'Robinsons Bank'], ['GC', 'GCredit (GCash)'], ['MAYA', 'Maya']
+  ];
+  var TYPES = [['bank', 'Bank', 4], ['ewallet', 'E-wallet', 3], ['crypto', 'Crypto', 2], ['cash', 'Cash', 7], ['other', 'Other', 5]];
+  var SUGGEST = ['BDO Unibank', 'BPI', 'Metrobank', 'Security Bank', 'RCBC', 'UnionBank', 'EastWest', 'China Bank', 'PNB', 'Landbank',
+    'GoTyme', 'Maya Bank', 'SeaBank', 'GCash', 'Maya', 'Coins.ph', 'PDAX', 'Binance', 'Bybit', 'MetaMask', 'Trust Wallet', 'Ledger'];
+
+  function ord(n) {
+    n = Math.round(+n) || 0;
+    if (!n) return '';
+    var s = ['th', 'st', 'nd', 'rd'], v = n % 100;
+    return n + (s[(v - 20) % 10] || s[v] || s[0]);
+  }
+
+  function defaults() {
+    return {
+      tab: 'cards', example: true, aexample: true, hide: false, userName: '', skipName: false,
+      pay1: { day: 15, amount: 15000 }, pay2: { day: 30, amount: 25000 },
+      cur: '₱', base: 'PHP', strategy: 'smallest', focusId: '',
+      cards: [
+        { id: nid(), name: 'BDO Unibank', bank: 'BDO Unibank', logo: '', col: 0, balance: 24000, min: 6000, apr: 15, dueDay: 5, use: 'auto', plans: [] },
+        { id: nid(), name: 'BPI', bank: 'BPI', logo: '', col: 3, balance: 9500, min: 3500, apr: 18, dueDay: 20, use: 'auto',
+          plans: [{ id: nid('p'), name: 'Phone, 0% interest', monthly: 2500, months: 5 }] },
+        { id: nid(), name: 'Metrobank', bank: 'Metrobank', logo: '', col: 4, balance: 22000, min: 12000, apr: 12, dueDay: 3, use: 'auto',
+          plans: [{ id: nid('p'), name: 'Laptop, 0% interest', monthly: 4000, months: 7 }] }
+      ],
+      assets: [
+        { id: nid('a'), name: 'BPI savings', type: 'bank', ccy: 'PHP', amount: 85000, rate: 1 },
+        { id: nid('a'), name: 'GCash', type: 'ewallet', ccy: 'PHP', amount: 5200, rate: 1 },
+        { id: nid('a'), name: 'Binance', type: 'crypto', ccy: 'USDT', amount: 120, rate: 58 },
+        { id: nid('a'), name: 'Cash at home', type: 'cash', ccy: 'PHP', amount: 3000, rate: 1 }
+      ]
+    };
+  }
+  var state = defaults();
+
+  function bumpUid() {
+    state.cards.concat(state.assets).forEach(function (x) {
+      var n = parseInt(String(x.id).replace(/\D/g, ''), 10);
+      if (n > uid) uid = n;
+      (x.plans || []).forEach(function (p) {
+        var m = parseInt(String(p.id).replace(/\D/g, ''), 10);
+        if (m > uid) uid = m;
+      });
+    });
+  }
+  function adopt(saved) {
+    var d = defaults();
+    var s = Object.assign({}, d, saved);
+    s.cards = Array.isArray(saved.cards) && saved.cards.length ? saved.cards : d.cards;
+    s.cards.forEach(function (c, i) {
+      if (c.bank === undefined) c.bank = '';
+      if (c.logo === undefined) c.logo = '';
+      if (c.col === undefined) c.col = i % 8;
+      if (c.dueDay === undefined) c.dueDay = 0;
+      if (c.use === undefined) c.use = 'auto';
+      if (!Array.isArray(c.plans)) c.plans = [];
+    });
+    if (!saved.pay1 || !saved.pay2) {
+      var b = +saved.budget || 0;
+      s.pay1 = { day: 15, amount: Math.ceil(b / 2) };
+      s.pay2 = { day: 30, amount: Math.floor(b / 2) };
+    }
+    var hasAssets = Array.isArray(saved.assets);
+    s.assets = hasAssets ? saved.assets : d.assets;
+    s.userName = typeof saved.userName === 'string' ? saved.userName : '';
+    s.skipName = !!saved.skipName;
+    s.example = false;
+    s.aexample = hasAssets ? false : true;
+    return s;
+  }
+  try {
+    var raw = localStorage.getItem(KEY) || localStorage.getItem(OLD);
+    if (raw) {
+      var sv = JSON.parse(raw);
+      if (sv && Array.isArray(sv.cards)) { state = adopt(sv); bumpUid(); }
+    }
+  } catch (e) {}
+
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+  function $(id) { return document.getElementById(id); }
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function r2(n) { return Math.round(n * 100) / 100; }
+  var nf = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 });
+  var nfx = new Intl.NumberFormat(undefined, { maximumFractionDigits: 8 });
+  function fmt(n) { return (state.cur || '') + nf.format(r2(n)); }
+
+  function bankCode(name) { for (var i = 0; i < BANKS.length; i++) if (BANKS[i][1] === name) return BANKS[i][0]; return ''; }
+  function initials(s) {
+    var w = String(s || '').trim().split(/\s+/).filter(Boolean);
+    if (!w.length) return '•';
+    return (w[0].charAt(0) + (w[1] ? w[1].charAt(0) : (w[0].charAt(1) || ''))).toUpperCase();
+  }
+  function pv(i) { return 'var(--p' + ((i % 8) + 1) + ')'; }
+  function cardBadge(c) {
+    var cc = pv(c.col || 0);
+    if (c.logo) return '<span class="badge" style="--cc:' + cc + '"><img alt="" src="' + esc(c.logo) + '"></span>';
+    var t = bankCode(c.bank) || initials(c.name);
+    return '<span class="badge" style="--cc:' + cc + '"><b class="' + (t.length > 3 ? 'sm' : '') + '">' + esc(t) + '</b></span>';
+  }
+  function typeInfo(t) { for (var i = 0; i < TYPES.length; i++) if (TYPES[i][0] === t) return TYPES[i]; return TYPES[4]; }
+  function assetBadge(a) {
+    return '<span class="badge" style="--cc:var(--p' + typeInfo(a.type)[2] + ')"><b>' + esc(initials(a.name)) + '</b></span>';
+  }
+
+  /* ---------- installments ---------- */
+  function activePlans(c) { return (c.plans || []).filter(function (p) { return (+p.months || 0) > 0 && (+p.monthly || 0) > 0; }); }
+  function instMonthly(c) { return r2(activePlans(c).reduce(function (t, p) { return t + (+p.monthly || 0); }, 0)); }
+  function instRemaining(c) { return r2(activePlans(c).reduce(function (t, p) { return t + (+p.monthly || 0) * (+p.months || 0); }, 0)); }
+  function instNote(c) {
+    var n = activePlans(c).length, m = instMonthly(c);
+    if (!n) return 'No installments added.';
+    var s = n + ' plan' + (n > 1 ? 's' : '') + ', ' + fmt(m) + ' a month.';
+    if ((+c.min || 0) < m - 0.004 || (+c.balance || 0) < m - 0.004) s += ' Counted in the minimum and amount due.';
+    return s;
+  }
+
+  /* ---------- card split logic ---------- */
+  function groupOf(c, s) {
+    if (c.use === '1') return 1;
+    if (c.use === '2') return 2;
+    var d = +c.dueDay || 0;
+    if (!d) return 1;
+    var d1 = +s.pay1.day || 0, d2 = +s.pay2.day || 0;
+    var early = d1 <= d2 ? 1 : 2, late = early === 1 ? 2 : 1;
+    var dl = late === 1 ? d1 : d2, de = early === 1 ? d1 : d2;
+    if (d >= dl) return late;
+    if (d >= de) return early;
+    return late;
+  }
+
+  function compute(s) {
+    var cards = s.cards.map(function (c, i) {
+      var inst = instMonthly(c);
+      var bal = Math.max(0, +c.balance || 0, inst);
+      var mn = Math.min(Math.max(0, +c.min || 0, inst), bal);
+      return {
+        id: c.id, src: c, g: groupOf(c, s), parts: { 1: 0, 2: 0 }, inst: inst,
+        name: String(c.name || '').trim() || ('Card ' + (i + 1)),
+        balance: bal, min: mn, apr: Math.max(0, +c.apr || 0)
+      };
+    });
+    cards.forEach(function (c) { c.due = c.min; });
+    var live = cards.filter(function (c) { return c.balance > 0; });
+
+    var order;
+    if (s.strategy === 'manual') {
+      var f = live.filter(function (c) { return c.id === s.focusId; })[0] || null;
+      order = (f ? [f] : []).concat(live.filter(function (c) { return c !== f; }).sort(function (a, b) { return a.balance - b.balance; }));
+    } else if (s.strategy === 'apr') {
+      order = live.slice().sort(function (a, b) { return (b.apr - a.apr) || (a.balance - b.balance); });
+    } else {
+      order = live.slice().sort(function (a, b) { return a.balance - b.balance; });
+    }
+
+    var amt = { 1: Math.max(0, +s.pay1.amount || 0), 2: Math.max(0, +s.pay2.amount || 0) };
+    var left = { 1: amt[1], 2: amt[2] };
+
+    // 1) minimums, each from the pay day that comes before the due date
+    [1, 2].forEach(function (g) {
+      var grp = live.filter(function (c) { return c.g === g; });
+      var sum = r2(grp.reduce(function (t, c) { return t + c.due; }, 0));
+      if (sum <= left[g] + 0.004) {
+        grp.forEach(function (c) { c.parts[g] = c.due; });
+        left[g] = r2(left[g] - sum);
+      } else {
+        grp.slice().sort(function (a, b) { return a.due - b.due; }).forEach(function (c) {
+          var p = Math.min(c.due, left[g]);
+          c.parts[g] = r2(p);
+          left[g] = r2(left[g] - p);
+        });
+      }
+    });
+
+    // 2) extra money goes to the priority card, from its own pay day first, then the other one
+    order.forEach(function (c) {
+      [c.g, c.g === 1 ? 2 : 1].forEach(function (g) {
+        var paid = c.parts[1] + c.parts[2];
+        var add = Math.min(c.balance - paid, left[g]);
+        if (add > 0.004) { c.parts[g] = r2(c.parts[g] + add); left[g] = r2(left[g] - add); }
+      });
+    });
+
+    var first = order[0];
+    cards.forEach(function (c) {
+      c.pay = r2(c.parts[1] + c.parts[2]);
+      c.remaining = r2(c.balance - c.pay);
+      if (c.balance === 0) c.status = 'none';
+      else if (c.pay >= c.balance - 0.005) c.status = 'paid';
+      else if (c.pay < c.due - 0.005) c.status = 'short';
+      else if (c.pay > c.due + 0.005) c.status = (c === first) ? 'focus' : 'extra';
+      else c.status = 'min';
+    });
+
+    return {
+      cards: cards, first: first, amt: amt, left: left,
+      totalDue: r2(live.reduce(function (t, c) { return t + c.due; }, 0)),
+      totalExtra: r2(cards.reduce(function (t, c) { return t + Math.max(0, c.pay - c.due); }, 0)),
+      shortTotal: r2(cards.reduce(function (t, c) { return t + Math.max(0, c.due - c.pay); }, 0)),
+      debtLeft: r2(cards.reduce(function (t, c) { return t + c.remaining; }, 0)),
+      totalDebt: r2(live.reduce(function (t, c) { return t + c.balance; }, 0))
+    };
+  }
+
+  /* ---------- cards tab ---------- */
+  function cardRow(c) {
+    var opts = '<option value="">Choose bank (optional)</option>' + BANKS.map(function (b) {
+      return '<option value="' + esc(b[1]) + '"' + (c.bank === b[1] ? ' selected' : '') + '>' + esc(b[1]) + '</option>';
+    }).join('') + '<option value="Other"' + (c.bank === 'Other' ? ' selected' : '') + '>Other bank</option>';
+    var d1 = state.pay1.day ? ' (' + ord(state.pay1.day) + ')' : '';
+    var d2 = state.pay2.day ? ' (' + ord(state.pay2.day) + ')' : '';
+    var useOpts = '<option value="auto"' + (c.use === 'auto' ? ' selected' : '') + '>By due date</option>' +
+      '<option value="1"' + (c.use === '1' ? ' selected' : '') + '>First pay day' + esc(d1) + '</option>' +
+      '<option value="2"' + (c.use === '2' ? ' selected' : '') + '>Second pay day' + esc(d2) + '</option>';
+    var n = activePlans(c).length;
+    return '<div class="item" data-id="' + c.id + '">' +
+      '<div class="cr-head"><button type="button" class="badgebtn" data-inst="' + c.id + '" title="Installment plans" aria-label="Installment plans for ' + esc(c.name) + '">' +
+      '<span data-badge>' + cardBadge(c) + '</span><i class="cnt" data-cnt' + (n ? '' : ' hidden') + '>' + n + '</i></button>' +
+      '<label>Card name<input data-f="name" type="text" value="' + esc(c.name) + '" id="n-' + c.id + '"></label>' +
+      '<button type="button" class="ghost danger small" data-del="' + c.id + '">Remove</button></div>' +
+      '<div class="cr-bank"><label>Bank<select data-f="bank">' + opts + '</select></label>' +
+      '<div class="logo-actions"><button type="button" class="small" data-logo-btn="' + c.id + '">' + (c.logo ? 'Change logo' : 'Upload your own logo') + '</button>' +
+      (c.logo ? '<button type="button" class="ghost small" data-logo-clear="' + c.id + '">Remove logo</button>' : '') +
+      '<input type="file" accept="image/*" hidden data-logo-file="' + c.id + '"></div></div>' +
+      '<div class="inst-line"><button type="button" class="small" data-inst="' + c.id + '">Installment plans</button><span class="hint" data-inst-note>' + esc(instNote(c)) + '</span></div>' +
+      '<div class="mid">' +
+      '<label>Due day of month<input class="num" data-f="dueDay" type="number" inputmode="numeric" min="1" max="31" step="1" value="' + (c.dueDay ? esc(c.dueDay) : '') + '" placeholder="e.g. 20"></label>' +
+      '<label>Pay it with<select data-f="use">' + useOpts + '</select></label></div>' +
+      '<div class="nums">' +
+      '<label>Amount due this month<input class="num" data-f="balance" type="number" inputmode="decimal" min="0" step="any" value="' + esc(c.balance) + '"></label>' +
+      '<label>Minimum due<input class="num" data-f="min" type="number" inputmode="decimal" min="0" step="any" value="' + esc(c.min) + '"></label>' +
+      '<label>Interest % a year<input class="num" data-f="apr" type="number" inputmode="decimal" min="0" step="any" value="' + esc(c.apr) + '"></label>' +
+      '</div></div>';
+  }
+  function renderCards() { $('cards').innerHTML = state.cards.map(cardRow).join(''); }
+  function refreshCardInst(id) {
+    var c = findCard(id);
+    var row = $('cards').querySelector('[data-id="' + id + '"]');
+    if (!c || !row) return;
+    var n = activePlans(c).length;
+    var cnt = row.querySelector('[data-cnt]');
+    cnt.textContent = n; cnt.hidden = !n;
+    row.querySelector('[data-inst-note]').textContent = instNote(c);
+  }
+
+  function renderFocusOptions() {
+    var sel = $('focus');
+    if (!state.cards.some(function (c) { return c.id === state.focusId; })) state.focusId = state.cards[0] ? state.cards[0].id : '';
+    sel.innerHTML = state.cards.map(function (c, i) {
+      var nm = String(c.name || '').trim() || ('Card ' + (i + 1));
+      return '<option value="' + c.id + '"' + (c.id === state.focusId ? ' selected' : '') + '>' + esc(nm) + '</option>';
+    }).join('');
+  }
+
+  var lastText = '';
+
+  function renderResult() {
+    var r = compute(state);
+    var sTotal = r.amt[1] + r.amt[2];
+    var s = '<div class="stat" style="--cc:var(--p4)"><div class="k">Minimums on all cards</div><div class="v num">' + fmt(r.totalDue) + '</div></div>';
+    if (r.shortTotal > 0.004) {
+      s += '<div class="stat" style="--cc:var(--p1)"><div class="k">Short of the minimums by</div><div class="v num">' + fmt(r.shortTotal) + '</div></div>';
+      s += '<div class="stat" style="--cc:var(--p2)"><div class="k">Total you set aside</div><div class="v num">' + fmt(sTotal) + '</div></div>';
+    } else {
+      s += '<div class="stat" style="--cc:var(--p3)"><div class="k">Extra on top of minimums</div><div class="v num">' + fmt(r.totalExtra) + '</div></div>';
+      s += '<div class="stat" style="--cc:var(--p2)"><div class="k">Still unpaid after paying</div><div class="v num">' + fmt(r.debtLeft) + '</div></div>';
+    }
+    $('summary').innerHTML = s;
+
+    var flag = '';
+    if (r.shortTotal > 0.004) flag += '<div class="notice bad">The amounts you set aside do not cover every minimum. Each pay day pays the smallest minimums in full first, so as many cards as possible stay current. Contact the banks of the cards marked Short about a payment arrangement.</div>';
+    var spare = r2(r.left[1] + r.left[2]);
+    if (r.shortTotal <= 0.004 && spare > 0.004) flag += '<div class="notice">' + fmt(spare) + ' is left over because every card is already paid in full.</div>';
+    $('flag').innerHTML = flag;
+
+    var seq = (+state.pay1.day || 0) <= (+state.pay2.day || 0) ? [1, 2] : [2, 1];
+    var lines = ['Payment plan' + (state.userName ? ' for ' + state.userName : '')];
+    $('alloc').innerHTML = seq.map(function (g) {
+      var pd = g === 1 ? state.pay1 : state.pay2;
+      var title = (g === 1 ? 'First' : 'Second') + ' pay day' + (pd.day ? ' · ' + ord(pd.day) : '');
+      var rows = r.cards.filter(function (c) { return c.parts[g] > 0.004 || (c.g === g && c.balance > 0); });
+      var tot = r2(rows.reduce(function (t, c) { return t + c.parts[g]; }, 0));
+      lines.push('');
+      lines.push(title.replace(' · ', ' (') + (pd.day ? ')' : '') + ': pay ' + fmt(tot));
+      var body = rows.length ? rows.map(function (c) {
+        var p = c.parts[g];
+        var ownMin = c.g === g ? Math.min(p, c.due) : 0;
+        var extraP = r2(p - ownMin);
+        var label, cls;
+        if (c.status === 'short' && c.g === g) { label = 'Short by ' + fmt(c.due - c.pay); cls = 'short'; }
+        else if (c.status === 'paid') { label = 'Paid in full'; cls = 'paid'; }
+        else if (extraP > 0.004) { if (c === r.first) { label = 'Pay off first'; cls = 'focus'; } else { label = 'Extra'; cls = 'extra'; } }
+        else { label = 'Minimum'; cls = 'min'; }
+        var dd = +c.src.dueDay || 0;
+        var dueTxt = dd ? 'Due the ' + ord(dd) : 'No due date set';
+        var meta1 = c.g === g ? dueTxt + ' · Minimum ' + fmt(c.due) : dueTxt + ' · Extra payment';
+        if (c.inst > 0 && c.g === g) meta1 += ' · Includes installments ' + fmt(c.inst);
+        var segMin = c.balance > 0 ? ownMin / c.balance * 100 : 0;
+        var segExtra = c.balance > 0 ? extraP / c.balance * 100 : 0;
+        var cc = pv(c.src.col || 0);
+        lines.push('  ' + c.name + ': ' + fmt(p) + ' (' + label + ')');
+        return '<div class="alloc-row" style="--cc:' + cc + '">' +
+          '<div class="alloc-top">' + cardBadge(c.src) +
+          '<div class="alloc-id"><div class="alloc-name">' + esc(c.name) + '<span class="chip ' + cls + '">' + esc(label) + '</span></div></div>' +
+          '<div class="alloc-pay num">' + fmt(p) + '</div></div>' +
+          '<div class="bar" aria-hidden="true"><i style="background:color-mix(in srgb,' + cc + ' 38%,var(--surface));width:' + segMin.toFixed(2) + '%"></i><i style="background:' + cc + ';width:' + segExtra.toFixed(2) + '%"></i></div>' +
+          '<div class="alloc-meta"><span class="num">' + esc(meta1) + '</span><span class="num">' + (c.status === 'paid' ? 'Paid in full' : 'Still unpaid: ' + fmt(c.remaining)) + '</span></div></div>';
+      }).join('') : '<p class="hint">No cards are paid on this pay day.</p>';
+      return '<div class="period"><div class="period-head"><h3>' + esc(title) + '</h3><span class="tot num">Pay ' + fmt(tot) + ' of ' + fmt(r.amt[g]) + '</span></div>' + body + '</div>';
+    }).join('');
+    lastText = lines.join('\n');
+    renderAssetTotals();
+  }
+
+  /* ---------- assets tab ---------- */
+  function isBase(a) { var c = String(a.ccy || '').trim().toUpperCase(); return !c || c === String(state.base || '').trim().toUpperCase(); }
+  function assetValue(a) { var amt = +a.amount || 0; return isBase(a) ? amt : amt * (+a.rate || 0); }
+
+  function assetRow(a) {
+    var ts = TYPES.map(function (t) { return '<option value="' + t[0] + '"' + (a.type === t[0] ? ' selected' : '') + '>' + t[1] + '</option>'; }).join('');
+    var base = isBase(a);
+    return '<div class="item" data-id="' + a.id + '">' +
+      '<div class="cr-head"><span data-badge>' + assetBadge(a) + '</span>' +
+      '<label>Bank or wallet name<input data-f="name" type="text" list="inst" value="' + esc(a.name) + '" id="n-' + a.id + '"></label>' +
+      '<button type="button" class="ghost danger small" data-del="' + a.id + '">Remove</button></div>' +
+      '<div class="mid"><label>Type<select data-f="type">' + ts + '</select></label>' +
+      '<label>Currency code<input data-f="ccy" type="text" maxlength="8" value="' + esc(a.ccy) + '" placeholder="PHP, USD, BTC"></label></div>' +
+      '<div class="nums">' +
+      '<label>Amount<input class="num" data-f="amount" type="number" inputmode="decimal" min="0" step="any" value="' + esc(a.amount) + '"></label>' +
+      '<label>Rate to ' + esc(state.base || 'main') + '<input class="num" data-f="rate" type="number" inputmode="decimal" min="0" step="any" value="' + esc(base ? 1 : a.rate) + '"' + (base ? ' disabled' : '') + '></label>' +
+      '<div class="worth"><span>Worth</span><span class="av num" data-av></span></div>' +
+      '</div></div>';
+  }
+  function renderAssetRows() { $('assets').innerHTML = state.assets.map(assetRow).join(''); }
+
+  function renderAssetTotals() {
+    var total = 0, by = {};
+    TYPES.forEach(function (t) { by[t[0]] = 0; });
+    state.assets.forEach(function (a) {
+      var v = assetValue(a);
+      total += v;
+      by[typeInfo(a.type)[0]] += v;
+      var row = $('assets').querySelector('[data-id="' + a.id + '"]');
+      if (row) {
+        var av = row.querySelector('[data-av]');
+        av.textContent = fmt(v);
+        av.title = isBase(a) ? '' : nfx.format(+a.amount || 0) + ' ' + String(a.ccy || '').toUpperCase();
+      }
+    });
+    total = r2(total);
+    var debt = compute(state).totalDebt;
+    $('hero').innerHTML = '<span class="k">Everything you have across ' + state.assets.length + ' account' + (state.assets.length === 1 ? '' : 's') + '</span><span class="v num">' + fmt(total) + '</span>';
+    $('net').innerHTML =
+      '<div class="stat" style="--cc:var(--p1)"><div class="k">Card dues this month</div><div class="v num">' + fmt(debt) + '</div></div>' +
+      '<div class="stat" style="--cc:' + (total - debt >= 0 ? 'var(--p7)' : 'var(--p1)') + '"><div class="k">Assets minus card dues</div><div class="v num">' + fmt(total - debt) + '</div></div>' +
+      '<div class="stat" style="--cc:var(--p8)"><div class="k">Accounts</div><div class="v num">' + state.assets.length + '</div></div>';
+    var stack = '', brk = '';
+    TYPES.forEach(function (t) {
+      var v = by[t[0]];
+      if (v <= 0) return;
+      var pct = total > 0 ? v / total * 100 : 0;
+      stack += '<i style="width:' + pct.toFixed(2) + '%;background:var(--p' + t[2] + ')"></i>';
+      brk += '<div class="brk-row" style="--cc:var(--p' + t[2] + ')"><span class="dot"></span><span>' + t[1] + '</span><span class="amt num">' + fmt(v) + '</span><span class="pct num">' + Math.round(pct) + '%</span></div>';
+    });
+    $('stack').innerHTML = stack;
+    $('brk').innerHTML = brk || '<p class="hint">Add an account to see the breakdown.</p>';
+  }
+
+  /* ---------- shared UI ---------- */
+  function applyTab() {
+    var t = state.tab === 'assets' ? 'assets' : 'cards';
+    $('panel-cards').hidden = t !== 'cards';
+    $('panel-assets').hidden = t !== 'assets';
+    $('tab-cards').setAttribute('aria-selected', String(t === 'cards'));
+    $('tab-assets').setAttribute('aria-selected', String(t === 'assets'));
+  }
+  function applyHide() {
+    document.body.classList.toggle('hide', !!state.hide);
+    $('hide-btn').textContent = state.hide ? 'Show amounts' : 'Hide amounts';
+  }
+  function renderHello() {
+    $('hello').textContent = state.userName ? 'Hi, ' + state.userName : '';
+    $('name-edit').textContent = state.userName ? 'Change name' : 'Add your name';
+  }
+  function syncTop() {
+    $('p1day').value = state.pay1.day || ''; $('p1amt').value = state.pay1.amount;
+    $('p2day').value = state.pay2.day || ''; $('p2amt').value = state.pay2.amount;
+    $('cur').value = state.cur; $('cur2').value = state.cur;
+    $('base').value = state.base;
+    $('strategy').value = state.strategy;
+    var manual = state.strategy === 'manual';
+    $('focus-wrap').hidden = !manual;
+    $('strategy-wrap').className = 'strategy' + (manual ? ' manual' : '');
+    $('example-note').hidden = !state.example;
+    $('aexample-note').hidden = !state.aexample;
+  }
+  function changed(kind) {
+    if (kind === 'assets') { state.aexample = false; $('aexample-note').hidden = true; }
+    else { state.example = false; $('example-note').hidden = true; }
+    save();
+    renderResult();
+  }
+  function copyText(text, btn, label) {
+    function done(msg) { btn.textContent = msg; setTimeout(function () { btn.textContent = label; }, 1600); }
+    function fallback() {
+      var ta = document.createElement('textarea');
+      ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      var ok = false;
+      try { ok = document.execCommand('copy'); } catch (err) {}
+      document.body.removeChild(ta);
+      done(ok ? 'Copied' : 'Select and copy manually');
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(function () { done('Copied'); }, fallback);
+    else fallback();
+  }
+
+  /* ---------- name prompt ---------- */
+  function showWelcome() {
+    var has = !!state.userName;
+    $('w-title').textContent = has ? 'Change your name' : 'Welcome! What should I call you?';
+    $('name-in').value = state.userName || '';
+    $('name-skip').textContent = has ? 'Cancel' : 'Skip for now';
+    $('welcome').hidden = false;
+    setTimeout(function () { $('name-in').focus(); }, 0);
+  }
+  $('welcome-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var v = $('name-in').value.trim();
+    if (!v) { $('name-in').focus(); return; }
+    state.userName = v.slice(0, 40);
+    save();
+    $('welcome').hidden = true;
+    renderHello(); renderResult();
+  });
+  $('name-skip').addEventListener('click', function () {
+    if (!state.userName) { state.skipName = true; save(); }
+    $('welcome').hidden = true;
+  });
+  $('name-edit').addEventListener('click', showWelcome);
+
+  /* ---------- events: top controls ---------- */
+  document.querySelectorAll('[data-tab]').forEach(function (b) {
+    b.addEventListener('click', function () { state.tab = b.dataset.tab; applyTab(); save(); });
+  });
+  $('hide-btn').addEventListener('click', function () { state.hide = !state.hide; applyHide(); save(); });
+  function dayVal(v) { var n = parseInt(v, 10) || 0; return Math.max(0, Math.min(31, n)); }
+  $('p1day').addEventListener('input', function (e) { state.pay1.day = dayVal(e.target.value); renderCards(); changed('cards'); });
+  $('p2day').addEventListener('input', function (e) { state.pay2.day = dayVal(e.target.value); renderCards(); changed('cards'); });
+  $('p1amt').addEventListener('input', function (e) { state.pay1.amount = parseFloat(e.target.value) || 0; changed('cards'); });
+  $('p2amt').addEventListener('input', function (e) { state.pay2.amount = parseFloat(e.target.value) || 0; changed('cards'); });
+  function setCur(v) { state.cur = v; $('cur').value = v; $('cur2').value = v; renderCards(); changed('cards'); }
+  $('cur').addEventListener('input', function (e) { setCur(e.target.value); });
+  $('cur2').addEventListener('input', function (e) { setCur(e.target.value); });
+  $('base').addEventListener('input', function (e) {
+    state.base = e.target.value;
+    renderAssetRows(); changed('assets');
+  });
+  $('strategy').addEventListener('change', function (e) {
+    state.strategy = e.target.value;
+    $('focus-wrap').hidden = state.strategy !== 'manual';
+    $('strategy-wrap').className = 'strategy' + (state.strategy === 'manual' ? ' manual' : '');
+    renderFocusOptions(); changed('cards');
+  });
+  $('focus').addEventListener('change', function (e) { state.focusId = e.target.value; changed('cards'); });
+
+  /* ---------- events: cards ---------- */
+  function findCard(id) { return state.cards.filter(function (c) { return c.id === id; })[0]; }
+  function onCardField(e) {
+    var row = e.target.closest('.item');
+    if (!row || !e.target.dataset.f) return;
+    var card = findCard(row.dataset.id);
+    if (!card) return;
+    var f = e.target.dataset.f;
+    if (f === 'name') card.name = e.target.value;
+    else if (f === 'use') card.use = e.target.value;
+    else if (f === 'dueDay') card.dueDay = dayVal(e.target.value);
+    else if (f === 'bank') {
+      var prev = card.bank, nm = String(card.name || '').trim();
+      card.bank = e.target.value;
+      if (card.bank && card.bank !== 'Other' && (!nm || /^Card \d+$/.test(nm) || nm === prev)) {
+        card.name = card.bank;
+        row.querySelector('[data-f="name"]').value = card.name;
+      }
+    } else card[f] = parseFloat(e.target.value) || 0;
+    if (f === 'name' || f === 'bank') {
+      row.querySelector('[data-badge]').innerHTML = cardBadge(card);
+      renderFocusOptions();
+    }
+    if (f === 'balance' || f === 'min') refreshCardInst(card.id);
+    changed('cards');
+  }
+  $('cards').addEventListener('input', onCardField);
+  $('cards').addEventListener('change', function (e) {
+    if (e.target.tagName === 'SELECT') { onCardField(e); return; }
+    var id = e.target.dataset && e.target.dataset.logoFile;
+    if (!id || !e.target.files || !e.target.files[0]) return;
+    var card = findCard(id);
+    if (!card) return;
+    var reader = new FileReader();
+    reader.onload = function () {
+      var img = new Image();
+      img.onload = function () {
+        var S = 96, cv = document.createElement('canvas');
+        cv.width = S; cv.height = S;
+        var ctx = cv.getContext('2d');
+        var k = Math.min(S / img.width, S / img.height);
+        var w = img.width * k, h = img.height * k;
+        ctx.drawImage(img, (S - w) / 2, (S - h) / 2, w, h);
+        try { card.logo = cv.toDataURL('image/png'); } catch (err) { return; }
+        renderCards(); changed('cards');
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(e.target.files[0]);
+  });
+  $('cards').addEventListener('click', function (e) {
+    var b = e.target.closest('button');
+    if (!b) return;
+    var d = b.dataset || {};
+    if (d.del) {
+      state.cards = state.cards.filter(function (c) { return c.id !== d.del; });
+      renderCards(); renderFocusOptions(); changed('cards');
+    } else if (d.inst) {
+      openInst(d.inst);
+    } else if (d.logoBtn) {
+      var inp = $('cards').querySelector('[data-logo-file="' + d.logoBtn + '"]');
+      if (inp) inp.click();
+    } else if (d.logoClear) {
+      var c = findCard(d.logoClear);
+      if (c) { c.logo = ''; renderCards(); changed('cards'); }
+    }
+  });
+  $('add').addEventListener('click', function () {
+    var c = { id: nid(), name: 'Card ' + (state.cards.length + 1), bank: '', logo: '', col: uid % 8, balance: 0, min: 0, apr: 0, dueDay: 0, use: 'auto', plans: [] };
+    state.cards.push(c);
+    renderCards(); renderFocusOptions(); changed('cards');
+    var el = $('n-' + c.id);
+    if (el) { el.focus(); el.select(); }
+  });
+  $('copy').addEventListener('click', function () { copyText(lastText, $('copy'), 'Copy plan'); });
+
+  /* ---------- installment dialog ---------- */
+  var dlgCardId = '', lastFocus = null;
+  function planRow(p) {
+    return '<div class="plan" data-pid="' + p.id + '">' +
+      '<label class="p-name">What is it for<input data-pf="name" type="text" value="' + esc(p.name) + '" placeholder="e.g. Phone, 0% interest"></label>' +
+      '<label>Monthly amount<input class="num" data-pf="monthly" type="number" inputmode="decimal" min="0" step="any" value="' + esc(p.monthly) + '"></label>' +
+      '<label>Months left<input class="num" data-pf="months" type="number" inputmode="numeric" min="0" step="1" value="' + esc(p.months) + '"></label>' +
+      '<button type="button" class="ghost danger small" data-pdel="' + p.id + '">Remove</button></div>';
+  }
+  function renderDlgSum(c) {
+    var act = activePlans(c);
+    var last = act.reduce(function (m, p) { return Math.max(m, +p.months || 0); }, 0);
+    $('dlg-sum').innerHTML =
+      '<div class="stat" style="--cc:var(--p4)"><div class="k">Billed each month</div><div class="v num">' + fmt(instMonthly(c)) + '</div></div>' +
+      '<div class="stat" style="--cc:var(--p2)"><div class="k">Still to pay in total</div><div class="v num">' + fmt(instRemaining(c)) + '</div></div>' +
+      '<div class="stat" style="--cc:var(--p3)"><div class="k">Last payment in</div><div class="v num">' + (last ? last + (last === 1 ? ' month' : ' months') : 'None') + '</div></div>';
+  }
+  function renderDlg() {
+    var c = findCard(dlgCardId);
+    if (!c) return;
+    $('dlg-badge').innerHTML = cardBadge(c);
+    $('dlg-title').textContent = (String(c.name || '').trim() || 'Card') + ' installments';
+    $('dlg-body').innerHTML = c.plans.length ? c.plans.map(planRow).join('') : '<p class="hint">No installment plans yet. Tap "Add installment" for each plan that is still being billed.</p>';
+    renderDlgSum(c);
+  }
+  function openInst(id) {
+    if (!findCard(id)) return;
+    dlgCardId = id; lastFocus = document.activeElement;
+    renderDlg();
+    $('modal').hidden = false;
+    var f = $('dlg-body').querySelector('input');
+    (f || $('dlg-add')).focus();
+  }
+  function closeInst() {
+    $('modal').hidden = true;
+    dlgCardId = '';
+    if (lastFocus && lastFocus.focus) { try { lastFocus.focus(); } catch (e) {} }
+  }
+  $('dlg-close').addEventListener('click', closeInst);
+  $('dlg-done').addEventListener('click', closeInst);
+  $('modal').addEventListener('click', function (e) { if (e.target === $('modal')) closeInst(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !$('modal').hidden) closeInst(); });
+  $('dlg-add').addEventListener('click', function () {
+    var c = findCard(dlgCardId);
+    if (!c) return;
+    c.plans.push({ id: nid('p'), name: '', monthly: 0, months: 12 });
+    renderDlg(); refreshCardInst(c.id); changed('cards');
+    var rows = $('dlg-body').querySelectorAll('.plan');
+    var inp = rows.length ? rows[rows.length - 1].querySelector('input') : null;
+    if (inp) inp.focus();
+  });
+  $('dlg-body').addEventListener('input', function (e) {
+    var row = e.target.closest('.plan');
+    if (!row || !e.target.dataset.pf) return;
+    var c = findCard(dlgCardId);
+    if (!c) return;
+    var p = c.plans.filter(function (x) { return x.id === row.dataset.pid; })[0];
+    if (!p) return;
+    var f = e.target.dataset.pf;
+    p[f] = f === 'name' ? e.target.value : (parseFloat(e.target.value) || 0);
+    renderDlgSum(c); refreshCardInst(c.id); changed('cards');
+  });
+  $('dlg-body').addEventListener('click', function (e) {
+    var id = e.target.dataset && e.target.dataset.pdel;
+    if (!id) return;
+    var c = findCard(dlgCardId);
+    if (!c) return;
+    c.plans = c.plans.filter(function (p) { return p.id !== id; });
+    renderDlg(); refreshCardInst(c.id); changed('cards');
+  });
+
+  /* ---------- events: assets ---------- */
+  function findAsset(id) { return state.assets.filter(function (a) { return a.id === id; })[0]; }
+  function onAssetField(e) {
+    var row = e.target.closest('.item');
+    if (!row || !e.target.dataset.f) return;
+    var a = findAsset(row.dataset.id);
+    if (!a) return;
+    var f = e.target.dataset.f;
+    if (f === 'name' || f === 'ccy' || f === 'type') a[f] = e.target.value;
+    else a[f] = parseFloat(e.target.value) || 0;
+    if (f === 'name' || f === 'type') row.querySelector('[data-badge]').innerHTML = assetBadge(a);
+    if (f === 'ccy') {
+      var rate = row.querySelector('[data-f="rate"]');
+      var b = isBase(a);
+      rate.disabled = b;
+      if (b) rate.value = 1; else rate.value = a.rate || '';
+    }
+    changed('assets');
+  }
+  $('assets').addEventListener('input', onAssetField);
+  $('assets').addEventListener('change', function (e) { if (e.target.tagName === 'SELECT') onAssetField(e); });
+  $('assets').addEventListener('click', function (e) {
+    var id = e.target.dataset && e.target.dataset.del;
+    if (!id) return;
+    state.assets = state.assets.filter(function (a) { return a.id !== id; });
+    renderAssetRows(); changed('assets');
+  });
+  $('add-asset').addEventListener('click', function () {
+    var a = { id: nid('a'), name: '', type: 'bank', ccy: state.base || 'PHP', amount: 0, rate: 1 };
+    state.assets.push(a);
+    renderAssetRows(); changed('assets');
+    var el = $('n-' + a.id);
+    if (el) el.focus();
+  });
+
+  /* ---------- backup ---------- */
+  $('bk-copy').addEventListener('click', function () {
+    var json = JSON.stringify(state);
+    $('bk-text').value = json;
+    $('bk-msg').textContent = 'Backup text is in the box above. Paste it somewhere safe.';
+    copyText(json, $('bk-copy'), 'Copy backup');
+  });
+  $('bk-restore').addEventListener('click', function () {
+    var msg = $('bk-msg');
+    try {
+      var p = JSON.parse($('bk-text').value);
+      if (!p || !Array.isArray(p.cards) || !p.cards.length) { msg.textContent = 'That text is not a valid backup.'; return; }
+      state = adopt(p);
+      if (!Array.isArray(p.assets)) state.assets = [];
+      state.aexample = false;
+      bumpUid(); save(); renderAll();
+      msg.textContent = 'Backup restored.';
+    } catch (err) { msg.textContent = 'That text is not a valid backup.'; }
+  });
+
+  /* ---------- boot ---------- */
+  function renderAll() {
+    $('inst').innerHTML = SUGGEST.map(function (n) { return '<option value="' + esc(n) + '"></option>'; }).join('');
+    renderCards(); renderFocusOptions(); renderAssetRows();
+    syncTop(); applyTab(); applyHide(); renderHello(); renderResult();
+  }
+  renderAll();
+  if (!state.userName && !state.skipName) showWelcome();
+})();
+</script>
+</html>
