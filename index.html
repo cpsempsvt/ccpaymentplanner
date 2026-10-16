@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;padding:0}body{margin:0}[hidden]{display:none!important}img{max-width:100%}</style></head><body>
 <title>Card Payment Planner</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -69,8 +69,8 @@ h1 { font-family: var(--font-display); font-weight: 750; font-size: clamp(1.7rem
 .strip i:nth-child(5) { background: var(--p8); } .strip i:nth-child(6) { background: var(--p4); }
 .strip i:nth-child(7) { background: var(--p5); } .strip i:nth-child(8) { background: var(--p6); }
 
-.tabs { display: inline-flex; gap: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 99px; padding: 4px; justify-self: start; }
-.tabs button { border: 0; background: transparent; color: var(--muted); border-radius: 99px; padding: 9px 20px; font-weight: 600; }
+.tabs { display: inline-flex; gap: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 99px; padding: 4px; justify-self: start; max-width: 100%; overflow-x: auto; }
+.tabs button { border: 0; background: transparent; color: var(--muted); border-radius: 99px; padding: 9px 16px; font-weight: 600; white-space: nowrap; }
 .tabs button[aria-selected="true"] { background: var(--accent); color: var(--on-accent); }
 
 .cols { display: grid; gap: 20px; grid-template-columns: minmax(0, 1fr); align-items: start; }
@@ -190,6 +190,35 @@ textarea { font: inherit; font-size: 0.8rem; width: 100%; min-height: 90px; back
 .dlg-head h2 { overflow-wrap: anywhere; }
 .plan { display: grid; gap: 8px; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto; align-items: end; border: 1px solid var(--line); border-radius: 12px; padding: 10px; }
 .plan .p-name { grid-column: 1 / -1; }
+.plan-wrap { display: grid; gap: 20px; }
+.due-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+.due-item, .sched-row { border: 1px solid var(--line); border-radius: 12px; padding: 12px; display: grid; gap: 8px; min-width: 0; }
+.due-top { display: flex; align-items: center; gap: 10px; }
+.due-date { font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; }
+.due-amt { display: flex; justify-content: space-between; gap: 4px 10px; flex-wrap: wrap; font-size: 0.84rem; color: var(--muted); }
+.summary.four { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+.stat .sub { font-size: 0.76rem; color: var(--muted); }
+.sched-list { display: grid; gap: 10px; }
+.sched-row { grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
+.sched-row .chip { margin-left: 0; }
+.chart-box { position: relative; min-width: 0; }
+.chart-box svg { width: 100%; height: auto; display: block; }
+.tip { position: absolute; top: 0; left: 0; z-index: 5; pointer-events: none; min-width: 170px; background: var(--surface); color: var(--ink);
+  border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; font-size: 0.8rem; display: grid; gap: 2px;
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--ink) 18%, transparent); }
+.tip b { font-family: var(--font-display); }
+.tip .trow { display: flex; justify-content: space-between; gap: 12px; }
+.tip i { display: inline-block; width: 9px; height: 9px; border-radius: 3px; margin-right: 6px; }
+.tbl-wrap { overflow-x: auto; margin-top: 10px; }
+table.sched { border-collapse: collapse; font-size: 0.82rem; width: 100%; min-width: max-content; }
+.sched th, .sched td { padding: 6px 10px; text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.sched th { color: var(--muted); font-weight: 600; }
+.sched th:first-child, .sched td:first-child { text-align: left; position: sticky; left: 0; background: var(--surface); }
+.hint:empty { display: none; }
+.item.tinted, .alloc-row, .sched-row, .due-item {
+  background: color-mix(in srgb, var(--cc) 12%, var(--surface));
+  border-color: color-mix(in srgb, var(--cc) 34%, var(--line));
+}
 @media (prefers-reduced-motion: reduce) { .bar i { transition: none; } }
 </style>
 
@@ -209,6 +238,7 @@ textarea { font: inherit; font-size: 0.8rem; width: 100%; min-height: 90px; back
     <div class="strip" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
     <div class="tabs" role="tablist" aria-label="Sections">
       <button id="tab-cards" role="tab" type="button" data-tab="cards" aria-selected="true">Pay cards</button>
+      <button id="tab-plan" role="tab" type="button" data-tab="plan" aria-selected="false">Plan ahead</button>
       <button id="tab-assets" role="tab" type="button" data-tab="assets" aria-selected="false">My assets</button>
     </div>
   </header>
@@ -237,10 +267,14 @@ textarea { font: inherit; font-size: 0.8rem; width: 100%; min-height: 90px; back
       <p class="hint">Each card is paid on the pay day just before its due date. Use 30 or 31 for an end-of-month pay day. Any extra goes to the card you want to clear first, even if it is due later.</p>
 
       <div class="top-fields">
+        <label>Main currency code
+          <input id="base2" type="text" maxlength="8" list="ccys" placeholder="PHP">
+        </label>
         <label>Currency symbol
           <input id="cur" type="text" maxlength="4" placeholder="₱, $, ¥">
         </label>
       </div>
+      <p class="hint">Your plan is worked out in this currency. Each card takes the currency of its location, and cards from other countries are converted with the rate you type on the card.</p>
 
       <div id="strategy-wrap" class="strategy">
         <label>Which card to pay off first
@@ -279,13 +313,39 @@ textarea { font: inherit; font-size: 0.8rem; width: 100%; min-height: 90px; back
     </section>
   </div>
 
+  <div id="panel-plan" class="plan-wrap" role="tabpanel" aria-labelledby="tab-plan" hidden>
+    <section class="panel" aria-labelledby="due-h">
+      <div class="panel-head"><h2 id="due-h">Due soon</h2></div>
+      <p class="hint">Dates count from today on your device. Amounts come from the Pay cards tab.</p>
+      <div id="due-list" class="due-grid"></div>
+    </section>
+
+    <section class="panel" aria-labelledby="sch-h" aria-live="polite">
+      <div class="panel-head"><h2 id="sch-h">Payoff schedule</h2></div>
+      <div id="sch-flag" class="list"></div>
+      <div id="sch-sum" class="summary four"></div>
+      <div>
+        <h3>What you still have to pay at the end of each month, including later installments</h3>
+        <div id="sch-chart" class="chart-box" style="margin-top:8px"></div>
+      </div>
+      <div id="sch-legend" class="legend"></div>
+      <h3>When each card clears</h3>
+      <div id="sch-cards" class="sched-list"></div>
+      <details class="backup">
+        <summary>Month-by-month table</summary>
+        <div id="sch-table" class="tbl-wrap"></div>
+      </details>
+      <p class="hint">How this is worked out: each month uses the total you set aside on both pay days. Minimums are paid first, then extra goes to the card you chose to pay off first. Unpaid balances grow by the card's yearly interest divided by 12. Future minimums keep the same share of the balance as this month's, plus installments, and never fall below 5% of this month's amount due. No new purchases are added. This is an estimate, not your bank's figures.</p>
+    </section>
+  </div>
+
   <div id="panel-assets" class="cols" role="tabpanel" aria-labelledby="tab-assets" hidden>
     <section class="panel" aria-labelledby="as-h">
       <div class="panel-head"><h2 id="as-h">Banks and wallets</h2></div>
       <div id="aexample-note" class="notice" hidden>These are example accounts and rates. Change any field to use your own.</div>
       <div class="top-fields">
         <label>Main currency code
-          <input id="base" type="text" maxlength="8" placeholder="PHP">
+          <input id="base" type="text" maxlength="8" list="ccys" placeholder="PHP">
         </label>
         <label>Currency symbol
           <input id="cur2" type="text" maxlength="4" placeholder="₱, $, ¥">
@@ -295,6 +355,7 @@ textarea { font: inherit; font-size: 0.8rem; width: 100%; min-height: 90px; back
       <div id="assets" class="list"></div>
       <div class="row-actions"><button id="add-asset" class="primary" type="button">Add account</button></div>
       <datalist id="inst"></datalist>
+      <datalist id="ccys"></datalist>
     </section>
 
     <section class="panel" aria-labelledby="tot-h" aria-live="polite">
@@ -358,12 +419,33 @@ textarea { font: inherit; font-size: 0.8rem; width: 100%; min-height: 90px; back
   var uid = 0;
   function nid(p) { uid += 1; return (p || 'c') + uid; }
 
-  var BANKS = [
-    ['BDO', 'BDO Unibank'], ['BPI', 'BPI'], ['MBTC', 'Metrobank'], ['SBC', 'Security Bank'],
-    ['RCBC', 'RCBC'], ['UB', 'UnionBank'], ['EW', 'EastWest'], ['CBC', 'China Bank'],
-    ['PNB', 'PNB'], ['LBP', 'Landbank'], ['AUB', 'AUB'], ['MB', 'Maybank'],
-    ['HSBC', 'HSBC'], ['RB', 'Robinsons Bank'], ['GC', 'GCredit (GCash)'], ['MAYA', 'Maya']
+  // Locations, their currencies and common card-issuing banks. A bank entry is 'CODE|Name' or just 'Name'.
+  function B(list) { return list.map(function (s) { var p = s.split('|'); return [p[1] ? p[0] : '', p[1] || p[0]]; }); }
+  var COUNTRIES = [
+    { id: 'PH', name: 'Philippines', group: '', ccy: 'PHP', sym: '₱', banks: B(['BDO|BDO Unibank', 'BPI|BPI', 'MBTC|Metrobank', 'SBC|Security Bank', 'RCBC|RCBC', 'UB|UnionBank', 'EW|EastWest', 'CBC|China Bank', 'PNB|PNB', 'LBP|Landbank', 'AUB|AUB', 'MB|Maybank', 'HSBC|HSBC', 'RB|Robinsons Bank', 'GC|GCredit (GCash)', 'MAYA|Maya']) },
+    { id: 'US', name: 'United States', group: '', ccy: 'USD', sym: 'US$', banks: B(['Chase', 'BofA|Bank of America', 'Citi', 'WF|Wells Fargo', 'CapOne|Capital One', 'Amex|American Express', 'Discover', 'USB|U.S. Bank', 'Synchrony', 'Barclays', 'PNC', 'TD Bank']) },
+    { id: 'CA', name: 'Canada', group: '', ccy: 'CAD', sym: 'C$', banks: B(['RBC|RBC Royal Bank', 'TD|TD Canada Trust', 'Scotia|Scotiabank', 'BMO', 'CIBC', 'NBC|National Bank of Canada', 'Amex|American Express Canada', 'Desjardins', 'Tangerine', 'CapOne|Capital One Canada', 'Canadian Tire Bank']) },
+    { id: 'AU', name: 'Australia', group: '', ccy: 'AUD', sym: 'A$', banks: B(['CBA|Commonwealth Bank', 'Westpac', 'ANZ', 'NAB', 'St.George Bank', 'Bendigo Bank', 'Macquarie Bank', 'HSBC Australia', 'Amex|American Express Australia', 'Bankwest', 'ING Australia']) },
+    { id: 'JP', name: 'Japan', group: 'Asia', ccy: 'JPY', sym: '¥', banks: B(['Rakuten Card', 'MUFG Card', 'SMBC|Sumitomo Mitsui Card', 'Mizuho Bank', 'JCB', 'AEON Card', 'EPOS Card', 'Saison Card', 'PayPay Card', 'Orico|Orient Corporation (Orico)']) },
+    { id: 'SG', name: 'Singapore', group: 'Asia', ccy: 'SGD', sym: 'S$', banks: B(['DBS', 'OCBC', 'UOB', 'StanChart|Standard Chartered Singapore', 'Citibank Singapore', 'HSBC Singapore', 'Maybank Singapore', 'Amex|American Express Singapore']) },
+    { id: 'HK', name: 'Hong Kong', group: 'Asia', ccy: 'HKD', sym: 'HK$', banks: B(['HSBC Hong Kong', 'Hang Seng Bank', 'BOCHK|Bank of China (Hong Kong)', 'StanChart|Standard Chartered Hong Kong', 'Citibank Hong Kong', 'DBS Hong Kong', 'BEA|Bank of East Asia']) },
+    { id: 'CN', name: 'China', group: 'Asia', ccy: 'CNY', sym: 'CN¥', banks: B(['ICBC', 'CCB|China Construction Bank', 'BOC|Bank of China', 'ABC|Agricultural Bank of China', 'CMB|China Merchants Bank', 'BoCom|Bank of Communications', 'Ping An Bank']) },
+    { id: 'IN', name: 'India', group: 'Asia', ccy: 'INR', sym: '₹', banks: B(['HDFC Bank', 'ICICI Bank', 'SBI Card', 'Axis Bank', 'Kotak Mahindra Bank', 'IndusInd Bank', 'Amex|American Express India', 'StanChart|Standard Chartered India', 'RBL Bank', 'Yes Bank']) },
+    { id: 'KR', name: 'South Korea', group: 'Asia', ccy: 'KRW', sym: '₩', banks: B(['Shinhan Card', 'KB Kookmin Card', 'Samsung Card', 'Hyundai Card', 'Lotte Card', 'BC Card', 'Woori Card', 'Hana Card', 'NH NongHyup Card']) },
+    { id: 'MY', name: 'Malaysia', group: 'Asia', ccy: 'MYR', sym: 'RM ', banks: B(['Maybank Malaysia', 'CIMB Bank', 'Public Bank', 'RHB Bank', 'Hong Leong Bank', 'AmBank', 'UOB Malaysia', 'HSBC Malaysia']) },
+    { id: 'TH', name: 'Thailand', group: 'Asia', ccy: 'THB', sym: '฿', banks: B(['Kasikornbank', 'SCB|Siam Commercial Bank', 'Bangkok Bank', 'Krungsri', 'Krungthai Bank', 'ttb bank', 'UOB Thailand']) },
+    { id: 'ID', name: 'Indonesia', group: 'Asia', ccy: 'IDR', sym: 'Rp ', banks: B(['BCA', 'Bank Mandiri', 'BNI', 'BRI', 'CIMB Niaga', 'Bank Danamon', 'Permata Bank', 'OCBC NISP']) },
+    { id: 'VN', name: 'Vietnam', group: 'Asia', ccy: 'VND', sym: '₫', banks: B(['Vietcombank', 'VietinBank', 'BIDV', 'Techcombank', 'VPBank', 'MB Bank', 'ACB', 'TPBank']) },
+    { id: 'TW', name: 'Taiwan', group: 'Asia', ccy: 'TWD', sym: 'NT$', banks: B(['CTBC Bank', 'Cathay United Bank', 'Taishin Bank', 'E.SUN Bank', 'Fubon Bank', 'Mega Bank']) },
+    { id: 'AE', name: 'United Arab Emirates', group: 'Middle East', ccy: 'AED', sym: 'AED ', banks: B(['Emirates NBD', 'FAB|First Abu Dhabi Bank', 'ADCB|Abu Dhabi Commercial Bank', 'Dubai Islamic Bank', 'Mashreq', 'RAKBANK', 'Emirates Islamic', 'StanChart|Standard Chartered UAE', 'HSBC UAE', 'CBD|Commercial Bank of Dubai']) },
+    { id: 'SA', name: 'Saudi Arabia', group: 'Middle East', ccy: 'SAR', sym: 'SAR ', banks: B(['Al Rajhi Bank', 'SNB|Saudi National Bank', 'Riyad Bank', 'BSF|Banque Saudi Fransi', 'Saudi Awwal Bank', 'Alinma Bank', 'Arab National Bank']) },
+    { id: 'QA', name: 'Qatar', group: 'Middle East', ccy: 'QAR', sym: 'QAR ', banks: B(['QNB|Qatar National Bank', 'Commercial Bank of Qatar', 'Doha Bank', 'Masraf Al Rayan', 'Dukhan Bank', 'Ahli Bank Qatar']) },
+    { id: 'KW', name: 'Kuwait', group: 'Middle East', ccy: 'KWD', sym: 'KWD ', banks: B(['NBK|National Bank of Kuwait', 'KFH|Kuwait Finance House', 'Gulf Bank', 'Burgan Bank', 'Commercial Bank of Kuwait', 'Ahli Bank of Kuwait']) },
+    { id: 'BH', name: 'Bahrain', group: 'Middle East', ccy: 'BHD', sym: 'BHD ', banks: B(['NBB|National Bank of Bahrain', 'BBK|Bank of Bahrain and Kuwait', 'Bahrain Islamic Bank', 'Standard Chartered Bahrain', 'KFH Bahrain']) },
+    { id: 'OM', name: 'Oman', group: 'Middle East', ccy: 'OMR', sym: 'OMR ', banks: B(['Bank Muscat', 'National Bank of Oman', 'Bank Dhofar', 'Sohar International', 'Oman Arab Bank']) }
   ];
+  var COUNTRY_BY_ID = {}, CCY_SYM = {};
+  COUNTRIES.forEach(function (k) { COUNTRY_BY_ID[k.id] = k; CCY_SYM[k.ccy] = k.sym; });
   var TYPES = [['bank', 'Bank', 4], ['ewallet', 'E-wallet', 3], ['crypto', 'Crypto', 2], ['cash', 'Cash', 7], ['other', 'Other', 5]];
   var SUGGEST = ['BDO Unibank', 'BPI', 'Metrobank', 'Security Bank', 'RCBC', 'UnionBank', 'EastWest', 'China Bank', 'PNB', 'Landbank',
     'GoTyme', 'Maya Bank', 'SeaBank', 'GCash', 'Maya', 'Coins.ph', 'PDAX', 'Binance', 'Bybit', 'MetaMask', 'Trust Wallet', 'Ledger'];
@@ -396,6 +478,17 @@ textarea { font: inherit; font-size: 0.8rem; width: 100%; min-height: 90px; back
     };
   }
   var state = defaults();
+  // Older saved cards have no location: guess the Philippines when their bank is a Philippine bank.
+  function fixCards(s) {
+    s.cards.forEach(function (c) {
+      if (c.loc === undefined) {
+        c.loc = '';
+        if (c.bank && COUNTRY_BY_ID.PH.banks.some(function (b) { return b[1] === c.bank; })) c.loc = 'PH';
+      }
+      if (c.rate === undefined) c.rate = 0;
+    });
+  }
+  fixCards(state);
 
   function bumpUid() {
     state.cards.concat(state.assets).forEach(function (x) {
@@ -430,6 +523,7 @@ textarea { font: inherit; font-size: 0.8rem; width: 100%; min-height: 90px; back
     s.skipName = !!saved.skipName;
     s.example = false;
     s.aexample = hasAssets ? false : true;
+    fixCards(s);
     return s;
   }
   try {
@@ -448,17 +542,87 @@ textarea { font: inherit; font-size: 0.8rem; width: 100%; min-height: 90px; back
   var nfx = new Intl.NumberFormat(undefined, { maximumFractionDigits: 8 });
   function fmt(n) { return (state.cur || '') + nf.format(r2(n)); }
 
-  function bankCode(name) { for (var i = 0; i < BANKS.length; i++) if (BANKS[i][1] === name) return BANKS[i][0]; return ''; }
+  function countryOf(c) { return COUNTRY_BY_ID[c.loc] || null; }
+  function bankCode(c) {
+    var k = countryOf(c);
+    if (!k) return '';
+    for (var i = 0; i < k.banks.length; i++) if (k.banks[i][1] === c.bank) return k.banks[i][0];
+    return '';
+  }
+  function sameCcy(code) { return String(code || '').trim().toUpperCase() === String(state.base || '').trim().toUpperCase(); }
+  function needsRate(c) { var k = countryOf(c); return !!k && !sameCcy(k.ccy); }
+  function rateMissing(c) { return needsRate(c) && !(+c.rate > 0); }
+  function cardRate(c) { return needsRate(c) && +c.rate > 0 ? +c.rate : 1; }
+  function cardCcy(c) { var k = countryOf(c); return k ? k.ccy : String(state.base || '').toUpperCase(); }
+  function cardSym(c) { var k = countryOf(c); return k ? k.sym : (state.cur || ''); }
+  function fmtC(n, c) { return cardSym(c) + nf.format(r2(n)); }
+  function curTag(c) { return countryOf(c) ? ' (' + cardCcy(c) + ')' : ''; }
+  function locOptions(c) {
+    function opt(k) { return '<option value="' + k.id + '"' + (c.loc === k.id ? ' selected' : '') + '>' + esc(k.name) + ' (' + k.ccy + ')</option>'; }
+    var s = '<option value="">Choose location</option>';
+    COUNTRIES.filter(function (k) { return !k.group; }).forEach(function (k) { s += opt(k); });
+    ['Asia', 'Middle East'].forEach(function (g) {
+      s += '<optgroup label="' + g + '">' + COUNTRIES.filter(function (k) { return k.group === g; }).map(opt).join('') + '</optgroup>';
+    });
+    return s;
+  }
+  function bankOptions(c) {
+    var k = countryOf(c);
+    if (!k) return '<option value="">Choose a location first</option>';
+    return '<option value="">Choose bank (optional)</option>' + k.banks.map(function (b) {
+      return '<option value="' + esc(b[1]) + '"' + (c.bank === b[1] ? ' selected' : '') + '>' + esc(b[1]) + '</option>';
+    }).join('') + '<option value="Other"' + (c.bank === 'Other' ? ' selected' : '') + '>Other bank</option>';
+  }
+  function convNote(c) {
+    if (!needsRate(c)) return '';
+    var base = state.base || 'your main currency';
+    if (rateMissing(c)) return 'Enter the rate above so amounts convert to ' + base + '. Until then they count 1 to 1.';
+    var m = instMonthly(c), rt = cardRate(c);
+    var bal = Math.max(+c.balance || 0, m), mn = Math.min(Math.max(+c.min || 0, m), bal);
+    return 'In ' + base + ': amount due ' + fmt(bal * rt) + ', minimum ' + fmt(mn * rt) + '.';
+  }
   function initials(s) {
     var w = String(s || '').trim().split(/\s+/).filter(Boolean);
     if (!w.length) return '•';
     return (w[0].charAt(0) + (w[1] ? w[1].charAt(0) : (w[0].charAt(1) || ''))).toUpperCase();
   }
   function pv(i) { return 'var(--p' + ((i % 8) + 1) + ')'; }
+  // Card colour: a soft pastel taken from the uploaded logo, otherwise the card's palette colour.
+  function cardColor(c) {
+    if (c.logo && c.hue != null) return 'hsl(' + Math.round(c.hue) + ' ' + Math.round(c.sat != null ? c.sat : 55) + '% 66%)';
+    return pv(c.col || 0);
+  }
+  // Finds the most common colourful hue in a logo drawn on a canvas.
+  function toneFrom(cv) {
+    var fallback = { hue: 215, sat: 14 };
+    try {
+      var d = cv.getContext('2d').getImageData(0, 0, cv.width, cv.height).data;
+      var buckets = [], i;
+      for (i = 0; i < 36; i++) buckets.push({ w: 0, hc: 0, hs: 0, ss: 0 });
+      for (i = 0; i < d.length; i += 4) {
+        if (d[i + 3] < 128) continue;
+        var r = d[i] / 255, g = d[i + 1] / 255, b = d[i + 2] / 255;
+        var mx = Math.max(r, g, b), mn = Math.min(r, g, b), df = mx - mn;
+        if (mx > 0.96 && mn > 0.9) continue;
+        if (df < 0.12 || mx < 0.15) continue;
+        var h;
+        if (mx === r) h = ((g - b) / df) % 6; else if (mx === g) h = (b - r) / df + 2; else h = (r - g) / df + 4;
+        h = (h * 60 + 360) % 360;
+        var s = df / mx, w = s * mx, bk = buckets[Math.floor(h / 10) % 36];
+        bk.w += w; bk.ss += s * w;
+        bk.hc += w * Math.cos(h * Math.PI / 180); bk.hs += w * Math.sin(h * Math.PI / 180);
+      }
+      var best = null;
+      buckets.forEach(function (x) { if (!best || x.w > best.w) best = x; });
+      if (!best || best.w <= 0) return fallback;
+      var hue = (Math.atan2(best.hs, best.hc) * 180 / Math.PI + 360) % 360;
+      return { hue: hue, sat: Math.round(40 + (best.ss / best.w) * 30) };
+    } catch (e) { return fallback; }
+  }
   function cardBadge(c) {
-    var cc = pv(c.col || 0);
+    var cc = cardColor(c);
     if (c.logo) return '<span class="badge" style="--cc:' + cc + '"><img alt="" src="' + esc(c.logo) + '"></span>';
-    var t = bankCode(c.bank) || initials(c.name);
+    var t = bankCode(c) || initials(c.name);
     return '<span class="badge" style="--cc:' + cc + '"><b class="' + (t.length > 3 ? 'sm' : '') + '">' + esc(t) + '</b></span>';
   }
   function typeInfo(t) { for (var i = 0; i < TYPES.length; i++) if (TYPES[i][0] === t) return TYPES[i]; return TYPES[4]; }
@@ -473,7 +637,7 @@ textarea { font: inherit; font-size: 0.8rem; width: 100%; min-height: 90px; back
   function instNote(c) {
     var n = activePlans(c).length, m = instMonthly(c);
     if (!n) return 'No installments added.';
-    var s = n + ' plan' + (n > 1 ? 's' : '') + ', ' + fmt(m) + ' a month.';
+    var s = n + ' plan' + (n > 1 ? 's' : '') + ', ' + fmtC(m, c) + ' a month.';
     if ((+c.min || 0) < m - 0.004 || (+c.balance || 0) < m - 0.004) s += ' Counted in the minimum and amount due.';
     return s;
   }
@@ -494,11 +658,12 @@ textarea { font: inherit; font-size: 0.8rem; width: 100%; min-height: 90px; back
 
   function compute(s) {
     var cards = s.cards.map(function (c, i) {
-      var inst = instMonthly(c);
-      var bal = Math.max(0, +c.balance || 0, inst);
-      var mn = Math.min(Math.max(0, +c.min || 0, inst), bal);
+      var rt = cardRate(c);
+      var inst = r2(instMonthly(c) * rt);
+      var bal = r2(Math.max(0, (+c.balance || 0) * rt, inst));
+      var mn = r2(Math.min(Math.max(0, (+c.min || 0) * rt, inst), bal));
       return {
-        id: c.id, src: c, g: groupOf(c, s), parts: { 1: 0, 2: 0 }, inst: inst,
+        id: c.id, src: c, g: groupOf(c, s), parts: { 1: 0, 2: 0 }, inst: inst, fx: rt,
         name: String(c.name || '').trim() || ('Card ' + (i + 1)),
         balance: bal, min: mn, apr: Math.max(0, +c.apr || 0)
       };
@@ -567,33 +732,34 @@ textarea { font: inherit; font-size: 0.8rem; width: 100%; min-height: 90px; back
 
   /* ---------- cards tab ---------- */
   function cardRow(c) {
-    var opts = '<option value="">Choose bank (optional)</option>' + BANKS.map(function (b) {
-      return '<option value="' + esc(b[1]) + '"' + (c.bank === b[1] ? ' selected' : '') + '>' + esc(b[1]) + '</option>';
-    }).join('') + '<option value="Other"' + (c.bank === 'Other' ? ' selected' : '') + '>Other bank</option>';
     var d1 = state.pay1.day ? ' (' + ord(state.pay1.day) + ')' : '';
     var d2 = state.pay2.day ? ' (' + ord(state.pay2.day) + ')' : '';
     var useOpts = '<option value="auto"' + (c.use === 'auto' ? ' selected' : '') + '>By due date</option>' +
       '<option value="1"' + (c.use === '1' ? ' selected' : '') + '>First pay day' + esc(d1) + '</option>' +
       '<option value="2"' + (c.use === '2' ? ' selected' : '') + '>Second pay day' + esc(d2) + '</option>';
     var n = activePlans(c).length;
-    return '<div class="item" data-id="' + c.id + '">' +
+    return '<div class="item tinted" data-id="' + c.id + '" style="--cc:' + cardColor(c) + '">' +
       '<div class="cr-head"><button type="button" class="badgebtn" data-inst="' + c.id + '" title="Installment plans" aria-label="Installment plans for ' + esc(c.name) + '">' +
       '<span data-badge>' + cardBadge(c) + '</span><i class="cnt" data-cnt' + (n ? '' : ' hidden') + '>' + n + '</i></button>' +
       '<label>Card name<input data-f="name" type="text" value="' + esc(c.name) + '" id="n-' + c.id + '"></label>' +
       '<button type="button" class="ghost danger small" data-del="' + c.id + '">Remove</button></div>' +
-      '<div class="cr-bank"><label>Bank<select data-f="bank">' + opts + '</select></label>' +
-      '<div class="logo-actions"><button type="button" class="small" data-logo-btn="' + c.id + '">' + (c.logo ? 'Change logo' : 'Upload your own logo') + '</button>' +
+      '<div class="mid"><label>Location<select data-f="loc">' + locOptions(c) + '</select></label>' +
+      '<label>Bank<select data-f="bank"' + (countryOf(c) ? '' : ' disabled') + '>' + bankOptions(c) + '</select></label></div>' +
+      '<div class="inst-line"><button type="button" class="small" data-inst="' + c.id + '">Installment plans</button>' +
+      '<button type="button" class="small" data-logo-btn="' + c.id + '">' + (c.logo ? 'Change logo' : 'Upload your own logo') + '</button>' +
       (c.logo ? '<button type="button" class="ghost small" data-logo-clear="' + c.id + '">Remove logo</button>' : '') +
-      '<input type="file" accept="image/*" hidden data-logo-file="' + c.id + '"></div></div>' +
-      '<div class="inst-line"><button type="button" class="small" data-inst="' + c.id + '">Installment plans</button><span class="hint" data-inst-note>' + esc(instNote(c)) + '</span></div>' +
+      '<input type="file" accept="image/*" hidden data-logo-file="' + c.id + '"></div>' +
+      '<div class="hint" data-inst-note>' + esc(instNote(c)) + '</div>' +
       '<div class="mid">' +
       '<label>Due day of month<input class="num" data-f="dueDay" type="number" inputmode="numeric" min="1" max="31" step="1" value="' + (c.dueDay ? esc(c.dueDay) : '') + '" placeholder="e.g. 20"></label>' +
       '<label>Pay it with<select data-f="use">' + useOpts + '</select></label></div>' +
       '<div class="nums">' +
-      '<label>Amount due this month<input class="num" data-f="balance" type="number" inputmode="decimal" min="0" step="any" value="' + esc(c.balance) + '"></label>' +
-      '<label>Minimum due<input class="num" data-f="min" type="number" inputmode="decimal" min="0" step="any" value="' + esc(c.min) + '"></label>' +
+      '<label>Amount due this month' + esc(curTag(c)) + '<input class="num" data-f="balance" type="number" inputmode="decimal" min="0" step="any" value="' + esc(c.balance) + '"></label>' +
+      '<label>Minimum due' + esc(curTag(c)) + '<input class="num" data-f="min" type="number" inputmode="decimal" min="0" step="any" value="' + esc(c.min) + '"></label>' +
       '<label>Interest % a year<input class="num" data-f="apr" type="number" inputmode="decimal" min="0" step="any" value="' + esc(c.apr) + '"></label>' +
-      '</div></div>';
+      '</div>' +
+      (needsRate(c) ? '<label>1 ' + esc(cardCcy(c)) + ' is worth how many ' + esc(state.base || 'main currency') + '?<input class="num" data-f="rate" type="number" inputmode="decimal" min="0" step="any" value="' + (c.rate ? esc(c.rate) : '') + '" placeholder="Type today\'s rate"></label>' : '') +
+      '<div class="hint" data-conv>' + esc(convNote(c)) + '</div></div>';
   }
   function renderCards() { $('cards').innerHTML = state.cards.map(cardRow).join(''); }
   function refreshCardInst(id) {
@@ -604,6 +770,7 @@ textarea { font: inherit; font-size: 0.8rem; width: 100%; min-height: 90px; back
     var cnt = row.querySelector('[data-cnt]');
     cnt.textContent = n; cnt.hidden = !n;
     row.querySelector('[data-inst-note]').textContent = instNote(c);
+    row.querySelector('[data-conv]').textContent = convNote(c);
   }
 
   function renderFocusOptions() {
@@ -631,6 +798,8 @@ textarea { font: inherit; font-size: 0.8rem; width: 100%; min-height: 90px; back
     $('summary').innerHTML = s;
 
     var flag = '';
+    var noRate = state.cards.filter(rateMissing).map(function (c) { return esc(String(c.name || '').trim() || 'a card'); });
+    if (noRate.length) flag += '<div class="notice">Add the exchange rate for ' + noRate.join(', ') + '. Until then their amounts count 1 to 1.</div>';
     if (r.shortTotal > 0.004) flag += '<div class="notice bad">The amounts you set aside do not cover every minimum. Each pay day pays the smallest minimums in full first, so as many cards as possible stay current. Contact the banks of the cards marked Short about a payment arrangement.</div>';
     var spare = r2(r.left[1] + r.left[2]);
     if (r.shortTotal <= 0.004 && spare > 0.004) flag += '<div class="notice">' + fmt(spare) + ' is left over because every card is already paid in full.</div>';
@@ -660,7 +829,7 @@ textarea { font: inherit; font-size: 0.8rem; width: 100%; min-height: 90px; back
         if (c.inst > 0 && c.g === g) meta1 += ' · Includes installments ' + fmt(c.inst);
         var segMin = c.balance > 0 ? ownMin / c.balance * 100 : 0;
         var segExtra = c.balance > 0 ? extraP / c.balance * 100 : 0;
-        var cc = pv(c.src.col || 0);
+        var cc = cardColor(c.src);
         lines.push('  ' + c.name + ': ' + fmt(p) + ' (' + label + ')');
         return '<div class="alloc-row" style="--cc:' + cc + '">' +
           '<div class="alloc-top">' + cardBadge(c.src) +
@@ -673,7 +842,245 @@ textarea { font: inherit; font-size: 0.8rem; width: 100%; min-height: 90px; back
     }).join('');
     lastText = lines.join('\n');
     renderAssetTotals();
+    renderPlan(r);
   }
+
+  /* ---------- plan ahead tab: due dates and payoff schedule ---------- */
+  var NOW = new Date();
+  var simRows = [], simKs = [];
+
+  function monthLabel(t, withYear) {
+    var d = new Date(NOW.getFullYear(), NOW.getMonth() + t, 1);
+    return d.toLocaleDateString(undefined, withYear === false ? { month: 'short' } : { month: 'short', year: 'numeric' });
+  }
+  function nextDate(today, day) {
+    var y = today.getFullYear(), m = today.getMonth();
+    for (var k = 0; k < 2; k++) {
+      var last = new Date(y, m + k + 1, 0).getDate();
+      var d = new Date(y, m + k, Math.min(day, last));
+      if (d >= today) return d;
+    }
+    return new Date(y, m + 2, 1);
+  }
+  function niceCeil(v) {
+    if (v <= 0) return 1;
+    var p = Math.pow(10, Math.floor(Math.log(v) / Math.LN10)), f = v / p;
+    return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * p;
+  }
+
+  function renderDue(r) {
+    var today = new Date(); today.setHours(0, 0, 0, 0);
+    var items = r.cards.filter(function (c) { return c.balance > 0; }).map(function (c) {
+      var dd = +c.src.dueDay || 0;
+      return { c: c, date: dd ? nextDate(today, dd) : null };
+    });
+    items.sort(function (a, b) {
+      if (!a.date && !b.date) return 0;
+      if (!a.date) return 1;
+      if (!b.date) return -1;
+      return a.date - b.date;
+    });
+    if (!items.length) { $('due-list').innerHTML = '<p class="hint">No cards have an amount due.</p>'; return; }
+    $('due-list').innerHTML = items.map(function (it) {
+      var c = it.c, dTxt, chip = '';
+      if (it.date) {
+        var days = Math.round((it.date - today) / 86400000);
+        dTxt = it.date.toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' });
+        var cls = days <= 3 ? 'short' : (days <= 7 ? 'extra' : 'min');
+        var when = days === 0 ? 'Due today' : (days === 1 ? 'Due tomorrow' : 'In ' + days + ' days');
+        chip = '<span class="chip ' + cls + '">' + when + '</span>';
+      } else { dTxt = 'No due date set'; }
+      var pd = c.g === 1 ? state.pay1 : state.pay2;
+      return '<div class="due-item" style="--cc:' + cardColor(c.src) + '">' +
+        '<div class="due-top">' + cardBadge(c.src) + '<div class="alloc-id"><div class="alloc-name">' + esc(c.name) + '</div>' +
+        '<div class="due-date">' + esc(dTxt) + chip + '</div></div></div>' +
+        '<div class="due-amt"><span class="num">Minimum due ' + fmt(c.due) + '</span><span class="num">Planned payment ' + fmt(c.pay) + '</span></div>' +
+        '<div class="hint">Paid from your ' + (c.g === 1 ? 'first' : 'second') + ' pay day' + (pd.day ? ' (' + ord(pd.day) + ')' : '') + '</div></div>';
+    }).join('');
+  }
+
+  // Month 0 is this month and uses the plan from the Pay cards tab. Later months use one combined pot.
+  function simulate(r, extra) {
+    var ks = r.cards.map(function (c) {
+      var plans = activePlans(c.src).map(function (p) { return { m: +p.months, v: r2(+p.monthly * c.fx) }; });
+      var other = Math.max(0, c.balance - c.inst);
+      var ratio = other > 0 ? (c.min - c.inst) / other : 0.05;
+      ratio = Math.min(1, Math.max(0.03, ratio));
+      var lastBill = plans.reduce(function (m, p) { return Math.max(m, p.m - 1); }, -1);
+      var floor = Math.max(1, Math.min(c.min, c.balance * 0.05));
+      return { c: c, plans: plans, ratio: ratio, floor: floor, lastBill: lastBill, carry: 0, cleared: null, paid: 0, interest: 0 };
+    });
+    var budget = r.amt[1] + r.amt[2];
+    var rows = [], totalInterest = 0, short = false;
+    for (var t = 0; t < 120; t++) {
+      var D = [], M = [], P = [];
+      ks.forEach(function (k, i) {
+        if (k.cleared !== null) { D[i] = 0; M[i] = 0; return; }
+        var instT = 0;
+        k.plans.forEach(function (p) { if (t <= p.m - 1) instT += p.v; });
+        if (t === 0) { D[i] = k.c.balance; M[i] = k.c.min; }
+        else {
+          D[i] = r2(k.carry + instT);
+          M[i] = r2(Math.min(D[i], Math.max(instT + k.ratio * Math.max(0, D[i] - instT), k.floor)));
+        }
+      });
+      if (!extra) { P = M.slice(); }
+      else if (t === 0) { P = ks.map(function (k) { return k.c.pay; }); }
+      else {
+        P = ks.map(function () { return 0; });
+        var left = budget;
+        var idx = ks.map(function (k, i) { return i; }).filter(function (i) { return D[i] > 0; });
+        var sumM = idx.reduce(function (s, i) { return s + M[i]; }, 0);
+        if (sumM <= left + 0.004) { idx.forEach(function (i) { P[i] = M[i]; }); left = r2(left - sumM); }
+        else {
+          short = true;
+          idx.slice().sort(function (a, b) { return M[a] - M[b]; }).forEach(function (i) {
+            var p = Math.min(M[i], left); P[i] = r2(p); left = r2(left - p);
+          });
+        }
+        var ord2 = idx.slice();
+        if (state.strategy === 'apr') ord2.sort(function (a, b) { return (ks[b].c.apr - ks[a].c.apr) || (D[a] - D[b]); });
+        else if (state.strategy === 'manual') ord2.sort(function (a, b) {
+          var fa = ks[a].c.id === state.focusId ? 0 : 1, fb = ks[b].c.id === state.focusId ? 0 : 1;
+          return (fa - fb) || (D[a] - D[b]);
+        });
+        else ord2.sort(function (a, b) { return D[a] - D[b]; });
+        ord2.forEach(function (i) {
+          var add = Math.min(D[i] - P[i], left);
+          if (add > 0.004) { P[i] = r2(P[i] + add); left = r2(left - add); }
+        });
+      }
+      var row = { t: t, paid: [], carry: [], rem: [], total: 0, interest: 0, owed: 0 };
+      ks.forEach(function (k, i) {
+        if (k.cleared !== null) { row.paid.push(0); row.carry.push(0); row.rem.push(0); return; }
+        var unpaid = Math.max(0, r2(D[i] - P[i]));
+        var intr = r2(unpaid * k.c.apr / 1200);
+        k.carry = r2(unpaid + intr);
+        k.paid = r2(k.paid + P[i]); k.interest = r2(k.interest + intr);
+        // still to pay = unpaid balance carried over plus installments that will be billed later
+        var fut = 0;
+        k.plans.forEach(function (p) { fut += p.v * Math.max(0, p.m - 1 - t); });
+        var rem = r2(k.carry + fut);
+        row.paid.push(P[i]); row.carry.push(k.carry); row.rem.push(rem);
+        row.total += P[i]; row.interest += intr; row.owed += rem;
+        if (k.carry < 0.005 && t >= k.lastBill) { k.cleared = t; k.carry = 0; }
+      });
+      row.total = r2(row.total); row.interest = r2(row.interest); row.owed = r2(row.owed);
+      rows.push(row);
+      totalInterest += row.interest;
+      if (ks.every(function (k) { return k.cleared !== null; })) break;
+    }
+    return {
+      rows: rows, ks: ks, interest: r2(totalInterest), months: rows.length, short: short,
+      done: ks.every(function (k) { return k.cleared !== null; })
+    };
+  }
+
+  function chartSvg(rows, ks) {
+    var W = 640, H = 260, L = 58, R = 8, T = 10, B = 28, iw = W - L - R, ih = H - T - B;
+    var maxV = Math.max.apply(null, rows.map(function (x) { return x.owed; }));
+    var top = niceCeil(maxV);
+    var bw = iw / rows.length, w = Math.max(2, bw * 0.7);
+    var cf = new Intl.NumberFormat(undefined, { notation: 'compact', maximumFractionDigits: 1 });
+    var step = Math.ceil(rows.length / 8);
+    var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Stacked bars of how much you still have to pay at the end of each month, one colour per card">';
+    [0, 0.5, 1].forEach(function (f) {
+      var y = T + ih - f * ih;
+      s += '<line x1="' + L + '" x2="' + (W - R) + '" y1="' + y + '" y2="' + y + '" style="stroke:var(--line);stroke-width:1"/>';
+      s += '<text x="' + (L - 6) + '" y="' + (y + 4) + '" text-anchor="end" style="fill:var(--muted);font:11px var(--font-ui)">' + esc((state.cur || '') + cf.format(top * f)) + '</text>';
+    });
+    rows.forEach(function (x, t) {
+      var bx = L + t * bw + (bw - w) / 2, y = T + ih;
+      ks.forEach(function (k, i) {
+        var v = x.rem[i];
+        if (v <= 0.004) return;
+        var h = v / top * ih;
+        y -= h;
+        s += '<rect x="' + bx.toFixed(2) + '" y="' + y.toFixed(2) + '" width="' + w.toFixed(2) + '" height="' + h.toFixed(2) + '" style="fill:' + cardColor(k.c.src) + ';stroke:var(--surface);stroke-width:2"/>';
+      });
+      if (t % step === 0) {
+        var d = new Date(NOW.getFullYear(), NOW.getMonth() + t, 1);
+        var lab = d.toLocaleDateString(undefined, (t === 0 || d.getMonth() === 0) ? { month: 'short', year: '2-digit' } : { month: 'short' });
+        s += '<text x="' + (L + t * bw + bw / 2).toFixed(2) + '" y="' + (H - 8) + '" text-anchor="middle" style="fill:var(--muted);font:11px var(--font-ui)">' + esc(lab) + '</text>';
+      }
+      s += '<rect data-t="' + t + '" x="' + (L + t * bw).toFixed(2) + '" y="' + T + '" width="' + bw.toFixed(2) + '" height="' + ih + '" fill="transparent"/>';
+    });
+    return s + '</svg><div class="tip" hidden></div>';
+  }
+
+  function schedTable(sim) {
+    var h = '<table class="sched"><thead><tr><th>Month</th>' + sim.ks.map(function (k) { return '<th>' + esc(k.c.name) + '</th>'; }).join('') +
+      '<th>Paid</th><th>Interest</th><th>Still to pay</th></tr></thead><tbody>';
+    sim.rows.forEach(function (x) {
+      h += '<tr><td>' + esc(monthLabel(x.t)) + '</td>' +
+        x.paid.map(function (v) { return '<td class="num">' + (v > 0.004 ? fmt(v) : '–') + '</td>'; }).join('') +
+        '<td class="num">' + fmt(x.total) + '</td><td class="num">' + fmt(x.interest) + '</td><td class="num">' + fmt(x.owed) + '</td></tr>';
+    });
+    return h + '</tbody></table>';
+  }
+
+  function renderPlan(r) {
+    NOW = new Date();
+    renderDue(r);
+    var sim = simulate(r, true), base = simulate(r, false);
+    simRows = sim.rows; simKs = sim.ks;
+    var anyApr = r.cards.some(function (c) { return c.apr > 0 && c.balance > 0; });
+
+    var flag = '';
+    if (!sim.done) flag += '<div class="notice bad">At this pace the cards are not cleared within 10 years. Raise the amount you set aside, or check the interest rates.</div>';
+    else if (sim.short) flag += '<div class="notice bad">Some months do not cover every minimum, so this plan may take longer and cost more than shown.</div>';
+    if (!anyApr) flag += '<div class="notice">Add the yearly interest % on each card to include interest in these numbers.</div>';
+    $('sch-flag').innerHTML = flag;
+
+    var saved = Math.max(0, r2(base.interest - sim.interest));
+    var sooner = base.months - sim.months;
+    $('sch-sum').innerHTML =
+      '<div class="stat" style="--cc:var(--p3)"><div class="k">Debt-free by</div><div class="v">' + esc(sim.done ? monthLabel(sim.months - 1) : 'Over 10 years') + '</div></div>' +
+      '<div class="stat" style="--cc:var(--p4)"><div class="k">Months to pay off</div><div class="v num">' + (sim.done ? sim.months : '120+') + '</div></div>' +
+      '<div class="stat" style="--cc:var(--p2)"><div class="k">Interest paid with this plan</div><div class="v num">' + fmt(sim.interest) + '</div></div>' +
+      '<div class="stat" style="--cc:var(--p7)"><div class="k">Saved versus minimums only</div><div class="v num">' + fmt(saved) + '</div><div class="sub">' + (sooner > 0 ? sooner + (sooner === 1 ? ' month' : ' months') + ' sooner' : 'Same time') + '</div></div>';
+
+    var shown = sim.rows.slice(0, 60);
+    var hasOwed = shown.some(function (x) { return x.owed > 0.004; });
+    $('sch-chart').innerHTML = hasOwed ? chartSvg(shown, sim.ks) + (sim.rows.length > 60 ? '<p class="hint">The chart shows the first 60 months.</p>' : '') : '<p class="hint">Every card is paid off this month, so there is nothing left to chart.</p>';
+    $('sch-legend').innerHTML = hasOwed ? sim.ks.filter(function (k, i) {
+      return shown.some(function (x) { return x.rem[i] > 0.004; });
+    }).map(function (k) {
+      return '<span><b style="background:' + cardColor(k.c.src) + '"></b>' + esc(k.c.name) + '</span>';
+    }).join('') : '';
+
+    var order = sim.ks.slice().sort(function (a, b) {
+      return (a.cleared === null ? 999 : a.cleared) - (b.cleared === null ? 999 : b.cleared);
+    });
+    $('sch-cards').innerHTML = order.map(function (k) {
+      var ok = k.cleared !== null;
+      return '<div class="sched-row" style="--cc:' + cardColor(k.c.src) + '">' +
+        '<div class="alloc-top">' + cardBadge(k.c.src) + '<div class="alloc-id"><div class="alloc-name">' + esc(k.c.name) + '</div>' +
+        '<div class="hint num">Pays ' + fmt(k.paid) + ' in total, ' + fmt(k.interest) + ' of it interest</div></div></div>' +
+        '<span class="chip ' + (ok ? 'paid' : 'short') + '">' + esc(ok ? 'Clears ' + monthLabel(k.cleared) : 'Not within 10 years') + '</span></div>';
+    }).join('');
+    $('sch-table').innerHTML = schedTable(sim);
+  }
+
+  function showTip(el) {
+    var box = $('sch-chart'), tip = box.querySelector('.tip');
+    if (!tip) return;
+    var t = +el.getAttribute('data-t'), row = simRows[t];
+    if (!row) return;
+    var h = '<b>' + esc(monthLabel(t)) + '</b><div class="trow"><span>Still to pay</span><span class="num">' + fmt(row.owed) + '</span></div>';
+    simKs.forEach(function (k, i) {
+      if (row.rem[i] > 0.004) h += '<div class="trow"><span><i style="background:' + cardColor(k.c.src) + '"></i>' + esc(k.c.name) + '</span><span class="num">' + fmt(row.rem[i]) + '</span></div>';
+    });
+    h += '<div class="trow"><span>Paid this month</span><span class="num">' + fmt(row.total) + '</span></div>';
+    tip.innerHTML = h; tip.hidden = false;
+    var br = box.getBoundingClientRect(), er = el.getBoundingClientRect();
+    var x = er.left - br.left + er.width / 2 - tip.offsetWidth / 2;
+    tip.style.left = Math.max(0, Math.min(x, br.width - tip.offsetWidth)) + 'px';
+  }
+  function tipHandler(e) { var el = e.target.closest ? e.target.closest('[data-t]') : null; if (el) showTip(el); }
+  $('sch-chart').addEventListener('pointermove', tipHandler);
+  $('sch-chart').addEventListener('pointerdown', tipHandler);
+  $('sch-chart').addEventListener('pointerleave', function () { var tip = $('sch-chart').querySelector('.tip'); if (tip) tip.hidden = true; });
 
   /* ---------- assets tab ---------- */
   function isBase(a) { var c = String(a.ccy || '').trim().toUpperCase(); return !c || c === String(state.base || '').trim().toUpperCase(); }
@@ -731,11 +1138,11 @@ textarea { font: inherit; font-size: 0.8rem; width: 100%; min-height: 90px; back
 
   /* ---------- shared UI ---------- */
   function applyTab() {
-    var t = state.tab === 'assets' ? 'assets' : 'cards';
-    $('panel-cards').hidden = t !== 'cards';
-    $('panel-assets').hidden = t !== 'assets';
-    $('tab-cards').setAttribute('aria-selected', String(t === 'cards'));
-    $('tab-assets').setAttribute('aria-selected', String(t === 'assets'));
+    var t = state.tab === 'assets' ? 'assets' : (state.tab === 'plan' ? 'plan' : 'cards');
+    ['cards', 'plan', 'assets'].forEach(function (n) {
+      $('panel-' + n).hidden = n !== t;
+      $('tab-' + n).setAttribute('aria-selected', String(n === t));
+    });
   }
   function applyHide() {
     document.body.classList.toggle('hide', !!state.hide);
@@ -749,7 +1156,7 @@ textarea { font: inherit; font-size: 0.8rem; width: 100%; min-height: 90px; back
     $('p1day').value = state.pay1.day || ''; $('p1amt').value = state.pay1.amount;
     $('p2day').value = state.pay2.day || ''; $('p2amt').value = state.pay2.amount;
     $('cur').value = state.cur; $('cur2').value = state.cur;
-    $('base').value = state.base;
+    $('base').value = state.base; $('base2').value = state.base;
     $('strategy').value = state.strategy;
     var manual = state.strategy === 'manual';
     $('focus-wrap').hidden = !manual;
@@ -815,10 +1222,16 @@ textarea { font: inherit; font-size: 0.8rem; width: 100%; min-height: 90px; back
   function setCur(v) { state.cur = v; $('cur').value = v; $('cur2').value = v; renderCards(); changed('cards'); }
   $('cur').addEventListener('input', function (e) { setCur(e.target.value); });
   $('cur2').addEventListener('input', function (e) { setCur(e.target.value); });
-  $('base').addEventListener('input', function (e) {
-    state.base = e.target.value;
-    renderAssetRows(); changed('assets');
-  });
+  // Main currency: typing a known code (like USD or JPY) also fills in its symbol.
+  function setBase(v) {
+    state.base = v;
+    $('base').value = v; $('base2').value = v;
+    var sym = CCY_SYM[String(v).trim().toUpperCase()];
+    if (sym) { state.cur = sym; $('cur').value = sym; $('cur2').value = sym; }
+    renderCards(); renderAssetRows(); changed('cards');
+  }
+  $('base').addEventListener('input', function (e) { setBase(e.target.value); });
+  $('base2').addEventListener('input', function (e) { setBase(e.target.value); });
   $('strategy').addEventListener('change', function (e) {
     state.strategy = e.target.value;
     $('focus-wrap').hidden = state.strategy !== 'manual';
@@ -838,6 +1251,11 @@ textarea { font: inherit; font-size: 0.8rem; width: 100%; min-height: 90px; back
     if (f === 'name') card.name = e.target.value;
     else if (f === 'use') card.use = e.target.value;
     else if (f === 'dueDay') card.dueDay = dayVal(e.target.value);
+    else if (f === 'loc') {
+      card.loc = e.target.value; card.bank = '';
+      renderCards(); renderFocusOptions(); changed('cards');
+      return;
+    }
     else if (f === 'bank') {
       var prev = card.bank, nm = String(card.name || '').trim();
       card.bank = e.target.value;
@@ -850,7 +1268,7 @@ textarea { font: inherit; font-size: 0.8rem; width: 100%; min-height: 90px; back
       row.querySelector('[data-badge]').innerHTML = cardBadge(card);
       renderFocusOptions();
     }
-    if (f === 'balance' || f === 'min') refreshCardInst(card.id);
+    if (f === 'balance' || f === 'min' || f === 'rate') refreshCardInst(card.id);
     changed('cards');
   }
   $('cards').addEventListener('input', onCardField);
@@ -870,7 +1288,8 @@ textarea { font: inherit; font-size: 0.8rem; width: 100%; min-height: 90px; back
         var k = Math.min(S / img.width, S / img.height);
         var w = img.width * k, h = img.height * k;
         ctx.drawImage(img, (S - w) / 2, (S - h) / 2, w, h);
-        try { card.logo = cv.toDataURL('image/png'); } catch (err) { return; }
+        var tone = toneFrom(cv);
+        try { card.logo = cv.toDataURL('image/png'); card.hue = tone.hue; card.sat = tone.sat; } catch (err) { return; }
         renderCards(); changed('cards');
       };
       img.src = reader.result;
@@ -895,7 +1314,8 @@ textarea { font: inherit; font-size: 0.8rem; width: 100%; min-height: 90px; back
     }
   });
   $('add').addEventListener('click', function () {
-    var c = { id: nid(), name: 'Card ' + (state.cards.length + 1), bank: '', logo: '', col: uid % 8, balance: 0, min: 0, apr: 0, dueDay: 0, use: 'auto', plans: [] };
+    var prevCard = state.cards[state.cards.length - 1];
+    var c = { id: nid(), name: 'Card ' + (state.cards.length + 1), loc: prevCard ? prevCard.loc : '', rate: 0, bank: '', logo: '', col: uid % 8, balance: 0, min: 0, apr: 0, dueDay: 0, use: 'auto', plans: [] };
     state.cards.push(c);
     renderCards(); renderFocusOptions(); changed('cards');
     var el = $('n-' + c.id);
@@ -916,8 +1336,8 @@ textarea { font: inherit; font-size: 0.8rem; width: 100%; min-height: 90px; back
     var act = activePlans(c);
     var last = act.reduce(function (m, p) { return Math.max(m, +p.months || 0); }, 0);
     $('dlg-sum').innerHTML =
-      '<div class="stat" style="--cc:var(--p4)"><div class="k">Billed each month</div><div class="v num">' + fmt(instMonthly(c)) + '</div></div>' +
-      '<div class="stat" style="--cc:var(--p2)"><div class="k">Still to pay in total</div><div class="v num">' + fmt(instRemaining(c)) + '</div></div>' +
+      '<div class="stat" style="--cc:var(--p4)"><div class="k">Billed each month</div><div class="v num">' + fmtC(instMonthly(c), c) + '</div></div>' +
+      '<div class="stat" style="--cc:var(--p2)"><div class="k">Still to pay in total</div><div class="v num">' + fmtC(instRemaining(c), c) + '</div></div>' +
       '<div class="stat" style="--cc:var(--p3)"><div class="k">Last payment in</div><div class="v num">' + (last ? last + (last === 1 ? ' month' : ' months') : 'None') + '</div></div>';
   }
   function renderDlg() {
@@ -1030,13 +1450,31 @@ textarea { font: inherit; font-size: 0.8rem; width: 100%; min-height: 90px; back
   });
 
   /* ---------- boot ---------- */
+  // Logos saved before colours were taken from them get their colour now.
+  function ensureTones() {
+    state.cards.forEach(function (c) {
+      if (!c.logo || c.hue != null) return;
+      var img = new Image();
+      img.onload = function () {
+        var cv = document.createElement('canvas');
+        cv.width = 48; cv.height = 48;
+        cv.getContext('2d').drawImage(img, 0, 0, 48, 48);
+        var t = toneFrom(cv);
+        c.hue = t.hue; c.sat = t.sat;
+        save(); renderCards(); renderResult();
+      };
+      img.src = c.logo;
+    });
+  }
   function renderAll() {
     $('inst').innerHTML = SUGGEST.map(function (n) { return '<option value="' + esc(n) + '"></option>'; }).join('');
+    $('ccys').innerHTML = COUNTRIES.map(function (k) { return k.ccy; }).concat(['USDT', 'BTC', 'ETH']).map(function (n) { return '<option value="' + n + '"></option>'; }).join('');
     renderCards(); renderFocusOptions(); renderAssetRows();
     syncTop(); applyTab(); applyHide(); renderHello(); renderResult();
+    ensureTones();
   }
   renderAll();
   if (!state.userName && !state.skipName) showWelcome();
 })();
 </script>
-</html>
+</body></html>
