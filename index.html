@@ -3,51 +3,55 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
 <style>
 /* Layout: header with greeting, colour strip and tabs; each tab is inputs on the left, live results on the right; stacks on phones.
    Every card and account gets one colour from an 8-colour palette (--p1..--p8). Installments open in a modal. */
 :root {
-  --bg: #f4f6fb;
-  --surface: #ffffff;
-  --ink: #181c32;
-  --muted: #566078;
-  --line: #dce1ee;
-  --accent: #3d4ae0;
+  --quartz: #f7cac9; --serenity: #92a8d1;
+  --bg: #f8f1f3;
+  --surface: #fffdfd;
+  --ink: #2b2d42;
+  --muted: #5e6479;
+  --line: #e6d8de;
+  --accent: #4f6aa3;
   --on-accent: #ffffff;
-  --good: #138a54;
-  --crit: #c0392f;
-  --warn: #a35a00;
-  --p1: #ee5446; --p2: #e8940c; --p3: #10a186; --p4: #2d79e0;
-  --p5: #7a58ee; --p6: #dd3f8c; --p7: #64a812; --p8: #0ca3c2;
-  --font-display: "Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --good: #2f7f5f;
+  --crit: #b8433f;
+  --warn: #9a5b12;
+  --p1: #e58a8a; --p2: #e3a86f; --p3: #5fb39d; --p4: #7b97c9;
+  --p5: #a592d0; --p6: #d98bb0; --p7: #9bb86a; --p8: #6fb7cc;u
+  --font-display: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-ui: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #0d1020; --surface: #171b30; --ink: #e9ecfa; --muted: #98a2c0; --line: #2a3050;
-    --accent: #9aa2ff; --on-accent: #12163a;
-    --good: #5cc88e; --crit: #ff8b80; --warn: #ffbb4d;
-    --p1: #ff8277; --p2: #ffbb4d; --p3: #3fd1b3; --p4: #6ea8ff;
-    --p5: #a58bff; --p6: #ff7ab8; --p7: #9bd44a; --p8: #46cde8;
+    --bg: #1b1d2b; --surface: #262a3d; --ink: #f1eaee; --muted: #b3b6ca; --line: #3b4059;
+    --accent: #a9bbe0; --on-accent: #1b2238;
+    --good: #7fd0a8; --crit: #ff9a94; --warn: #f0be7a;
+    --p1: #f3a3a3; --p2: #f0c08a; --p3: #84cdb8; --p4: #9ab3e0;
+    --p5: #bfaee6; --p6: #eea6c6; --p7: #b5cf86; --p8: #8ccbdc;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #0d1020; --surface: #171b30; --ink: #e9ecfa; --muted: #98a2c0; --line: #2a3050;
-  --accent: #9aa2ff; --on-accent: #12163a;
-  --good: #5cc88e; --crit: #ff8b80; --warn: #ffbb4d;
-  --p1: #ff8277; --p2: #ffbb4d; --p3: #3fd1b3; --p4: #6ea8ff;
-  --p5: #a58bff; --p6: #ff7ab8; --p7: #9bd44a; --p8: #46cde8;
+  --bg: #1b1d2b; --surface: #262a3d; --ink: #f1eaee; --muted: #b3b6ca; --line: #3b4059;
+  --accent: #a9bbe0; --on-accent: #1b2238;
+  --good: #7fd0a8; --crit: #ff9a94; --warn: #f0be7a;
+  --p1: #f3a3a3; --p2: #f0c08a; --p3: #84cdb8; --p4: #9ab3e0;
+  --p5: #bfaee6; --p6: #eea6c6; --p7: #b5cf86; --p8: #8ccbdc;
   color-scheme: dark;
 }
 
+html { font-size: 14px; -webkit-text-size-adjust: 100%; }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 body {
   background: var(--bg); color: var(--ink);
-  font-family: var(--font-ui); font-size: 15px; line-height: 1.5;
-  padding-block: 24px 48px;
+  background-image: linear-gradient(150deg, color-mix(in srgb, var(--quartz) 55%, var(--bg)) 0%, var(--bg) 38%, color-mix(in srgb, var(--serenity) 40%, var(--bg)) 100%);
+  min-height: 100vh;
+  font-family: var(--font-ui); font-size: 13.5px; line-height: 1.5;
+  padding-block: 24px 110px;
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
 }
@@ -60,7 +64,7 @@ header { display: grid; gap: 12px; }
 .hello-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; min-height: 32px; }
 #hello { font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; }
 .title-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
-h1 { font-family: var(--font-display); font-weight: 750; font-size: clamp(1.7rem, 4.5vw, 2.3rem); line-height: 1.1; letter-spacing: -0.02em; margin: 0; text-wrap: balance; }
+h1 { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.35rem, 4vw, 1.8rem); line-height: 1.15; letter-spacing: -0.02em; margin: 0; text-wrap: balance; }
 .lede { color: var(--muted); margin: 6px 0 0; max-width: 60ch; }
 .strip { display: flex; height: 6px; border-radius: 99px; overflow: hidden; }
 .strip i { flex: 1; }
@@ -69,9 +73,12 @@ h1 { font-family: var(--font-display); font-weight: 750; font-size: clamp(1.7rem
 .strip i:nth-child(5) { background: var(--p8); } .strip i:nth-child(6) { background: var(--p4); }
 .strip i:nth-child(7) { background: var(--p5); } .strip i:nth-child(8) { background: var(--p6); }
 
-.tabs { display: inline-flex; gap: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 99px; padding: 4px; justify-self: start; max-width: 100%; overflow-x: auto; }
-.tabs button { border: 0; background: transparent; color: var(--muted); border-radius: 99px; padding: 9px 16px; font-weight: 600; white-space: nowrap; }
+.tabs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 2px; width: 100%; background: var(--surface); border: 1px solid var(--line); border-radius: 99px; padding: 4px; }
+.tabs button { border: 0; background: transparent; color: var(--muted); border-radius: 99px; padding: 9px 2px; font-weight: 600; font-size: 0.86rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; min-width: 0; }
 .tabs button[aria-selected="true"] { background: var(--accent); color: var(--on-accent); }
+.tabs .l-short { display: none; }
+@media (max-width: 600px) { .tabs .l-full { display: none; } .tabs .l-short { display: inline; } .tabs button { font-size: 0.8rem; } }
+.hbtns { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
 
 .cols { display: grid; gap: 20px; grid-template-columns: minmax(0, 1fr); align-items: start; }
 @media (min-width: 900px) { .cols { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); } }
@@ -90,7 +97,7 @@ input, select {
 }
 input:disabled { opacity: 0.6; }
 input:focus-visible, select:focus-visible, button:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
-.big input { font-family: var(--font-display); font-size: 1.35rem; font-weight: 700; padding: 8px 12px; }
+.big input { font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; padding: 8px 12px; }
 
 button { font: inherit; font-weight: 600; cursor: pointer; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); padding: 8px 14px; }
 button:hover { border-color: var(--accent); }
@@ -112,7 +119,7 @@ button.small { padding: 6px 10px; font-size: 0.82rem; }
 
 .badge { width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; flex: none; overflow: hidden;
   background: color-mix(in srgb, var(--cc) 22%, var(--surface)); color: color-mix(in srgb, var(--cc) 55%, var(--ink)); }
-.badge b { font-family: var(--font-display); font-weight: 750; font-size: 0.86rem; letter-spacing: 0.01em; }
+.badge b { font-family: var(--font-display); font-weight: 800; font-size: 0.86rem; letter-spacing: 0.01em; }
 .badge b.sm { font-size: 0.64rem; }
 .badge img { width: 100%; height: 100%; object-fit: contain; background: #fff; padding: 4px; }
 .badgebtn { position: relative; padding: 0; border: 0; background: none; border-radius: 12px; display: block; line-height: 0; }
@@ -159,9 +166,9 @@ button.small { padding: 6px 10px; font-size: 0.82rem; }
 .legend { display: flex; gap: 16px; flex-wrap: wrap; font-size: 0.8rem; color: var(--muted); }
 .legend b { display: inline-block; width: 22px; height: 8px; border-radius: 99px; margin-right: 6px; vertical-align: 0; }
 
-.hero { background: color-mix(in srgb, var(--p3) 16%, var(--surface)); border-radius: 14px; padding: 16px; display: grid; gap: 4px; }
+.hero { background: linear-gradient(135deg, color-mix(in srgb, var(--quartz) 55%, var(--surface)), color-mix(in srgb, var(--serenity) 45%, var(--surface))); border-radius: 14px; padding: 16px; display: grid; gap: 4px; }
 .hero .k { font-size: 0.8rem; color: var(--muted); font-weight: 600; }
-.hero .v { font-family: var(--font-display); font-weight: 750; font-size: clamp(1.9rem, 6vw, 2.5rem); line-height: 1.1; overflow-wrap: anywhere; letter-spacing: -0.02em; }
+.hero .v { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.5rem, 5vw, 2rem); line-height: 1.1; overflow-wrap: anywhere; letter-spacing: -0.02em; }
 .stack { display: flex; height: 14px; border-radius: 99px; overflow: hidden; background: var(--bg); }
 .stack i { display: block; height: 100%; }
 .brk { display: grid; gap: 8px; }
@@ -219,7 +226,93 @@ table.sched { border-collapse: collapse; font-size: 0.82rem; width: 100%; min-wi
   background: color-mix(in srgb, var(--cc) 12%, var(--surface));
   border-color: color-mix(in srgb, var(--cc) 34%, var(--line));
 }
-@media (prefers-reduced-motion: reduce) { .bar i { transition: none; } }
+.lbl { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.lbl h1, .lbl h2, .lbl h3 { margin: 0; }
+h1 .q { vertical-align: middle; margin-left: 4px; }
+.q { position: relative; width: 20px; height: 20px; min-width: 20px; padding: 0; border-radius: 99px; flex: none; display: inline-grid; place-items: center;
+  font-size: 0.72rem; line-height: 1; font-weight: 800; text-transform: none; letter-spacing: 0;
+  background: color-mix(in srgb, var(--accent) 14%, var(--surface)); color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--surface)); }
+.q::after { content: ""; position: absolute; inset: -10px; }
+#qpop { position: fixed; z-index: 90; left: 0; top: 0; max-width: min(300px, calc(100vw - 24px)); background: var(--surface); color: var(--ink);
+  border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; font-size: 0.84rem; line-height: 1.45; font-weight: 500;
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--ink) 22%, transparent); }
+.monthbar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.monthbar select { width: auto; min-width: 160px; font-weight: 700; }
+.monthbar button.small { min-width: 36px; font-size: 1rem; line-height: 1; padding: 7px 10px; }
+.mnote { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.fs { border: 0; padding: 0; margin: 0; min-width: 0; display: grid; gap: 10px; }
+.fs[disabled] input, .fs[disabled] select { opacity: 1; border-color: transparent; background: transparent; -webkit-appearance: none; appearance: none; color: var(--ink); -webkit-text-fill-color: var(--ink); }
+.fs[disabled] button { opacity: 0.5; }
+.fs[disabled] .q { opacity: 1; }
+.nm { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: end; }
+.fold { padding: 0; gap: 0; }
+.fold:not(.open) { margin-bottom: 8px;
+  box-shadow: 0 5px 0 -2px color-mix(in srgb, var(--cc) 20%, var(--surface)), 0 5px 0 -1px color-mix(in srgb, var(--cc) 34%, var(--line)),
+              0 10px 0 -4px color-mix(in srgb, var(--cc) 12%, var(--surface)), 0 10px 0 -3px color-mix(in srgb, var(--cc) 26%, var(--line)); }
+.fold-head { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; background: none; border: 0; border-radius: 12px; padding: 10px 12px; color: inherit; }
+.fold-head:hover { border-color: transparent; background: color-mix(in srgb, var(--cc) 10%, transparent); }
+.fold-head .badge { width: 38px; height: 38px; border-radius: 11px; }
+.fold-main { flex: 1; min-width: 0; display: grid; gap: 1px; }
+.fold-name { font-weight: 700; overflow-wrap: anywhere; }
+.fold-sub { font-size: 0.8rem; color: var(--muted); font-weight: 500; }
+.fold-amt { font-weight: 700; text-align: right; font-size: 0.92rem; overflow-wrap: anywhere; max-width: 40%; }
+.fold-ico { flex: none; display: grid; color: color-mix(in srgb, var(--cc) 62%, var(--ink)); }
+.fold-ico .ico-open { display: none; }
+.fold.open .ico-open { display: block; }
+.fold.open .ico-stack { display: none; }
+.fold-body { padding: 12px; display: grid; gap: 10px; border-top: 1px solid color-mix(in srgb, var(--cc) 28%, var(--line)); }
+
+/* quick-add button */
+.fab { position: fixed; left: 50%; bottom: max(18px, env(safe-area-inset-bottom, 0px)); width: 0; height: 0; z-index: 40; }
+.fab-scrim { position: fixed; inset: 0; z-index: 0; background: color-mix(in srgb, var(--bg) 55%, transparent); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.fab-main { position: absolute; left: -28px; bottom: 0; width: 56px; height: 56px; padding: 0; border-radius: 50%; z-index: 2; display: grid; place-items: center;
+  background: var(--accent); border: 0; color: var(--on-accent); box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 45%, transparent); transition: transform 0.25s ease; }
+.fab-main:hover { border: 0; }
+.fab.open .fab-main { transform: rotate(45deg); }
+.fab-item { position: absolute; left: -26px; bottom: 2px; width: 52px; height: 52px; padding: 0; border-radius: 50%; z-index: 1;
+  display: grid; place-items: center; color: var(--accent);
+  background: color-mix(in srgb, var(--serenity) 30%, var(--surface)); border: 1px solid color-mix(in srgb, var(--serenity) 55%, var(--surface));
+  -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  opacity: 0; pointer-events: none; transform: translate(0, 0) scale(0.4);
+  transition: transform 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.2), opacity 0.2s ease; transition-delay: calc(var(--i) * 28ms); }
+.fab.open .fab-item { opacity: 1; pointer-events: auto; transform: translate(var(--x), var(--y)) scale(1); }
+.fi-l { position: absolute; top: 100%; left: 50%; transform: translateX(-50%); margin-top: 5px; background: var(--ink); color: var(--surface);
+  font-size: 0.72rem; font-weight: 600; padding: 2px 9px; border-radius: 99px; white-space: nowrap; }
+
+/* lock screen */
+.lockscreen { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; padding: 16px; overflow: auto;
+  background: linear-gradient(150deg, color-mix(in srgb, var(--quartz) 60%, var(--bg)), var(--bg) 45%, color-mix(in srgb, var(--serenity) 45%, var(--bg))); }
+.lock-card { display: grid; gap: 14px; justify-items: center; text-align: center; width: min(320px, 100%); }
+.lock-ico { width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; background: var(--accent); color: var(--on-accent); }
+.dots { display: flex; gap: 14px; min-height: 16px; }
+.dots i { width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--accent); }
+.dots i.on { background: var(--accent); }
+.dots.shake { animation: shake 0.35s; }
+@keyframes shake { 20%, 60% { transform: translateX(-8px); } 40%, 80% { transform: translateX(8px); } }
+.keypad { display: grid; grid-template-columns: repeat(3, 72px); gap: 12px; justify-content: center; }
+.keypad button { width: 72px; height: 72px; border-radius: 50%; padding: 0; font-size: 1.4rem; font-weight: 600; background: color-mix(in srgb, var(--surface) 80%, transparent); }
+.keypad button.blank { visibility: hidden; }
+.set-sec { display: grid; gap: 10px; border-top: 1px solid var(--line); padding-top: 14px; }
+.chk { display: flex; align-items: center; gap: 8px; font-size: 0.88rem; color: var(--ink); font-weight: 500; }
+.chk input { width: auto; }
+.row-actions.wrap { flex-wrap: wrap; }
+
+/* printable summary */
+#print-sheet { display: none; }
+@media print {
+  body > *:not(#print-sheet) { display: none !important; }
+  body { background: #fff !important; background-image: none !important; padding: 0 !important; min-height: 0 !important; }
+  #print-sheet { display: block !important; color: #000; background: #fff; font: 12px/1.45 var(--font-ui); }
+  #print-sheet h1 { font-size: 20px; margin: 0 0 2px; }
+  #print-sheet h2 { font-size: 14px; margin: 18px 0 4px; }
+  #print-sheet p { margin: 0 0 6px; }
+  #print-sheet table { width: 100%; border-collapse: collapse; }
+  #print-sheet th, #print-sheet td { text-align: left; padding: 4px 6px; border-bottom: 1px solid #bbb; }
+  #print-sheet th.r, #print-sheet td.r { text-align: right; }
+  #print-sheet tr.tot td { font-weight: 700; }
+}
+@media (prefers-reduced-motion: reduce) { .bar i { transition: none; } .fab-item, .fab-main { transition: none; } .dots.shake { animation: none; } }
 </style>
 
 <div class="wrap" id="wrap">
@@ -230,16 +323,24 @@ table.sched { border-collapse: collapse; font-size: 0.82rem; width: 100%; min-wi
     </div>
     <div class="title-row">
       <div>
-        <h1>Card Payment Planner</h1>
-        <p class="lede">Split your pay between your credit cards for each cut-off, and keep track of your money across banks and wallets.</p>
+        <h1>Card Payment Planner <button type="button" class="q" data-q="Split your pay between your credit cards for each cut-off, and keep track of your money across banks and wallets." aria-label="More info">?</button></h1>
       </div>
-      <button id="hide-btn" type="button" class="ghost">Hide amounts</button>
+      <div class="hbtns"><button id="lock-btn" type="button" class="ghost" hidden>Lock</button><button id="set-btn" type="button" class="ghost">Settings</button><button id="hide-btn" type="button" class="ghost">Hide amounts</button></div>
     </div>
     <div class="strip" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="monthbar">
+      <button id="m-prev" type="button" class="small" aria-label="Earlier month">&lsaquo;</button>
+      <select id="m-sel" aria-label="Month"></select>
+      <button id="m-next" type="button" class="small" aria-label="Later month">&rsaquo;</button>
+      <button type="button" class="q" data-q="Each month keeps its own pay amounts, cards, accounts and goals, saved on this device. Open a new month to carry everything over: installments count down by a month and finished ones drop off. Earlier months stay saved and you can come back to edit them." aria-label="More info">?</button>
+    </div>
+    <div id="m-note" class="notice mnote" hidden><span id="m-note-t"></span><button id="m-go" type="button" class="small primary"></button></div>
     <div class="tabs" role="tablist" aria-label="Sections">
-      <button id="tab-cards" role="tab" type="button" data-tab="cards" aria-selected="true">Pay cards</button>
-      <button id="tab-plan" role="tab" type="button" data-tab="plan" aria-selected="false">Plan ahead</button>
-      <button id="tab-assets" role="tab" type="button" data-tab="assets" aria-selected="false">My assets</button>
+      <button id="tab-cards" role="tab" type="button" data-tab="cards" aria-selected="true"><span class="l-full">Pay cards</span><span class="l-short">Cards</span></button>
+      <button id="tab-plan" role="tab" type="button" data-tab="plan" aria-selected="false"><span class="l-full">Plan ahead</span><span class="l-short">Plan</span></button>
+      <button id="tab-assets" role="tab" type="button" data-tab="assets" aria-selected="false"><span class="l-full">My assets</span><span class="l-short">Assets</span></button>
+      <button id="tab-goals" role="tab" type="button" data-tab="goals" aria-selected="false"><span class="l-full">Goals</span><span class="l-short">Goals</span></button>
+      <button id="tab-subs" role="tab" type="button" data-tab="subs" aria-selected="false"><span class="l-full">Subscriptions</span><span class="l-short">Subs</span></button>
     </div>
   </header>
 
@@ -248,6 +349,7 @@ table.sched { border-collapse: collapse; font-size: 0.82rem; width: 100%; min-wi
       <div class="panel-head"><h2 id="in-h">Your cards</h2></div>
       <div id="example-note" class="notice" hidden>These are example numbers. Change any field to use your own.</div>
 
+      <div class="lbl"><h3>Pay days</h3><button type="button" class="q" data-q="Each card is paid on the pay day just before its due date. Use 30 or 31 for an end-of-month pay day. Any extra goes to the card you want to clear first, even if it is due later." aria-label="More info">?</button></div>
       <div class="pays">
         <div class="pay-box">
           <h3>First pay day</h3>
@@ -264,8 +366,8 @@ table.sched { border-collapse: collapse; font-size: 0.82rem; width: 100%; min-wi
           </div>
         </div>
       </div>
-      <p class="hint">Each card is paid on the pay day just before its due date. Use 30 or 31 for an end-of-month pay day. Any extra goes to the card you want to clear first, even if it is due later.</p>
 
+      <div class="lbl"><h3>Currency</h3><button type="button" class="q" data-q="Your plan is worked out in this currency. Each card takes the currency of its location, and cards from other countries are converted with the rate you type on the card." aria-label="More info">?</button></div>
       <div class="top-fields">
         <label>Main currency code
           <input id="base2" type="text" maxlength="8" list="ccys" placeholder="PHP">
@@ -274,7 +376,6 @@ table.sched { border-collapse: collapse; font-size: 0.82rem; width: 100%; min-wi
           <input id="cur" type="text" maxlength="4" placeholder="₱, $, ¥">
         </label>
       </div>
-      <p class="hint">Your plan is worked out in this currency. Each card takes the currency of its location, and cards from other countries are converted with the rate you type on the card.</p>
 
       <div id="strategy-wrap" class="strategy">
         <label>Which card to pay off first
@@ -289,17 +390,14 @@ table.sched { border-collapse: collapse; font-size: 0.82rem; width: 100%; min-wi
         </label>
       </div>
 
-      <div>
-        <h3>Cards</h3>
-        <p class="hint" style="margin-top:4px">Enter the Total Amount Due and Minimum Amount Due from your latest statement. Tap a card's badge or "Installment plans" to add its installments. They always count toward both amounts.</p>
-      </div>
+      <div class="lbl"><h3>Cards</h3><button type="button" class="q" data-q="Tap a card to open it. Enter the Total Amount Due and Minimum Amount Due from your latest statement. Installments always count toward both amounts." aria-label="More info">?</button></div>
       <div id="cards" class="list"></div>
       <div class="row-actions"><button id="add" class="primary" type="button">Add card</button></div>
     </section>
 
     <section class="panel" aria-labelledby="out-h" aria-live="polite">
       <div class="panel-head">
-        <h2 id="out-h">Payment split</h2>
+        <div class="lbl"><h2 id="out-h">Payment split</h2><button type="button" class="q" data-q="Anything left unpaid carries over to next month and may add interest." aria-label="More info">?</button></div>
         <button id="copy" type="button" class="ghost small">Copy plan</button>
       </div>
       <div id="summary" class="summary"></div>
@@ -309,19 +407,17 @@ table.sched { border-collapse: collapse; font-size: 0.82rem; width: 100%; min-wi
         <span><b style="background:color-mix(in srgb,var(--muted) 35%,var(--surface))"></b>Minimum due</span>
         <span><b style="background:var(--muted)"></b>Extra payment</span>
       </div>
-      <p class="hint">Anything left unpaid carries over to next month and may add interest.</p>
     </section>
   </div>
 
   <div id="panel-plan" class="plan-wrap" role="tabpanel" aria-labelledby="tab-plan" hidden>
     <section class="panel" aria-labelledby="due-h">
-      <div class="panel-head"><h2 id="due-h">Due soon</h2></div>
-      <p class="hint">Dates count from today on your device. Amounts come from the Pay cards tab.</p>
+      <div class="panel-head"><div class="lbl"><h2 id="due-h">Due soon</h2><button type="button" class="q" data-q="Dates count from today on your device. Amounts come from the Pay cards tab." aria-label="More info">?</button></div></div>
       <div id="due-list" class="due-grid"></div>
     </section>
 
     <section class="panel" aria-labelledby="sch-h" aria-live="polite">
-      <div class="panel-head"><h2 id="sch-h">Payoff schedule</h2></div>
+      <div class="panel-head"><div class="lbl"><h2 id="sch-h">Payoff schedule</h2><button type="button" class="q" data-q="How this is worked out: each month uses the total you set aside on both pay days. Minimums are paid first, then extra goes to the card you chose to pay off first. Unpaid balances grow by the card's yearly interest divided by 12. Future minimums keep the same share of the balance as this month's, plus installments, and never fall below 5% of this month's amount due. No new purchases are added. This is an estimate, not your bank's figures." aria-label="More info">?</button></div></div>
       <div id="sch-flag" class="list"></div>
       <div id="sch-sum" class="summary four"></div>
       <div>
@@ -335,7 +431,6 @@ table.sched { border-collapse: collapse; font-size: 0.82rem; width: 100%; min-wi
         <summary>Month-by-month table</summary>
         <div id="sch-table" class="tbl-wrap"></div>
       </details>
-      <p class="hint">How this is worked out: each month uses the total you set aside on both pay days. Minimums are paid first, then extra goes to the card you chose to pay off first. Unpaid balances grow by the card's yearly interest divided by 12. Future minimums keep the same share of the balance as this month's, plus installments, and never fall below 5% of this month's amount due. No new purchases are added. This is an estimate, not your bank's figures.</p>
     </section>
   </div>
 
@@ -343,6 +438,7 @@ table.sched { border-collapse: collapse; font-size: 0.82rem; width: 100%; min-wi
     <section class="panel" aria-labelledby="as-h">
       <div class="panel-head"><h2 id="as-h">Banks and wallets</h2></div>
       <div id="aexample-note" class="notice" hidden>These are example accounts and rates. Change any field to use your own.</div>
+      <div class="lbl"><h3>Currency</h3><button type="button" class="q" data-q="For money in another currency or crypto, type its code (USD, USDT, BTC) and enter the rate: how much 1 unit is worth in your main currency. Rates are typed by you and do not update by themselves." aria-label="More info">?</button></div>
       <div class="top-fields">
         <label>Main currency code
           <input id="base" type="text" maxlength="8" list="ccys" placeholder="PHP">
@@ -351,7 +447,6 @@ table.sched { border-collapse: collapse; font-size: 0.82rem; width: 100%; min-wi
           <input id="cur2" type="text" maxlength="4" placeholder="₱, $, ¥">
         </label>
       </div>
-      <p class="hint">For money in another currency or crypto, type its code (USD, USDT, BTC) and enter the rate: how much 1 unit is worth in your main currency. Rates are typed by you and do not update by themselves.</p>
       <div id="assets" class="list"></div>
       <div class="row-actions"><button id="add-asset" class="primary" type="button">Add account</button></div>
       <datalist id="inst"></datalist>
@@ -367,10 +462,44 @@ table.sched { border-collapse: collapse; font-size: 0.82rem; width: 100%; min-wi
     </section>
   </div>
 
+  <div id="panel-goals" class="cols" role="tabpanel" aria-labelledby="tab-goals" hidden>
+    <section class="panel" aria-labelledby="g-h">
+      <div class="panel-head"><div class="lbl"><h2 id="g-h">Your goals</h2><button type="button" class="q" data-q="Set a target amount and a target date. The page works out how much to save each month. Enter what you plan to save a month to see when you would finish." aria-label="More info">?</button></div></div>
+      <div id="gexample-note" class="notice" hidden>This is an example goal. Change any field to use your own.</div>
+      <div id="goals" class="list"></div>
+      <div class="row-actions"><button id="add-goal" class="primary" type="button">Add goal</button></div>
+    </section>
+
+    <section class="panel" aria-labelledby="gp-h" aria-live="polite">
+      <div class="panel-head"><h2 id="gp-h">Goal progress</h2></div>
+      <div id="g-sum" class="summary"></div>
+      <div id="g-stack" class="stack" aria-hidden="true"></div>
+      <div id="g-list" class="sched-list"></div>
+    </section>
+  </div>
+
+  <div id="panel-subs" class="cols" role="tabpanel" aria-labelledby="tab-subs" hidden>
+    <section class="panel" aria-labelledby="s-h">
+      <div class="panel-head"><div class="lbl"><h2 id="s-h">Subscriptions</h2><button type="button" class="q" data-q="Just for tracking. These amounts are not added to any card's amount due or to your payment plan. Pick the card each one is charged to so you can see what is billed where." aria-label="More info">?</button></div></div>
+      <div id="sexample-note" class="notice" hidden>These are example subscriptions. Change any field to use your own.</div>
+      <div id="subs" class="list"></div>
+      <div class="row-actions"><button id="add-sub" class="primary" type="button">Add subscription</button></div>
+    </section>
+
+    <section class="panel" aria-labelledby="sp-h" aria-live="polite">
+      <div class="panel-head"><h2 id="sp-h">Monthly subscriptions</h2></div>
+      <div id="s-sum" class="summary"></div>
+      <div id="s-stack" class="stack" aria-hidden="true"></div>
+      <div id="s-brk" class="brk"></div>
+      <h3>Next charges</h3>
+      <div id="s-up" class="sched-list"></div>
+    </section>
+  </div>
+
   <details class="backup">
     <summary>Backup and restore</summary>
     <div class="backup-body">
-      <p class="hint">Your entries are saved in this browser only. To move them to another device or keep a safe copy, copy the backup text and paste it into a note. To restore, paste it below and tap Restore.</p>
+      <div class="lbl"><h3>Keep a copy</h3><button type="button" class="q" data-q="Your entries are saved in this browser only. To move them to another device or keep a safe copy, copy the backup text and paste it into a note. To restore, paste it below and tap Restore." aria-label="More info">?</button></div>
       <textarea id="bk-text" aria-label="Backup text" placeholder="Backup text appears here, or paste a backup to restore"></textarea>
       <div class="row-actions">
         <button id="bk-copy" type="button">Copy backup</button>
@@ -386,8 +515,7 @@ table.sched { border-collapse: collapse; font-size: 0.82rem; width: 100%; min-wi
     <div class="dlg-head">
       <span id="dlg-badge"></span>
       <div>
-        <h2 id="dlg-title">Installment plans</h2>
-        <p class="hint">Add each installment that is still being billed on this card.</p>
+        <div class="lbl"><h2 id="dlg-title">Installment plans</h2><button type="button" class="q" data-q="Add each installment that is still being billed on this card. They count toward both the amount due and the minimum." aria-label="More info">?</button></div>
       </div>
       <button id="dlg-close" type="button" class="ghost small">Close</button>
     </div>
@@ -412,6 +540,83 @@ table.sched { border-collapse: collapse; font-size: 0.82rem; width: 100%; min-wi
     </div>
   </form>
 </div>
+
+<div id="qpop" role="tooltip" hidden></div>
+
+<div id="fab" class="fab">
+  <div id="fab-scrim" class="fab-scrim" hidden></div>
+  <div id="fab-items">
+    <button type="button" class="fab-item" data-fab="card" tabindex="-1" style="--x:-141px;--y:-51px;--i:0" aria-label="Card"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 10h19M6 15h4"/></svg><span class="fi-l">Card</span></button>
+    <button type="button" class="fab-item" data-fab="sub" tabindex="-1" style="--x:-86px;--y:-123px;--i:1" aria-label="Sub"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/></svg><span class="fi-l">Sub</span></button>
+    <button type="button" class="fab-item" data-fab="goal" tabindex="-1" style="--x:0px;--y:-150px;--i:2" aria-label="Goal"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2"/></svg><span class="fi-l">Goal</span></button>
+    <button type="button" class="fab-item" data-fab="asset" tabindex="-1" style="--x:86px;--y:-123px;--i:3" aria-label="Account"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h13v4"/><rect x="3" y="7" width="18" height="13" rx="2"/><circle cx="16.5" cy="13.5" r="1.2"/></svg><span class="fi-l">Account</span></button>
+    <button type="button" class="fab-item" data-fab="print" tabindex="-1" style="--x:141px;--y:-51px;--i:4" aria-label="Print"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 9V3h10v6M7 17H5a2 2 0 0 1-2-2v-4a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-2M7 14h10v7H7z"/></svg><span class="fi-l">Print</span></button>
+  </div>
+  <button id="fab-btn" type="button" class="fab-main" aria-expanded="false" aria-label="Quick add"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></button>
+</div>
+
+<div id="settings" class="overlay" hidden>
+  <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="set-title">
+    <div class="dlg-head"><div><h2 id="set-title">Settings</h2></div><button id="set-close" type="button" class="ghost small">Close</button></div>
+    <div class="fs">
+      <label>Language
+        <select id="set-lang"><option value="en">English</option><option value="tl">Filipino (Taglish)</option></select>
+      </label>
+      <label>Appearance
+        <select id="set-theme"><option value="auto">Match my device</option><option value="light">Light</option><option value="dark">Dark</option></select>
+      </label>
+    </div>
+
+    <div class="set-sec">
+      <div class="lbl"><h3>PIN lock</h3><button type="button" class="q" data-q="Keeps your amounts private if someone borrows your device. The PIN is stored only on this device and is a screen lock, not encryption. If you forget it, the only way back in is to erase this device's data, so keep a backup copy." aria-label="More info">?</button></div>
+      <div id="pin-set" class="fs">
+        <label>New PIN (4 to 6 digits)<input id="pin-new" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off"></label>
+        <label>Repeat PIN<input id="pin-new2" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off"></label>
+        <div class="row-actions"><button id="pin-save" type="button" class="primary">Turn on PIN lock</button></div>
+      </div>
+      <div id="pin-has" class="fs" hidden>
+        <label class="chk"><input id="pin-auto" type="checkbox"> Lock when I leave this page</label>
+        <div class="row-actions"><button id="lock-now" type="button" class="primary">Lock now</button></div>
+        <label>Current PIN<input id="pin-cur" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off"></label>
+        <label>New PIN (4 to 6 digits)<input id="pin-new3" type="password" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="off"></label>
+        <div class="row-actions"><button id="pin-change" type="button">Change PIN</button><button id="pin-remove" type="button" class="danger">Remove PIN</button></div>
+      </div>
+      <p id="pin-msg" class="hint"></p>
+    </div>
+
+    <div class="set-sec">
+      <div class="lbl"><h3>Monthly summary</h3><button type="button" class="q" data-q="Makes a one-page summary of the month you are viewing: pay plan, cards, subscriptions, goals and accounts. In the print window you can also choose Save as PDF." aria-label="More info">?</button></div>
+      <div class="row-actions"><button id="set-print" type="button" class="primary">Print summary</button></div>
+    </div>
+
+    <div class="set-sec">
+      <div class="lbl"><h3>Sync across devices</h3><button type="button" class="q" data-q="Saves your planner to your own Supabase project so you can open it on another device. It works only from a copy of the page you host yourself, not from inside claude.ai. You need a Supabase project with the planner_state table, and an account made here. Sync is manual: Save to cloud uploads this device, Load from cloud replaces this device with the cloud copy. The PIN is never uploaded." aria-label="More info">?</button></div>
+      <div class="fs">
+        <label>Supabase project URL<input id="sy-url" type="url" placeholder="https://xxxx.supabase.co" autocomplete="off"></label>
+        <label>Public key (anon or publishable)<input id="sy-key" type="text" autocomplete="off"></label>
+        <label>Email<input id="sy-email" type="email" autocomplete="email"></label>
+        <label>Password<input id="sy-pass" type="password" autocomplete="current-password"></label>
+        <div class="row-actions wrap"><button id="sy-in" type="button" class="primary">Sign in</button><button id="sy-up" type="button">Create account</button><button id="sy-out" type="button" class="ghost" hidden>Sign out</button></div>
+        <div id="sy-act" class="row-actions wrap" hidden><button id="sy-push" type="button" class="primary">Save to cloud</button><button id="sy-pull" type="button">Load from cloud</button></div>
+        <p id="sy-msg" class="hint"></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="lock" class="lockscreen">
+  <div class="lock-card">
+    <div class="lock-ico"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div>
+    <h2 id="lock-title">Enter your PIN</h2>
+    <div id="lock-dots" class="dots" aria-hidden="true"></div>
+    <p id="lock-msg" class="hint" role="status"></p>
+    <div id="lock-pad" class="keypad"></div>
+    <button id="lock-forgot" type="button" class="ghost small">Forgot PIN?</button>
+  </div>
+</div>
+
+<div id="print-sheet"></div>
+
 
 <script>
 (function () {
@@ -457,9 +662,12 @@ table.sched { border-collapse: collapse; font-size: 0.82rem; width: 100%; min-wi
     return n + (s[(v - 20) % 10] || s[v] || s[0]);
   }
 
+  function monthKey(d) { return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2); }
   function defaults() {
+    var gd = new Date(); gd.setFullYear(gd.getFullYear() + 1);
+    var gdate = gd.getFullYear() + '-' + ('0' + (gd.getMonth() + 1)).slice(-2) + '-' + ('0' + gd.getDate()).slice(-2);
     return {
-      tab: 'cards', example: true, aexample: true, hide: false, userName: '', skipName: false,
+      tab: 'cards', month: monthKey(new Date()), months: {}, example: true, sexample: true, aexample: true, gexample: true, hide: false, userName: '', skipName: false,
       pay1: { day: 15, amount: 15000 }, pay2: { day: 30, amount: 25000 },
       cur: '₱', base: 'PHP', strategy: 'smallest', focusId: '',
       cards: [
@@ -474,10 +682,19 @@ table.sched { border-collapse: collapse; font-size: 0.82rem; width: 100%; min-wi
         { id: nid('a'), name: 'GCash', type: 'ewallet', ccy: 'PHP', amount: 5200, rate: 1 },
         { id: nid('a'), name: 'Binance', type: 'crypto', ccy: 'USDT', amount: 120, rate: 58 },
         { id: nid('a'), name: 'Cash at home', type: 'cash', ccy: 'PHP', amount: 3000, rate: 1 }
+      ],
+      subs: [
+        { id: nid('s'), name: 'Netflix', amount: 549, day: 12, cardId: '' },
+        { id: nid('s'), name: 'Spotify', amount: 149, day: 3, cardId: '' }
+      ],
+      goals: [
+        { id: nid('g'), name: 'Emergency fund', target: 100000, saved: 20000, date: gdate, monthly: 0 }
       ]
     };
   }
   var state = defaults();
+  if (state.cards[1]) state.subs[0].cardId = state.cards[1].id;
+  if (state.cards[0]) state.subs[1].cardId = state.cards[0].id;
   // Older saved cards have no location: guess the Philippines when their bank is a Philippine bank.
   function fixCards(s) {
     s.cards.forEach(function (c) {
@@ -491,7 +708,7 @@ table.sched { border-collapse: collapse; font-size: 0.82rem; width: 100%; min-wi
   fixCards(state);
 
   function bumpUid() {
-    state.cards.concat(state.assets).forEach(function (x) {
+    state.cards.concat(state.assets, state.goals || [], state.subs || []).forEach(function (x) {
       var n = parseInt(String(x.id).replace(/\D/g, ''), 10);
       if (n > uid) uid = n;
       (x.plans || []).forEach(function (p) {
@@ -523,7 +740,16 @@ table.sched { border-collapse: collapse; font-size: 0.82rem; width: 100%; min-wi
     s.skipName = !!saved.skipName;
     s.example = false;
     s.aexample = hasAssets ? false : true;
+    var hasGoals = Array.isArray(saved.goals);
+    s.goals = hasGoals ? saved.goals : d.goals;
+    s.gexample = hasGoals ? false : true;
+    var hasSubs = Array.isArray(saved.subs);
+    s.subs = hasSubs ? saved.subs : d.subs;
+    s.sexample = hasSubs ? false : true;
+    s.month = /^\d{4}-\d{2}$/.test(saved.month || '') ? saved.month : monthKey(new Date());
+    s.months = saved.months && typeof saved.months === 'object' && !Array.isArray(saved.months) ? saved.months : {};
     fixCards(s);
+    s.months[s.month] = snapOf(s);
     return s;
   }
   try {
@@ -534,7 +760,47 @@ table.sched { border-collapse: collapse; font-size: 0.82rem; width: 100%; min-wi
     }
   } catch (e) {}
 
-  function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+  function snapOf(s) {
+    return JSON.parse(JSON.stringify({ pay1: s.pay1, pay2: s.pay2, cards: s.cards, assets: s.assets, goals: s.goals || [], subs: s.subs || [] }));
+  }
+  function save() {
+    try { state.months[state.month] = snapOf(state); } catch (e) {}
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+  }
+  function monthName(k) { var p = k.split('-'); return new Date(+p[0], +p[1] - 1, 1).toLocaleDateString(undefined, { month: 'long', year: 'numeric' }); }
+  function monthStep(k, n) { var p = k.split('-'); return monthKey(new Date(+p[0], +p[1] - 1 + n, 1)); }
+  function monthsDiff(a, b) { var pa = a.split('-'), pb = b.split('-'); return (+pb[0] - +pa[0]) * 12 + (+pb[1] - +pa[1]); }
+  // Today's date, or the first day of the month you are looking at when it is not this month.
+  function baseToday() {
+    var now = new Date();
+    if (state.month === monthKey(now)) { now.setHours(0, 0, 0, 0); return now; }
+    var p = state.month.split('-');
+    return new Date(+p[0], +p[1] - 1, 1);
+  }
+  // A new month starts as a copy of the nearest earlier saved month: installments count down and finished ones drop off.
+  function carry(from, to) {
+    var sn = JSON.parse(JSON.stringify(state.months[from]));
+    var k = Math.max(0, monthsDiff(from, to));
+    sn.cards.forEach(function (c) {
+      c.plans = (c.plans || []).map(function (p) { p.months = (+p.months || 0) - k; return p; }).filter(function (p) { return p.months > 0; });
+    });
+    return sn;
+  }
+  function switchMonth(key) {
+    if (!key || key === state.month) return;
+    state.months[state.month] = snapOf(state);
+    if (!state.months[key]) {
+      var from = null;
+      Object.keys(state.months).sort().forEach(function (k) { if (k < key) from = k; });
+      if (!from) from = state.month;
+      state.months[key] = carry(from, key);
+    }
+    var sn = JSON.parse(JSON.stringify(state.months[key]));
+    state.pay1 = sn.pay1; state.pay2 = sn.pay2; state.cards = sn.cards; state.assets = sn.assets; state.goals = sn.goals || []; state.subs = sn.subs || [];
+    state.month = key;
+    fixCards(state);
+    bumpUid(); save(); renderAll();
+  }
   function $(id) { return document.getElementById(id); }
   function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function r2(n) { return Math.round(n * 100) / 100; }
@@ -731,25 +997,55 @@ table.sched { border-collapse: collapse; font-size: 0.82rem; width: 100%; min-wi
   }
 
   /* ---------- cards tab ---------- */
+  var openIds = {};
+  var ICO = '<span class="fold-ico" aria-hidden="true">' +
+    '<svg class="ico-stack" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="3" width="15" height="10" rx="2"/><rect x="2.5" y="8" width="15" height="12" rx="2" fill="var(--surface)"/><path d="M2.5 12h15M5.5 16.5h4"/></svg>' +
+    '<svg class="ico-open" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M2.5 10h19M6 15h4"/></svg></span>';
+  function fold(id, cc, head, body, locked) {
+    var o = !!openIds[id];
+    return '<div class="item tinted fold' + (o ? ' open' : '') + (locked ? ' locked' : '') + '" data-id="' + id + '" style="--cc:' + cc + '">' +
+      '<button type="button" class="fold-head" data-fold="' + id + '" aria-expanded="' + o + '">' + head + ICO + '</button>' +
+      '<div class="fold-body"' + (o ? '' : ' hidden') + '><fieldset class="fs"' + (locked ? ' disabled' : '') + '>' + body + '</fieldset>' +
+      '<div class="row-actions"><button type="button" class="small' + (locked ? '' : ' primary') + '" data-save="' + id + '">' + (locked ? 'Edit' : 'Save') + '</button></div></div></div>';
+  }
+  function foldClick(e) {
+    var b = e.target.closest ? e.target.closest('[data-fold]') : null;
+    if (!b) return;
+    var row = b.closest('.fold');
+    if (!row) return;
+    var o = !row.classList.contains('open');
+    row.classList.toggle('open', o);
+    b.setAttribute('aria-expanded', String(o));
+    row.querySelector('.fold-body').hidden = !o;
+    if (o) openIds[row.dataset.id] = 1; else delete openIds[row.dataset.id];
+  }
+  function cardName(c, i) { return String(c.name || '').trim() || 'New card'; }
+  function cardSub(c) {
+    var dd = +c.dueDay || 0, n = activePlans(c).length;
+    return esc(dd ? 'Due the ' + ord(dd) : 'No due date') + ' · <span class="num">' + esc(fmtC(Math.max(+c.balance || 0, instMonthly(c)), c)) + '</span>' +
+      (n ? ' · ' + n + ' installment' + (n > 1 ? 's' : '') : '');
+  }
+  function instLabel(c) { var n = activePlans(c).length; return n ? 'Installment plans (' + n + ')' : 'Add installment plans'; }
+
+  /* ---------- cards tab ---------- */
   function cardRow(c) {
     var d1 = state.pay1.day ? ' (' + ord(state.pay1.day) + ')' : '';
     var d2 = state.pay2.day ? ' (' + ord(state.pay2.day) + ')' : '';
     var useOpts = '<option value="auto"' + (c.use === 'auto' ? ' selected' : '') + '>By due date</option>' +
       '<option value="1"' + (c.use === '1' ? ' selected' : '') + '>First pay day' + esc(d1) + '</option>' +
       '<option value="2"' + (c.use === '2' ? ' selected' : '') + '>Second pay day' + esc(d2) + '</option>';
-    var n = activePlans(c).length;
-    return '<div class="item tinted" data-id="' + c.id + '" style="--cc:' + cardColor(c) + '">' +
-      '<div class="cr-head"><button type="button" class="badgebtn" data-inst="' + c.id + '" title="Installment plans" aria-label="Installment plans for ' + esc(c.name) + '">' +
-      '<span data-badge>' + cardBadge(c) + '</span><i class="cnt" data-cnt' + (n ? '' : ' hidden') + '>' + n + '</i></button>' +
-      '<label>Card name<input data-f="name" type="text" value="' + esc(c.name) + '" id="n-' + c.id + '"></label>' +
+    var head = '<span data-badge>' + cardBadge(c) + '</span><span class="fold-main"><span class="fold-name" data-hname>' + esc(cardName(c)) + '</span>' +
+      '<span class="fold-sub" data-hsub>' + cardSub(c) + '</span></span>';
+    var body =
+      '<div class="nm"><label>Card name<input data-f="name" type="text" value="' + esc(c.name) + '" id="n-' + c.id + '"></label>' +
       '<button type="button" class="ghost danger small" data-del="' + c.id + '">Remove</button></div>' +
       '<div class="mid"><label>Location<select data-f="loc">' + locOptions(c) + '</select></label>' +
       '<label>Bank<select data-f="bank"' + (countryOf(c) ? '' : ' disabled') + '>' + bankOptions(c) + '</select></label></div>' +
-      '<div class="inst-line"><button type="button" class="small" data-inst="' + c.id + '">Installment plans</button>' +
-      '<button type="button" class="small" data-logo-btn="' + c.id + '">' + (c.logo ? 'Change logo' : 'Upload your own logo') + '</button>' +
+      '<div class="inst-line"><button type="button" class="small" data-inst="' + c.id + '">' + esc(instLabel(c)) + '</button>' +
+      '<button type="button" class="q" data-q="Add each installment still being billed on this card. They count toward both the amount due and the minimum." aria-label="More info">?</button>' +
+      '<button type="button" class="small" data-logo-btn="' + c.id + '">' + (c.logo ? 'Change logo' : 'Upload logo') + '</button>' +
       (c.logo ? '<button type="button" class="ghost small" data-logo-clear="' + c.id + '">Remove logo</button>' : '') +
       '<input type="file" accept="image/*" hidden data-logo-file="' + c.id + '"></div>' +
-      '<div class="hint" data-inst-note>' + esc(instNote(c)) + '</div>' +
       '<div class="mid">' +
       '<label>Due day of month<input class="num" data-f="dueDay" type="number" inputmode="numeric" min="1" max="31" step="1" value="' + (c.dueDay ? esc(c.dueDay) : '') + '" placeholder="e.g. 20"></label>' +
       '<label>Pay it with<select data-f="use">' + useOpts + '</select></label></div>' +
@@ -759,18 +1055,17 @@ table.sched { border-collapse: collapse; font-size: 0.82rem; width: 100%; min-wi
       '<label>Interest % a year<input class="num" data-f="apr" type="number" inputmode="decimal" min="0" step="any" value="' + esc(c.apr) + '"></label>' +
       '</div>' +
       (needsRate(c) ? '<label>1 ' + esc(cardCcy(c)) + ' is worth how many ' + esc(state.base || 'main currency') + '?<input class="num" data-f="rate" type="number" inputmode="decimal" min="0" step="any" value="' + (c.rate ? esc(c.rate) : '') + '" placeholder="Type today\'s rate"></label>' : '') +
-      '<div class="hint" data-conv>' + esc(convNote(c)) + '</div></div>';
+      '<div class="hint" data-conv>' + esc(convNote(c)) + '</div>';
+    return fold(c.id, cardColor(c), head, body, !!c.saved);
   }
   function renderCards() { $('cards').innerHTML = state.cards.map(cardRow).join(''); }
   function refreshCardInst(id) {
     var c = findCard(id);
     var row = $('cards').querySelector('[data-id="' + id + '"]');
     if (!c || !row) return;
-    var n = activePlans(c).length;
-    var cnt = row.querySelector('[data-cnt]');
-    cnt.textContent = n; cnt.hidden = !n;
-    row.querySelector('[data-inst-note]').textContent = instNote(c);
+    row.querySelector('[data-inst]').textContent = instLabel(c);
     row.querySelector('[data-conv]').textContent = convNote(c);
+    row.querySelector('[data-hsub]').innerHTML = cardSub(c);
   }
 
   function renderFocusOptions() {
@@ -843,6 +1138,8 @@ table.sched { border-collapse: collapse; font-size: 0.82rem; width: 100%; min-wi
     lastText = lines.join('\n');
     renderAssetTotals();
     renderPlan(r);
+    renderGoals();
+    renderSubs();
   }
 
   /* ---------- plan ahead tab: due dates and payoff schedule ---------- */
@@ -869,7 +1166,7 @@ table.sched { border-collapse: collapse; font-size: 0.82rem; width: 100%; min-wi
   }
 
   function renderDue(r) {
-    var today = new Date(); today.setHours(0, 0, 0, 0);
+    var today = baseToday();
     var items = r.cards.filter(function (c) { return c.balance > 0; }).map(function (c) {
       var dd = +c.src.dueDay || 0;
       return { c: c, date: dd ? nextDate(today, dd) : null };
@@ -1020,7 +1317,7 @@ table.sched { border-collapse: collapse; font-size: 0.82rem; width: 100%; min-wi
   }
 
   function renderPlan(r) {
-    NOW = new Date();
+    NOW = baseToday();
     renderDue(r);
     var sim = simulate(r, true), base = simulate(r, false);
     simRows = sim.rows; simKs = sim.ks;
@@ -1086,20 +1383,23 @@ table.sched { border-collapse: collapse; font-size: 0.82rem; width: 100%; min-wi
   function isBase(a) { var c = String(a.ccy || '').trim().toUpperCase(); return !c || c === String(state.base || '').trim().toUpperCase(); }
   function assetValue(a) { var amt = +a.amount || 0; return isBase(a) ? amt : amt * (+a.rate || 0); }
 
+  function assetName(a) { return String(a.name || '').trim() || 'New account'; }
+  function assetSub(a) { return typeInfo(a.type)[1] + (isBase(a) ? '' : ' · ' + String(a.ccy || '').toUpperCase()); }
   function assetRow(a) {
     var ts = TYPES.map(function (t) { return '<option value="' + t[0] + '"' + (a.type === t[0] ? ' selected' : '') + '>' + t[1] + '</option>'; }).join('');
     var base = isBase(a);
-    return '<div class="item" data-id="' + a.id + '">' +
-      '<div class="cr-head"><span data-badge>' + assetBadge(a) + '</span>' +
-      '<label>Bank or wallet name<input data-f="name" type="text" list="inst" value="' + esc(a.name) + '" id="n-' + a.id + '"></label>' +
+    var head = '<span data-badge>' + assetBadge(a) + '</span><span class="fold-main"><span class="fold-name" data-hname>' + esc(assetName(a)) + '</span>' +
+      '<span class="fold-sub" data-hsub>' + esc(assetSub(a)) + '</span></span><span class="fold-amt num" data-av></span>';
+    var body =
+      '<div class="nm"><label>Bank or wallet name<input data-f="name" type="text" list="inst" value="' + esc(a.name) + '" id="n-' + a.id + '"></label>' +
       '<button type="button" class="ghost danger small" data-del="' + a.id + '">Remove</button></div>' +
       '<div class="mid"><label>Type<select data-f="type">' + ts + '</select></label>' +
       '<label>Currency code<input data-f="ccy" type="text" maxlength="8" value="' + esc(a.ccy) + '" placeholder="PHP, USD, BTC"></label></div>' +
-      '<div class="nums">' +
+      '<div class="mid">' +
       '<label>Amount<input class="num" data-f="amount" type="number" inputmode="decimal" min="0" step="any" value="' + esc(a.amount) + '"></label>' +
       '<label>Rate to ' + esc(state.base || 'main') + '<input class="num" data-f="rate" type="number" inputmode="decimal" min="0" step="any" value="' + esc(base ? 1 : a.rate) + '"' + (base ? ' disabled' : '') + '></label>' +
-      '<div class="worth"><span>Worth</span><span class="av num" data-av></span></div>' +
-      '</div></div>';
+      '</div>';
+    return fold(a.id, 'var(--p' + typeInfo(a.type)[2] + ')', head, body, !!a.saved);
   }
   function renderAssetRows() { $('assets').innerHTML = state.assets.map(assetRow).join(''); }
 
@@ -1138,8 +1438,9 @@ table.sched { border-collapse: collapse; font-size: 0.82rem; width: 100%; min-wi
 
   /* ---------- shared UI ---------- */
   function applyTab() {
-    var t = state.tab === 'assets' ? 'assets' : (state.tab === 'plan' ? 'plan' : 'cards');
-    ['cards', 'plan', 'assets'].forEach(function (n) {
+    var t = ['assets', 'plan', 'goals', 'subs'].indexOf(state.tab) >= 0 ? state.tab : 'cards';
+    if (t === 'subs' && $('panel-subs').hidden) renderSubRows();
+    ['cards', 'plan', 'assets', 'goals', 'subs'].forEach(function (n) {
       $('panel-' + n).hidden = n !== t;
       $('tab-' + n).setAttribute('aria-selected', String(n === t));
     });
@@ -1148,6 +1449,32 @@ table.sched { border-collapse: collapse; font-size: 0.82rem; width: 100%; min-wi
     document.body.classList.toggle('hide', !!state.hide);
     $('hide-btn').textContent = state.hide ? 'Show amounts' : 'Hide amounts';
   }
+  function renderMonthBar() {
+    var real = monthKey(new Date());
+    var keys = Object.keys(state.months);
+    [real, monthStep(real, 1), state.month].forEach(function (k) { if (keys.indexOf(k) < 0) keys.push(k); });
+    keys.sort();
+    $('m-sel').innerHTML = keys.map(function (k) {
+      return '<option value="' + k + '"' + (k === state.month ? ' selected' : '') + '>' + esc(monthName(k)) + (state.months[k] ? '' : ' (new)') + '</option>';
+    }).join('');
+    $('m-sel').value = state.month;
+    var earlier = Object.keys(state.months).filter(function (k) { return k < state.month; }).sort();
+    $('m-prev').disabled = !earlier.length;
+    $('m-next').disabled = state.month >= monthStep(real, 1);
+    var showNote = state.month < real;
+    $('m-note').hidden = !showNote;
+    if (showNote) {
+      $('m-note-t').textContent = 'You are looking at ' + monthName(state.month) + '.';
+      $('m-go').textContent = (state.months[real] ? 'Go to ' : 'Start ') + monthName(real);
+    }
+  }
+  $('m-sel').addEventListener('change', function (e) { switchMonth(e.target.value); });
+  $('m-prev').addEventListener('click', function () {
+    var earlier = Object.keys(state.months).filter(function (k) { return k < state.month; }).sort();
+    if (earlier.length) switchMonth(earlier[earlier.length - 1]);
+  });
+  $('m-next').addEventListener('click', function () { switchMonth(monthStep(state.month, 1)); });
+  $('m-go').addEventListener('click', function () { switchMonth(monthKey(new Date())); });
   function renderHello() {
     $('hello').textContent = state.userName ? 'Hi, ' + state.userName : '';
     $('name-edit').textContent = state.userName ? 'Change name' : 'Add your name';
@@ -1163,9 +1490,13 @@ table.sched { border-collapse: collapse; font-size: 0.82rem; width: 100%; min-wi
     $('strategy-wrap').className = 'strategy' + (manual ? ' manual' : '');
     $('example-note').hidden = !state.example;
     $('aexample-note').hidden = !state.aexample;
+    $('gexample-note').hidden = !state.gexample;
+    $('sexample-note').hidden = !state.sexample;
   }
   function changed(kind) {
     if (kind === 'assets') { state.aexample = false; $('aexample-note').hidden = true; }
+    else if (kind === 'goals') { state.gexample = false; $('gexample-note').hidden = true; }
+    else if (kind === 'subs') { state.sexample = false; $('sexample-note').hidden = true; }
     else { state.example = false; $('example-note').hidden = true; }
     save();
     renderResult();
@@ -1268,9 +1599,12 @@ table.sched { border-collapse: collapse; font-size: 0.82rem; width: 100%; min-wi
       row.querySelector('[data-badge]').innerHTML = cardBadge(card);
       renderFocusOptions();
     }
+    row.querySelector('[data-hname]').textContent = cardName(card);
+    row.querySelector('[data-hsub]').innerHTML = cardSub(card);
     if (f === 'balance' || f === 'min' || f === 'rate') refreshCardInst(card.id);
     changed('cards');
   }
+  $('cards').addEventListener('click', foldClick);
   $('cards').addEventListener('input', onCardField);
   $('cards').addEventListener('change', function (e) {
     if (e.target.tagName === 'SELECT') { onCardField(e); return; }
@@ -1317,6 +1651,7 @@ table.sched { border-collapse: collapse; font-size: 0.82rem; width: 100%; min-wi
     var prevCard = state.cards[state.cards.length - 1];
     var c = { id: nid(), name: 'Card ' + (state.cards.length + 1), loc: prevCard ? prevCard.loc : '', rate: 0, bank: '', logo: '', col: uid % 8, balance: 0, min: 0, apr: 0, dueDay: 0, use: 'auto', plans: [] };
     state.cards.push(c);
+    openIds[c.id] = 1;
     renderCards(); renderFocusOptions(); changed('cards');
     var el = $('n-' + c.id);
     if (el) { el.focus(); el.select(); }
@@ -1345,7 +1680,7 @@ table.sched { border-collapse: collapse; font-size: 0.82rem; width: 100%; min-wi
     if (!c) return;
     $('dlg-badge').innerHTML = cardBadge(c);
     $('dlg-title').textContent = (String(c.name || '').trim() || 'Card') + ' installments';
-    $('dlg-body').innerHTML = c.plans.length ? c.plans.map(planRow).join('') : '<p class="hint">No installment plans yet. Tap "Add installment" for each plan that is still being billed.</p>';
+    $('dlg-body').innerHTML = c.plans.length ? c.plans.map(planRow).join('') : '<p class="hint">No installment plans yet.</p>';
     renderDlgSum(c);
   }
   function openInst(id) {
@@ -1411,8 +1746,12 @@ table.sched { border-collapse: collapse; font-size: 0.82rem; width: 100%; min-wi
       rate.disabled = b;
       if (b) rate.value = 1; else rate.value = a.rate || '';
     }
+    row.querySelector('[data-hname]').textContent = assetName(a);
+    row.querySelector('[data-hsub]').textContent = assetSub(a);
+    if (f === 'type') row.style.setProperty('--cc', 'var(--p' + typeInfo(a.type)[2] + ')');
     changed('assets');
   }
+  $('assets').addEventListener('click', foldClick);
   $('assets').addEventListener('input', onAssetField);
   $('assets').addEventListener('change', function (e) { if (e.target.tagName === 'SELECT') onAssetField(e); });
   $('assets').addEventListener('click', function (e) {
@@ -1424,10 +1763,249 @@ table.sched { border-collapse: collapse; font-size: 0.82rem; width: 100%; min-wi
   $('add-asset').addEventListener('click', function () {
     var a = { id: nid('a'), name: '', type: 'bank', ccy: state.base || 'PHP', amount: 0, rate: 1 };
     state.assets.push(a);
+    openIds[a.id] = 1;
     renderAssetRows(); changed('assets');
     var el = $('n-' + a.id);
     if (el) el.focus();
   });
+
+
+  /* ---------- goals tab ---------- */
+  function findGoal(id) { return state.goals.filter(function (g) { return g.id === id; })[0]; }
+  function goalCalc(g) {
+    var target = Math.max(0, +g.target || 0), saved = Math.max(0, +g.saved || 0);
+    var left = Math.max(0, target - saved);
+    var pct = target > 0 ? Math.min(100, saved / target * 100) : 0;
+    var today = baseToday();
+    var months = null;
+    if (g.date) {
+      var d = new Date(g.date + 'T00:00:00');
+      if (!isNaN(d.getTime())) months = Math.max(0, Math.ceil((d - today) / (30.4375 * 86400000)));
+    }
+    var need = left > 0 && months !== null ? left / Math.max(1, months) : 0;
+    var mo = +g.monthly || 0;
+    var fin = left > 0 && mo > 0 ? Math.ceil(left / mo) : null;
+    return { target: target, saved: saved, left: left, pct: pct, months: months, need: need, mo: mo, fin: fin };
+  }
+  function goalNote(k) {
+    if (k.target <= 0) return 'Enter a target amount to see your plan.';
+    if (k.left <= 0) return 'Goal reached.';
+    var parts = [];
+    if (k.months !== null) {
+      if (k.months === 0) parts.push('The target date is here and ' + fmt(k.left) + ' is still needed.');
+      else parts.push(k.months + (k.months === 1 ? ' month' : ' months') + ' left. Save ' + fmt(k.need) + ' a month to reach it on time.');
+    }
+    if (k.fin !== null) {
+      var t = 'At ' + fmt(k.mo) + ' a month you would finish in ' + k.fin + (k.fin === 1 ? ' month' : ' months') + ' (' + monthLabel(k.fin) + ').';
+      if (k.months !== null && k.months > 0) t += k.fin <= k.months ? ' That is on time.' : ' That is ' + (k.fin - k.months) + (k.fin - k.months === 1 ? ' month' : ' months') + ' late.';
+      parts.push(t);
+    }
+    if (!parts.length) return 'Add a target date or a monthly amount to see a plan.';
+    return parts.join(' ');
+  }
+  function goalName(g) { return String(g.name || '').trim() || 'New goal'; }
+  function goalRow(g, i) {
+    var k = goalCalc(g);
+    var head = '<span class="badge" style="--cc:' + pv(i + 2) + '"><b data-gbadge class="' + (k.pct >= 99.5 ? 'sm' : '') + '">' + Math.round(k.pct) + '%</b></span>' +
+      '<span class="fold-main"><span class="fold-name" data-hname>' + esc(goalName(g)) + '</span><span class="fold-sub" data-hsub></span></span>' +
+      '<span class="fold-amt num" data-hamt></span>';
+    var body =
+      '<div class="nm"><label>Goal name<input data-f="name" type="text" value="' + esc(g.name) + '" id="n-' + g.id + '" placeholder="e.g. Emergency fund"></label>' +
+      '<button type="button" class="ghost danger small" data-del="' + g.id + '">Remove</button></div>' +
+      '<div class="mid"><label>Target amount<input class="num" data-f="target" type="number" inputmode="decimal" min="0" step="any" value="' + esc(g.target) + '"></label>' +
+      '<label>Saved so far<input class="num" data-f="saved" type="number" inputmode="decimal" min="0" step="any" value="' + esc(g.saved) + '"></label></div>' +
+      '<div class="mid"><label>Target date<input data-f="date" type="date" value="' + esc(g.date || '') + '"></label>' +
+      '<label>Planned saving a month<input class="num" data-f="monthly" type="number" inputmode="decimal" min="0" step="any" value="' + (g.monthly ? esc(g.monthly) : '') + '" placeholder="optional"></label></div>' +
+      '<div class="bar" aria-hidden="true"><i data-gbar style="width:' + k.pct.toFixed(1) + '%;background:var(--cc)"></i></div>' +
+      '<div class="hint" data-gnote></div>';
+    return fold(g.id, pv(i + 2), head, body, !!g.saved);
+  }
+  function renderGoalRows() { $('goals').innerHTML = state.goals.map(goalRow).join(''); }
+  function goalAmtText(k) { return k.target > 0 && k.left <= 0 ? 'Reached' : (k.need > 0 ? fmt(k.need) + '/mo' : ''); }
+  function renderGoals() {
+    var totT = 0, totS = 0, totN = 0, out = '';
+    state.goals.forEach(function (g, i) {
+      var k = goalCalc(g);
+      totT += k.target; totS += Math.min(k.saved, k.target); totN += k.need;
+      var row = $('goals').querySelector('[data-id="' + g.id + '"]');
+      if (row) {
+        row.querySelector('[data-hname]').textContent = goalName(g);
+        row.querySelector('[data-hsub]').innerHTML = '<span class="num">' + esc(fmt(k.saved)) + ' of ' + esc(fmt(k.target)) + '</span>';
+        row.querySelector('[data-hamt]').textContent = goalAmtText(k);
+        var gb = row.querySelector('[data-gbadge]');
+        gb.textContent = Math.round(k.pct) + '%'; gb.className = k.pct >= 99.5 ? 'sm' : '';
+        row.querySelector('[data-gbar]').style.width = k.pct.toFixed(1) + '%';
+        row.querySelector('[data-gnote]').textContent = goalNote(k);
+      }
+      var chip = k.target > 0 && k.left <= 0 ? '<span class="chip paid">Reached</span>' : (k.need > 0 ? '<span class="chip min num">' + esc(fmt(k.need)) + ' / month</span>' : '<span class="chip min">No date set</span>');
+      out += '<div class="sched-row" style="--cc:' + pv(i + 2) + '"><div class="alloc-top"><span class="badge" style="--cc:' + pv(i + 2) + '"><b class="' + (k.pct >= 99.5 ? 'sm' : '') + '">' + Math.round(k.pct) + '%</b></span>' +
+        '<div class="alloc-id"><div class="alloc-name">' + esc(goalName(g)) + '</div><div class="hint num">' + esc(fmt(k.saved)) + ' of ' + esc(fmt(k.target)) + '</div></div></div>' + chip + '</div>';
+    });
+    var pct = totT > 0 ? totS / totT * 100 : 0;
+    $('g-sum').innerHTML =
+      '<div class="stat" style="--cc:var(--p4)"><div class="k">Total of all goals</div><div class="v num">' + fmt(totT) + '</div></div>' +
+      '<div class="stat" style="--cc:var(--p3)"><div class="k">Saved so far</div><div class="v num">' + fmt(totS) + '</div></div>' +
+      '<div class="stat" style="--cc:var(--p2)"><div class="k">To save each month</div><div class="v num">' + fmt(totN) + '</div></div>';
+    $('g-stack').innerHTML = '<i style="width:' + pct.toFixed(1) + '%;background:var(--accent)"></i>';
+    $('g-list').innerHTML = out || '<p class="hint">Add a goal to see your progress.</p>';
+  }
+  $('goals').addEventListener('click', function (e) {
+    foldClick(e);
+    var id = e.target.dataset && e.target.dataset.del;
+    if (!id) return;
+    state.goals = state.goals.filter(function (g) { return g.id !== id; });
+    renderGoalRows(); changed('goals');
+  });
+  function onGoalField(e) {
+    var row = e.target.closest('.item');
+    if (!row || !e.target.dataset.f) return;
+    var g = findGoal(row.dataset.id);
+    if (!g) return;
+    var f = e.target.dataset.f;
+    g[f] = (f === 'name' || f === 'date') ? e.target.value : (parseFloat(e.target.value) || 0);
+    changed('goals');
+  }
+  $('goals').addEventListener('input', onGoalField);
+  $('goals').addEventListener('change', onGoalField);
+  $('add-goal').addEventListener('click', function () {
+    var g = { id: nid('g'), name: '', target: 0, saved: 0, date: '', monthly: 0 };
+    state.goals.push(g);
+    openIds[g.id] = 1;
+    renderGoalRows(); changed('goals');
+    var el = $('n-' + g.id);
+    if (el) el.focus();
+  });
+
+  /* ---------- subscriptions tab (tracking only: never added to any card) ---------- */
+  function findSub(id) { return state.subs.filter(function (x) { return x.id === id; })[0]; }
+  function subCard(sb) { return state.cards.filter(function (c) { return c.id === sb.cardId; })[0] || null; }
+  function subName(sb) { return String(sb.name || '').trim() || 'New subscription'; }
+  function subColor(sb, i) { var c = subCard(sb); return c ? cardColor(c) : pv(i + 4); }
+  function subSub(sb) {
+    var c = subCard(sb), parts = [c ? cardName(c) : 'No card'];
+    if (+sb.day) parts.push('Bills the ' + ord(sb.day));
+    return parts.join(' · ');
+  }
+  function subRow(sb, i) {
+    var opts = '<option value="">Not on a card</option>' + state.cards.map(function (c) {
+      return '<option value="' + esc(c.id) + '"' + (sb.cardId === c.id ? ' selected' : '') + '>' + esc(cardName(c)) + '</option>';
+    }).join('');
+    var head = '<span class="badge"><b data-sbadge>' + esc(initials(sb.name)) + '</b></span><span class="fold-main"><span class="fold-name" data-hname>' + esc(subName(sb)) + '</span>' +
+      '<span class="fold-sub" data-hsub></span></span><span class="fold-amt num" data-hamt></span>';
+    var body =
+      '<div class="nm"><label>Subscription name<input data-f="name" type="text" value="' + esc(sb.name) + '" id="n-' + sb.id + '" placeholder="e.g. Netflix"></label>' +
+      '<button type="button" class="ghost danger small" data-del="' + sb.id + '">Remove</button></div>' +
+      '<div class="mid"><label>Amount a month<input class="num" data-f="amount" type="number" inputmode="decimal" min="0" step="any" value="' + esc(sb.amount) + '"></label>' +
+      '<label>Billing day of month<input class="num" data-f="day" type="number" inputmode="numeric" min="1" max="31" step="1" value="' + (sb.day ? esc(sb.day) : '') + '" placeholder="e.g. 12"></label></div>' +
+      '<label>Charged to<select data-f="cardId">' + opts + '</select></label>';
+    return fold(sb.id, subColor(sb, i), head, body, !!sb.saved);
+  }
+  function renderSubRows() { $('subs').innerHTML = state.subs.map(subRow).join(''); }
+  function renderSubs() {
+    var total = 0, by = {}, order = [], ups = [];
+    var today = baseToday();
+    state.subs.forEach(function (sb, i) {
+      var amt = Math.max(0, +sb.amount || 0), col = subColor(sb, i);
+      total += amt;
+      var key = subCard(sb) ? sb.cardId : '';
+      if (!by[key]) { by[key] = { amt: 0, col: subCard(sb) ? cardColor(subCard(sb)) : 'var(--muted)', name: subCard(sb) ? cardName(subCard(sb)) : 'Not on a card' }; order.push(key); }
+      by[key].amt += amt;
+      var row = $('subs').querySelector('[data-id="' + sb.id + '"]');
+      if (row) {
+        row.setAttribute('style', '--cc:' + col);
+        row.querySelector('[data-hname]').textContent = subName(sb);
+        row.querySelector('[data-hsub]').textContent = subSub(sb);
+        row.querySelector('[data-hamt]').textContent = fmt(amt) + '/mo';
+        row.querySelector('[data-sbadge]').textContent = initials(sb.name);
+      }
+      if (+sb.day) ups.push({ sb: sb, col: col, date: nextDate(today, +sb.day), amt: amt });
+    });
+    $('s-sum').innerHTML =
+      '<div class="stat" style="--cc:var(--p4)"><div class="k">Total each month</div><div class="v num">' + fmt(total) + '</div></div>' +
+      '<div class="stat" style="--cc:var(--p6)"><div class="k">Subscriptions</div><div class="v num">' + state.subs.length + '</div></div>' +
+      '<div class="stat" style="--cc:var(--p2)"><div class="k">Cost over a year</div><div class="v num">' + fmt(total * 12) + '</div></div>';
+    var stack = '', brk = '';
+    order.forEach(function (k) {
+      var g = by[k], pct = total > 0 ? g.amt / total * 100 : 0;
+      stack += '<i style="width:' + pct.toFixed(2) + '%;background:' + g.col + '"></i>';
+      brk += '<div class="brk-row" style="--cc:' + g.col + '"><span class="dot"></span><span>' + esc(g.name) + '</span><span class="amt num">' + esc(fmt(g.amt)) + '</span><span class="pct num">' + Math.round(pct) + '%</span></div>';
+    });
+    $('s-stack').innerHTML = stack;
+    $('s-brk').innerHTML = brk || '<p class="hint">Add a subscription to see the breakdown.</p>';
+    ups.sort(function (a, b) { return a.date - b.date; });
+    $('s-up').innerHTML = ups.slice(0, 8).map(function (u) {
+      var days = Math.round((u.date - today) / 86400000);
+      var when = days === 0 ? 'Today' : (days === 1 ? 'Tomorrow' : 'In ' + days + ' days');
+      return '<div class="sched-row" style="--cc:' + u.col + '"><div class="alloc-id"><div class="alloc-name">' + esc(subName(u.sb)) + '</div>' +
+        '<div class="hint num">' + esc(u.date.toLocaleDateString(undefined, { weekday: 'short', day: 'numeric', month: 'short' }) + ' · ' + subSub(u.sb)) + '</div></div>' +
+        '<span class="chip min num">' + esc(fmt(u.amt)) + ' · ' + esc(when) + '</span></div>';
+    }).join('') || '<p class="hint">Add a billing day to see the next charges.</p>';
+  }
+  $('subs').addEventListener('click', function (e) {
+    foldClick(e);
+    var id = e.target.dataset && e.target.dataset.del;
+    if (!id) return;
+    state.subs = state.subs.filter(function (x) { return x.id !== id; });
+    renderSubRows(); changed('subs');
+  });
+  function onSubField(e) {
+    var row = e.target.closest('.item');
+    if (!row || !e.target.dataset.f) return;
+    var sb = findSub(row.dataset.id);
+    if (!sb) return;
+    var f = e.target.dataset.f;
+    if (f === 'name' || f === 'cardId') sb[f] = e.target.value;
+    else if (f === 'day') sb.day = dayVal(e.target.value);
+    else sb[f] = parseFloat(e.target.value) || 0;
+    changed('subs');
+  }
+  $('subs').addEventListener('input', onSubField);
+  $('subs').addEventListener('change', onSubField);
+  $('add-sub').addEventListener('click', function () {
+    var sb = { id: nid('s'), name: '', amount: 0, day: 0, cardId: '' };
+    state.subs.push(sb);
+    openIds[sb.id] = 1;
+    renderSubRows(); changed('subs');
+    var el = $('n-' + sb.id);
+    if (el) el.focus();
+  });
+
+  /* ---------- save / edit buttons on every card, account, goal and subscription ---------- */
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('[data-save]') : null;
+    if (!b) return;
+    var id = b.getAttribute('data-save');
+    var groups = [['cards', state.cards, renderCards], ['assets', state.assets, renderAssetRows], ['goals', state.goals, renderGoalRows], ['subs', state.subs, renderSubRows]];
+    for (var i = 0; i < groups.length; i++) {
+      var it = groups[i][1].filter(function (x) { return x.id === id; })[0];
+      if (!it) continue;
+      it.saved = !it.saved;
+      if (it.saved) delete openIds[id]; else openIds[id] = 1;
+      groups[i][2]();
+      changed(groups[i][0]);
+      break;
+    }
+  });
+
+  /* ---------- question-mark tips ---------- */
+  var qpop = $('qpop'), qBtn = null;
+  function hideQ() { qpop.hidden = true; qBtn = null; }
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('.q') : null;
+    if (!b) { if (!qpop.hidden && !qpop.contains(e.target)) hideQ(); return; }
+    if (b === qBtn) { hideQ(); return; }
+    qBtn = b;
+    qpop.textContent = b.getAttribute('data-q') || '';
+    qpop.hidden = false;
+    var r = b.getBoundingClientRect(), w = qpop.offsetWidth, h = qpop.offsetHeight;
+    var vw = document.documentElement.clientWidth, vh = document.documentElement.clientHeight;
+    var left = Math.max(8, Math.min(r.left + r.width / 2 - w / 2, vw - w - 8));
+    var top = r.bottom + 8;
+    if (top + h > vh - 8) top = Math.max(8, r.top - h - 8);
+    qpop.style.left = left + 'px'; qpop.style.top = top + 'px';
+  });
+  document.addEventListener('scroll', hideQ, true);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') hideQ(); });
 
   /* ---------- backup ---------- */
   $('bk-copy').addEventListener('click', function () {
@@ -1436,18 +2014,435 @@ table.sched { border-collapse: collapse; font-size: 0.82rem; width: 100%; min-wi
     $('bk-msg').textContent = 'Backup text is in the box above. Paste it somewhere safe.';
     copyText(json, $('bk-copy'), 'Copy backup');
   });
+  function restoreFrom(p) {
+    if (!p || !Array.isArray(p.cards) || !p.cards.length) throw new Error('bad');
+    state = adopt(p);
+    if (!Array.isArray(p.assets)) state.assets = [];
+    state.aexample = false;
+    if (!Array.isArray(p.goals)) state.goals = [];
+    if (!Array.isArray(p.subs)) state.subs = [];
+    state.gexample = false; state.sexample = false;
+    bumpUid(); save(); renderAll();
+  }
   $('bk-restore').addEventListener('click', function () {
     var msg = $('bk-msg');
-    try {
-      var p = JSON.parse($('bk-text').value);
-      if (!p || !Array.isArray(p.cards) || !p.cards.length) { msg.textContent = 'That text is not a valid backup.'; return; }
-      state = adopt(p);
-      if (!Array.isArray(p.assets)) state.assets = [];
-      state.aexample = false;
-      bumpUid(); save(); renderAll();
-      msg.textContent = 'Backup restored.';
-    } catch (err) { msg.textContent = 'That text is not a valid backup.'; }
+    try { restoreFrom(JSON.parse($('bk-text').value)); msg.textContent = 'Backup restored.'; }
+    catch (err) { msg.textContent = 'That text is not a valid backup.'; }
   });
+
+  /* ---------- device settings: language, appearance, PIN lock, sync ---------- */
+  var PKEY = 'card-payment-planner-prefs', LKEY = 'card-payment-planner-lock';
+  var prefs = { lang: 'en', theme: 'auto', sync: { url: '', key: '', email: '', token: '', refresh: '', uid: '' } };
+  try {
+    var pr = JSON.parse(localStorage.getItem(PKEY) || 'null');
+    if (pr && typeof pr === 'object') {
+      prefs.lang = pr.lang === 'tl' ? 'tl' : 'en';
+      prefs.theme = pr.theme === 'light' || pr.theme === 'dark' ? pr.theme : 'auto';
+      Object.assign(prefs.sync, pr.sync || {});
+    }
+  } catch (e) {}
+  function savePrefs() { try { localStorage.setItem(PKEY, JSON.stringify(prefs)); } catch (e) {} }
+  var lockRec = null;
+  try { lockRec = JSON.parse(localStorage.getItem(LKEY) || 'null'); if (!lockRec || !lockRec.hash) lockRec = null; } catch (e) {}
+  function saveLock() { try { if (lockRec) localStorage.setItem(LKEY, JSON.stringify(lockRec)); else localStorage.removeItem(LKEY); } catch (e) {} }
+
+  function applyTheme() {
+    var el = document.documentElement;
+    if (prefs.theme === 'auto') el.removeAttribute('data-theme'); else el.setAttribute('data-theme', prefs.theme);
+  }
+  function i18nRefresh() { i18nPass(); }
+  function applyLang() { document.documentElement.setAttribute('lang', prefs.lang === 'tl' ? 'fil' : 'en'); i18nRefresh(); }
+
+  function openSettings() {
+    $('set-lang').value = prefs.lang; $('set-theme').value = prefs.theme;
+    updatePinUi(); updateSyncUi();
+    $('pin-msg').textContent = '';
+    $('settings').hidden = false;
+  }
+  function closeSettings() { $('settings').hidden = true; }
+  $('set-btn').addEventListener('click', openSettings);
+  $('set-close').addEventListener('click', closeSettings);
+  $('settings').addEventListener('click', function (e) { if (e.target === $('settings')) closeSettings(); });
+  $('set-lang').addEventListener('change', function (e) { prefs.lang = e.target.value === 'tl' ? 'tl' : 'en'; savePrefs(); applyLang(); });
+  $('set-theme').addEventListener('change', function (e) { prefs.theme = e.target.value; savePrefs(); applyTheme(); });
+  $('set-print').addEventListener('click', function () { closeSettings(); printSummary(); });
+
+  /* PIN */
+  function cyrb53(str) {
+    var h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+    for (var i = 0; i < str.length; i++) { var ch = str.charCodeAt(i); h1 = Math.imul(h1 ^ ch, 2654435761); h2 = Math.imul(h2 ^ ch, 1597334677); }
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+    return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(16);
+  }
+  function hashPin(pin, salt) {
+    var text = salt + ':' + pin;
+    try {
+      if (window.crypto && window.crypto.subtle && window.TextEncoder) {
+        return window.crypto.subtle.digest('SHA-256', new TextEncoder().encode(text)).then(function (buf) {
+          return Array.prototype.map.call(new Uint8Array(buf), function (b) { return ('0' + b.toString(16)).slice(-2); }).join('');
+        }, function () { return 'x' + cyrb53(text) + cyrb53(text + salt); });
+      }
+    } catch (e) {}
+    return Promise.resolve('x' + cyrb53(text) + cyrb53(text + salt));
+  }
+  function newSalt() { var a = ''; for (var i = 0; i < 4; i++) a += Math.random().toString(36).slice(2); return a; }
+  function pinMsg(t) { $('pin-msg').textContent = t; }
+  function updatePinUi() {
+    $('pin-set').hidden = !!lockRec; $('pin-has').hidden = !lockRec;
+    $('lock-btn').hidden = !lockRec;
+    if (lockRec) $('pin-auto').checked = !!lockRec.auto;
+    ['pin-new', 'pin-new2', 'pin-cur', 'pin-new3'].forEach(function (id) { $(id).value = ''; });
+  }
+  function validNew(a, b) {
+    if (!/^\d{4,6}$/.test(a)) { pinMsg('Use 4 to 6 digits.'); return false; }
+    if (b !== undefined && a !== b) { pinMsg('The two PINs do not match.'); return false; }
+    return true;
+  }
+  function setPin(pin, auto) {
+    var salt = newSalt();
+    return hashPin(pin, salt).then(function (h) { lockRec = { salt: salt, hash: h, len: pin.length, auto: auto !== false }; saveLock(); });
+  }
+  $('pin-save').addEventListener('click', function () {
+    var a = $('pin-new').value, b = $('pin-new2').value;
+    if (!validNew(a, b)) return;
+    setPin(a, true).then(function () { updatePinUi(); pinMsg('PIN lock is on.'); });
+  });
+  $('pin-change').addEventListener('click', function () {
+    var cur = $('pin-cur').value, nw = $('pin-new3').value;
+    if (!validNew(nw)) return;
+    hashPin(cur, lockRec.salt).then(function (h) {
+      if (h !== lockRec.hash) { pinMsg('Current PIN is wrong.'); return; }
+      return setPin(nw, lockRec.auto).then(function () { updatePinUi(); pinMsg('PIN changed.'); });
+    });
+  });
+  $('pin-remove').addEventListener('click', function () {
+    hashPin($('pin-cur').value, lockRec.salt).then(function (h) {
+      if (h !== lockRec.hash) { pinMsg('Current PIN is wrong.'); return; }
+      lockRec = null; saveLock(); updatePinUi(); pinMsg('PIN lock is off.');
+    });
+  });
+  $('pin-auto').addEventListener('change', function (e) { if (lockRec) { lockRec.auto = e.target.checked; saveLock(); } });
+
+  /* lock screen */
+  var lockBuf = '', lockFails = 0, lockUntil = 0, forgotArm = false;
+  (function () {
+    var h = '';
+    [1, 2, 3, 4, 5, 6, 7, 8, 9].forEach(function (n) { h += '<button type="button" data-k="' + n + '">' + n + '</button>'; });
+    h += '<button type="button" class="blank" tabindex="-1" aria-hidden="true"></button><button type="button" data-k="0">0</button><button type="button" data-k="back" aria-label="Delete">&#9003;</button>';
+    $('lock-pad').innerHTML = h;
+  })();
+  function drawDots() {
+    var n = lockRec ? lockRec.len : 4, h = '';
+    for (var i = 0; i < n; i++) h += '<i class="' + (i < lockBuf.length ? 'on' : '') + '"></i>';
+    $('lock-dots').innerHTML = h;
+  }
+  function showLock() {
+    lockBuf = ''; forgotArm = false;
+    $('lock-msg').textContent = ''; $('lock-forgot').textContent = 'Forgot PIN?';
+    drawDots();
+    $('lock').hidden = false;
+  }
+  function lockNow() {
+    if (!lockRec) return;
+    hideQ(); fabOpen(false); closeSettings();
+    showLock();
+  }
+  function pressKey(k) {
+    if (!lockRec || $('lock').hidden) return;
+    if (Date.now() < lockUntil) return;
+    if (k === 'back') { lockBuf = lockBuf.slice(0, -1); drawDots(); return; }
+    if (lockBuf.length >= lockRec.len) return;
+    lockBuf += k; drawDots();
+    if (lockBuf.length === lockRec.len) {
+      var attempt = lockBuf;
+      hashPin(attempt, lockRec.salt).then(function (h) {
+        if (h === lockRec.hash) { lockFails = 0; lockBuf = ''; $('lock').hidden = true; return; }
+        lockFails += 1; lockBuf = '';
+        var d = $('lock-dots'); d.classList.remove('shake'); void d.offsetWidth; d.classList.add('shake');
+        if (lockFails >= 5) { lockFails = 0; lockUntil = Date.now() + 30000; $('lock-msg').textContent = 'Too many tries. Wait 30 seconds.'; }
+        else $('lock-msg').textContent = 'Wrong PIN. Try again.';
+        drawDots();
+      });
+    }
+  }
+  $('lock-pad').addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('[data-k]') : null;
+    if (b) pressKey(b.getAttribute('data-k'));
+  });
+  document.addEventListener('keydown', function (e) {
+    if ($('lock').hidden) return;
+    if (/^\d$/.test(e.key)) pressKey(e.key); else if (e.key === 'Backspace') pressKey('back');
+  });
+  $('lock-forgot').addEventListener('click', function () {
+    if (!forgotArm) { forgotArm = true; $('lock-msg').textContent = 'Tap again to erase ALL data on this device and remove the PIN.'; $('lock-forgot').textContent = 'Erase and reset'; return; }
+    try { localStorage.removeItem(KEY); localStorage.removeItem(OLD); localStorage.removeItem(LKEY); } catch (e) {}
+    lockRec = null;
+    location.reload();
+  });
+  $('lock-btn').addEventListener('click', lockNow);
+  $('lock-now').addEventListener('click', lockNow);
+  document.addEventListener('visibilitychange', function () { if (document.hidden && lockRec && lockRec.auto) lockNow(); });
+
+  /* quick-add button */
+  function fabOpen(o) {
+    $('fab').classList.toggle('open', o);
+    $('fab-btn').setAttribute('aria-expanded', String(o));
+    $('fab-scrim').hidden = !o;
+    $('fab-items').querySelectorAll('button').forEach(function (b) { b.setAttribute('tabindex', o ? '0' : '-1'); });
+  }
+  $('fab-btn').addEventListener('click', function () { fabOpen(!$('fab').classList.contains('open')); });
+  $('fab-scrim').addEventListener('click', function () { fabOpen(false); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') { fabOpen(false); if (!$('settings').hidden) closeSettings(); } });
+  $('fab-items').addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('[data-fab]') : null;
+    if (!b) return;
+    var k = b.getAttribute('data-fab');
+    fabOpen(false);
+    if (k === 'print') { printSummary(); return; }
+    var m = { card: ['cards', 'add', 'cards'], sub: ['subs', 'add-sub', 'subs'], goal: ['goals', 'add-goal', 'goals'], asset: ['assets', 'add-asset', 'assets'] }[k];
+    if (!m) return;
+    state.tab = m[0]; applyTab(); save();
+    $(m[1]).click();
+    setTimeout(function () {
+      var last = $(m[2]).lastElementChild;
+      if (last && last.scrollIntoView) last.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 60);
+  });
+
+  /* printable monthly summary */
+  function buildPrint() {
+    var r = compute(state);
+    function tr_(a, head, tot) { return '<tr' + (tot ? ' class="tot"' : '') + '>' + a.map(function (x, i) { var t = head ? 'th' : 'td'; return '<' + t + (i ? ' class="r"' : '') + '>' + esc(x) + '</' + t + '>'; }).join('') + '</tr>'; }
+    var h = '<h1>Card Payment Planner</h1><p>' + esc((state.userName ? state.userName + ', ' : '') + monthName(state.month)) + '</p>';
+    var seq = (+state.pay1.day || 0) <= (+state.pay2.day || 0) ? [1, 2] : [2, 1];
+    h += '<h2>Payment plan</h2>';
+    seq.forEach(function (g) {
+      var pd = g === 1 ? state.pay1 : state.pay2;
+      var rows = r.cards.filter(function (c) { return c.parts[g] > 0.004; });
+      var tot = r2(rows.reduce(function (t, c) { return t + c.parts[g]; }, 0));
+      h += '<p><b>' + esc((g === 1 ? 'First' : 'Second') + ' pay day' + (pd.day ? ' (' + ord(pd.day) + ')' : '')) + '</b></p><table>' + tr_(['Card', 'Pay'], true) +
+        rows.map(function (c) { return tr_([c.name, fmt(c.parts[g])]); }).join('') + tr_(['Total to pay', fmt(tot)], false, true) + '</table>';
+    });
+    h += '<h2>Cards</h2><table>' + tr_(['Card', 'Due day', 'Amount due', 'Minimum', 'Planned payment', 'Left unpaid'], true) +
+      r.cards.map(function (c) { var dd = +c.src.dueDay || 0; return tr_([c.name, dd ? ord(dd) : '-', fmt(c.balance), fmt(c.due), fmt(c.pay), fmt(c.remaining)]); }).join('') +
+      tr_(['Total', '', fmt(r.totalDebt), fmt(r.totalDue), fmt(r.totalDue + r.totalExtra), fmt(r.debtLeft)], false, true) + '</table>';
+    var subTot = 0;
+    h += '<h2>Subscriptions</h2><p>Tracking only. Not included in the card amounts above.</p><table>' + tr_(['Subscription', 'Charged to', 'Bills on', 'Amount a month'], true) +
+      state.subs.map(function (sb) { var c = subCard(sb); subTot += Math.max(0, +sb.amount || 0); return tr_([subName(sb), c ? cardName(c) : 'Not on a card', +sb.day ? ord(sb.day) : '-', fmt(+sb.amount || 0)]); }).join('') +
+      tr_(['Total each month', '', '', fmt(subTot)], false, true) + '</table>';
+    h += '<h2>Goals</h2><table>' + tr_(['Goal', 'Saved', 'Target', 'To save a month'], true) +
+      state.goals.map(function (g) { var k = goalCalc(g); return tr_([goalName(g), fmt(k.saved), fmt(k.target), k.left <= 0 && k.target > 0 ? 'Reached' : (k.need > 0 ? fmt(k.need) : '-')]); }).join('') + '</table>';
+    var total = 0;
+    h += '<h2>Accounts</h2><table>' + tr_(['Account', 'Type', 'Worth'], true) +
+      state.assets.map(function (a) { var v = assetValue(a); total += v; return tr_([assetName(a), typeInfo(a.type)[1], fmt(v)]); }).join('') +
+      tr_(['Total assets', '', fmt(total)], false, true) + tr_(['Card dues this month', '', fmt(r.totalDebt)]) + tr_(['Assets minus card dues', '', fmt(total - r.totalDebt)], false, true) + '</table>';
+    h += '<p style="margin-top:14px">Estimates only. Printed ' + esc(new Date().toLocaleDateString()) + '.</p>';
+    $('print-sheet').innerHTML = h;
+  }
+  function printSummary() {
+    buildPrint();
+    setTimeout(function () { try { window.print(); } catch (e) {} }, 80);
+  }
+
+  /* sync across devices (Supabase REST, your own project) */
+  function syMsg(t) { $('sy-msg').textContent = t; }
+  function updateSyncUi() {
+    var sy = prefs.sync;
+    $('sy-url').value = sy.url || ''; $('sy-key').value = sy.key || ''; $('sy-email').value = sy.email || ''; $('sy-pass').value = '';
+    var on = !!sy.token;
+    $('sy-act').hidden = !on; $('sy-out').hidden = !on;
+    $('sy-in').hidden = on; $('sy-up').hidden = on;
+    if (on) syMsg('Signed in as ' + sy.email + '.');
+  }
+  function syCfg() {
+    var sy = prefs.sync;
+    sy.url = $('sy-url').value.trim().replace(/\/+$/, ''); sy.key = $('sy-key').value.trim(); sy.email = $('sy-email').value.trim();
+    savePrefs();
+    if (!/^https:\/\/.+/.test(sy.url) || !sy.key) { syMsg('Enter your Supabase project URL and public key first.'); return false; }
+    return true;
+  }
+  function sbFetch(path, opt, retried) {
+    var sy = prefs.sync;
+    var headers = { apikey: sy.key, 'Content-Type': 'application/json' };
+    if (sy.token) headers.Authorization = 'Bearer ' + sy.token;
+    Object.keys(opt.headers || {}).forEach(function (k) { headers[k] = opt.headers[k]; });
+    return fetch(sy.url + path, { method: opt.method || 'GET', headers: headers, body: opt.body }).then(function (res) {
+      if (res.status === 401 && sy.refresh && !retried && path.indexOf('/auth/') !== 0) {
+        return fetch(sy.url + '/auth/v1/token?grant_type=refresh_token', { method: 'POST', headers: { apikey: sy.key, 'Content-Type': 'application/json' }, body: JSON.stringify({ refresh_token: sy.refresh }) })
+          .then(function (r2_) { return r2_.ok ? r2_.json() : null; })
+          .then(function (j) {
+            if (!j || !j.access_token) { sy.token = ''; savePrefs(); updateSyncUi(); throw new Error('Session ended. Please sign in again.'); }
+            sy.token = j.access_token; sy.refresh = j.refresh_token || sy.refresh; savePrefs();
+            return sbFetch(path, opt, true);
+          });
+      }
+      return res;
+    });
+  }
+  function syFail(err) { syMsg(err && err.message && !/Failed to fetch|NetworkError|Load failed/i.test(err.message) ? err.message : 'Could not reach Supabase. This only works from a page you host yourself, with a working internet connection.'); }
+  function syAuth(path, extra) {
+    if (!syCfg()) return;
+    var pass = $('sy-pass').value;
+    if (!prefs.sync.email || !pass) { syMsg('Enter your email and password.'); return; }
+    syMsg('Working...');
+    sbFetch(path, { method: 'POST', body: JSON.stringify({ email: prefs.sync.email, password: pass }) }).then(function (res) {
+      return res.json().then(function (j) { return { ok: res.ok, j: j }; });
+    }).then(function (o) {
+      if (!o.ok) { syMsg(o.j.error_description || o.j.msg || o.j.message || 'That did not work.'); return; }
+      if (o.j.access_token) {
+        prefs.sync.token = o.j.access_token; prefs.sync.refresh = o.j.refresh_token || ''; prefs.sync.uid = (o.j.user && o.j.user.id) || '';
+        savePrefs(); updateSyncUi();
+      } else syMsg('Account created. Check your email to confirm it, then tap Sign in.');
+    }).catch(syFail);
+  }
+  $('sy-in').addEventListener('click', function () { syAuth('/auth/v1/token?grant_type=password'); });
+  $('sy-up').addEventListener('click', function () { syAuth('/auth/v1/signup'); });
+  $('sy-out').addEventListener('click', function () {
+    prefs.sync.token = ''; prefs.sync.refresh = ''; prefs.sync.uid = ''; savePrefs(); updateSyncUi(); syMsg('Signed out.');
+  });
+  $('sy-push').addEventListener('click', function () {
+    if (!prefs.sync.uid) { syMsg('Please sign in again.'); return; }
+    syMsg('Saving...');
+    state.months[state.month] = snapOf(state);
+    sbFetch('/rest/v1/planner_state?on_conflict=user_id', { method: 'POST', headers: { Prefer: 'resolution=merge-duplicates,return=minimal' },
+      body: JSON.stringify({ user_id: prefs.sync.uid, data: state, updated_at: new Date().toISOString() }) }).then(function (res) {
+      if (res.ok) syMsg('Saved to the cloud at ' + new Date().toLocaleTimeString() + '.');
+      else return res.text().then(function (t) { syMsg('Could not save (' + res.status + '). Did you create the planner_state table? ' + t.slice(0, 120)); });
+    }).catch(syFail);
+  });
+  var pullArm = false;
+  $('sy-pull').addEventListener('click', function () {
+    if (!prefs.sync.uid) { syMsg('Please sign in again.'); return; }
+    if (!pullArm) { pullArm = true; syMsg('Tap Load from cloud again to replace this device with the cloud copy.'); setTimeout(function () { pullArm = false; }, 6000); return; }
+    pullArm = false; syMsg('Loading...');
+    sbFetch('/rest/v1/planner_state?select=data,updated_at&user_id=eq.' + encodeURIComponent(prefs.sync.uid), {}).then(function (res) {
+      if (!res.ok) return res.text().then(function (t) { syMsg('Could not load (' + res.status + '). ' + t.slice(0, 120)); });
+      return res.json().then(function (rows) {
+        if (!rows.length) { syMsg('Nothing is saved in the cloud yet.'); return; }
+        restoreFrom(rows[0].data);
+        syMsg('Loaded the cloud copy from ' + new Date(rows[0].updated_at).toLocaleString() + '.');
+      });
+    }).catch(function (e) { if (e && e.message === 'bad') syMsg('The cloud copy is not valid.'); else syFail(e); });
+  });
+
+  /* ---------- Filipino (Taglish) labels ---------- */
+  var TL = {"Pay cards": "Bayad sa cards", "Plan ahead": "Planuhin", "Plan": "Plano", "My assets": "Mga asset ko", "Assets": "Assets", "Goals": "Mga goal", "Subscriptions": "Mga subscription", "Subs": "Subs", "Cards": "Cards", "Add your name": "Ilagay ang pangalan mo", "Change name": "Palitan ang pangalan", "Hide amounts": "Itago ang halaga", "Show amounts": "Ipakita ang halaga", "Settings": "Mga setting", "Lock": "I-lock", "Close": "Isara", "Done": "Tapos na", "Save": "I-save", "Edit": "I-edit", "Remove": "Alisin", "Continue": "Magpatuloy", "Skip for now": "Laktawan muna", "Cancel": "Kanselahin", "Welcome! What should I call you?": "Kumusta! Ano ang itatawag ko sa iyo?", "Change your name": "Palitan ang pangalan mo", "Your name": "Pangalan mo", "Your first name": "Unang pangalan mo", "Earlier month": "Naunang buwan", "Later month": "Susunod na buwan", "Month": "Buwan", "Quick add": "Mabilisang dagdag", "More info": "Dagdag na info", "Delete": "Burahin", "Sections": "Mga seksyon", "Your cards": "Mga card mo", "These are example numbers. Change any field to use your own.": "Halimbawa lang ang mga numerong ito. Palitan ang kahit anong field para gamitin ang sarili mong datos.", "Pay days": "Mga sahod", "First pay day": "Unang sahod", "Second pay day": "Ikalawang sahod", "Day of month": "Araw ng buwan", "Set aside for cards": "Nakalaan para sa cards", "Currency": "Currency", "Main currency code": "Main currency code", "Currency symbol": "Simbolo ng currency", "Which card to pay off first": "Aling card ang unang tatapusin", "Smallest amount due (finishes fastest)": "Pinakamaliit na amount due (pinakamabilis matapos)", "Highest interest rate (costs least)": "Pinakamataas na interest (pinakamura sa huli)", "I will choose": "Ako ang pipili", "Card to pay off": "Card na tatapusin", "Add card": "Magdagdag ng card", "Card name": "Pangalan ng card", "Location": "Lokasyon", "Bank": "Bangko", "Choose location": "Pumili ng lokasyon", "Choose a location first": "Pumili muna ng lokasyon", "Choose bank (optional)": "Pumili ng bangko (optional)", "Other bank": "Ibang bangko", "Add installment plans": "Magdagdag ng installment plans", "Installment plans": "Mga installment plan", "Upload logo": "Mag-upload ng logo", "Change logo": "Palitan ang logo", "Remove logo": "Alisin ang logo", "Due day of month": "Due date (araw ng buwan)", "Pay it with": "Bayaran gamit ang", "By due date": "Ayon sa due date", "Interest % a year": "Interest % kada taon", "New card": "Bagong card", "No due date": "Walang due date", "No due date set": "Walang due date", "Philippines (PHP)": "Pilipinas (PHP)", "Type today's rate": "I-type ang rate ngayon", "Payment split": "Hati ng bayad", "Copy plan": "Kopyahin ang plano", "Copied": "Nakopya", "Select and copy manually": "Piliin at kopyahin nang mano-mano", "Minimums on all cards": "Minimum ng lahat ng cards", "Extra on top of minimums": "Extra bukod sa minimum", "Still unpaid after paying": "Hindi pa bayad pagkatapos magbayad", "Short of the minimums by": "Kulang sa minimum ng", "Total you set aside": "Kabuuang inilaan mo", "Extra": "Extra", "Extra payment": "Extra na bayad", "Paid in full": "Bayad na lahat", "Pay off first": "Unahing tapusin", "Paid": "Bayad", "Minimum": "Minimum", "Minimum due": "Minimum due", "No cards are paid on this pay day.": "Walang card na babayaran sa sahod na ito.", "The amounts you set aside do not cover every minimum. Each pay day pays the smallest minimums in full first, so as many cards as possible stay current. Contact the banks of the cards marked Short about a payment arrangement.": "Hindi sapat ang inilaan mo para sa lahat ng minimum. Sa bawat sahod, inuuna ang pinakamaliliit na minimum para kahit paano ay maraming card ang manatiling updated. Makipag-ugnayan sa bangko ng mga card na may markang Kulang para sa payment arrangement.", "What is it for": "Para saan ito", "Monthly amount": "Buwanang halaga", "Months left": "Buwan na natitira", "Add installment": "Magdagdag ng installment", "Billed each month": "Siningil kada buwan", "Still to pay in total": "Kabuuang babayaran pa", "Last payment in": "Huling bayad sa", "None": "Wala", "No installment plans yet.": "Wala pang installment plan.", "e.g. Phone, 0% interest": "hal. Phone, 0% interest", "e.g. 20": "hal. 20", "e.g. 12": "hal. 12", "Due soon": "Malapit nang due", "Payoff schedule": "Iskedyul ng pagbabayad", "Debt-free by": "Walang utang pagdating ng", "Months to pay off": "Buwan bago matapos", "Interest paid with this plan": "Interest na babayaran sa planong ito", "Saved versus minimums only": "Natipid kumpara sa minimum lang", "Same time": "Parehong tagal", "When each card clears": "Kailan matatapos ang bawat card", "Month-by-month table": "Talahanayan kada buwan", "What you still have to pay at the end of each month, including later installments": "Ang babayaran pa sa katapusan ng bawat buwan, kasama ang mga susunod na installment", "Not within 10 years": "Hindi matatapos sa loob ng 10 taon", "Over 10 years": "Lampas 10 taon", "Still to pay": "Babayaran pa", "Interest": "Interest", "Paid this month": "Binayaran ngayong buwan", "Total": "Kabuuan", "The chart shows the first 60 months.": "Ipinapakita ng chart ang unang 60 buwan.", "Due today": "Due ngayon", "Due tomorrow": "Due bukas", "No cards have an amount due.": "Walang card na may amount due.", "At this pace the cards are not cleared within 10 years. Raise the amount you set aside, or check the interest rates.": "Sa bilis na ito, hindi matatapos ang mga card sa loob ng 10 taon. Dagdagan ang inilaan mo, o suriin ang mga interest rate.", "Some months do not cover every minimum, so this plan may take longer and cost more than shown.": "May mga buwang hindi sapat para sa lahat ng minimum, kaya maaaring mas matagal at mas mahal ang planong ito kaysa sa ipinapakita.", "Add the yearly interest % on each card to include interest in these numbers.": "Ilagay ang yearly interest % ng bawat card para maisama ang interest sa mga numerong ito.", "Stacked bars of how much you still have to pay at the end of each month, one colour per card": "Mga bar ng babayaran pa sa katapusan ng bawat buwan, may sariling kulay ang bawat card", "Banks and wallets": "Mga bangko at wallet", "Bank or wallet name": "Pangalan ng bangko o wallet", "Type": "Uri", "E-wallet": "E-wallet", "Crypto": "Crypto", "Cash": "Cash", "Other": "Iba pa", "Currency code": "Currency code", "Amount": "Halaga", "Add account": "Magdagdag ng account", "Total assets": "Kabuuang assets", "Card dues this month": "Card dues ngayong buwan", "Assets minus card dues": "Assets bawas card dues", "Accounts": "Mga account", "New account": "Bagong account", "Add an account to see the breakdown.": "Magdagdag ng account para makita ang hati.", "These are example accounts and rates. Change any field to use your own.": "Halimbawa lang ang mga account at rate na ito. Palitan ang kahit anong field para gamitin ang sarili mong datos.", "Your goals": "Mga goal mo", "Goal name": "Pangalan ng goal", "Target amount": "Target na halaga", "Saved so far": "Naipon na", "Target date": "Target na petsa", "Planned saving a month": "Planong ipon kada buwan", "Add goal": "Magdagdag ng goal", "Goal progress": "Progreso ng mga goal", "Total of all goals": "Kabuuan ng lahat ng goal", "To save each month": "Iipunin kada buwan", "New goal": "Bagong goal", "Reached": "Naabot na", "No date set": "Walang petsa", "Goal reached.": "Naabot na ang goal.", "Enter a target amount to see your plan.": "Maglagay ng target na halaga para makita ang plano mo.", "Add a target date or a monthly amount to see a plan.": "Maglagay ng target na petsa o buwanang halaga para makita ang plano.", "Add a goal to see your progress.": "Magdagdag ng goal para makita ang progreso mo.", "optional": "optional", "e.g. Emergency fund": "hal. Emergency fund", "This is an example goal. Change any field to use your own.": "Halimbawa lang ang goal na ito. Palitan ang kahit anong field para gamitin ang sarili mong datos.", "Subscription name": "Pangalan ng subscription", "Amount a month": "Halaga kada buwan", "Billing day of month": "Araw ng singil kada buwan", "Charged to": "Sinisingil sa", "Not on a card": "Hindi sa card", "No card": "Walang card", "Add subscription": "Magdagdag ng subscription", "Monthly subscriptions": "Buwanang subscription", "Total each month": "Kabuuan kada buwan", "Cost over a year": "Gastos sa isang taon", "Next charges": "Susunod na singil", "New subscription": "Bagong subscription", "Today": "Ngayon", "Tomorrow": "Bukas", "Add a subscription to see the breakdown.": "Magdagdag ng subscription para makita ang hati.", "Add a billing day to see the next charges.": "Maglagay ng araw ng singil para makita ang susunod na singil.", "These are example subscriptions. Change any field to use your own.": "Halimbawa lang ang mga subscription na ito. Palitan ang kahit anong field para gamitin ang sarili mong datos.", "e.g. Netflix": "hal. Netflix", "Subscription": "Subscription", "Language": "Wika", "Appearance": "Itsura", "Match my device": "Sundin ang device ko", "Light": "Maliwanag", "Dark": "Madilim", "PIN lock": "PIN lock", "New PIN (4 to 6 digits)": "Bagong PIN (4 hanggang 6 na numero)", "Repeat PIN": "Ulitin ang PIN", "Turn on PIN lock": "I-on ang PIN lock", "Lock when I leave this page": "I-lock kapag umalis ako sa page", "Lock now": "I-lock ngayon", "Current PIN": "Kasalukuyang PIN", "Change PIN": "Palitan ang PIN", "Remove PIN": "Alisin ang PIN", "PIN lock is on.": "Naka-on na ang PIN lock.", "Use 4 to 6 digits.": "Gumamit ng 4 hanggang 6 na numero.", "The two PINs do not match.": "Hindi magkapareho ang dalawang PIN.", "Current PIN is wrong.": "Mali ang kasalukuyang PIN.", "PIN changed.": "Napalitan na ang PIN.", "PIN lock is off.": "Naka-off na ang PIN lock.", "Enter your PIN": "Ilagay ang PIN mo", "Wrong PIN. Try again.": "Maling PIN. Subukan ulit.", "Too many tries. Wait 30 seconds.": "Masyadong maraming subok. Maghintay ng 30 segundo.", "Forgot PIN?": "Nakalimutan ang PIN?", "Tap again to erase ALL data on this device and remove the PIN.": "Pindutin ulit para BURAHIN ang LAHAT ng datos sa device na ito at alisin ang PIN.", "Erase and reset": "Burahin at i-reset", "Monthly summary": "Buwanang buod", "Print summary": "I-print ang buod", "Print": "I-print", "Sync across devices": "I-sync sa iba pang device", "Supabase project URL": "Supabase project URL", "Public key (anon or publishable)": "Public key (anon o publishable)", "Email": "Email", "Password": "Password", "Sign in": "Mag-sign in", "Create account": "Gumawa ng account", "Sign out": "Mag-sign out", "Save to cloud": "I-save sa cloud", "Load from cloud": "I-load mula sa cloud", "Enter your Supabase project URL and public key first.": "Ilagay muna ang Supabase project URL at public key mo.", "Enter your email and password.": "Ilagay ang email at password mo.", "Working...": "Pinoproseso...", "Saving...": "Nagse-save...", "Loading...": "Naglo-load...", "Signed out.": "Naka-sign out na.", "Nothing is saved in the cloud yet.": "Wala pang naka-save sa cloud.", "Please sign in again.": "Mag-sign in ulit.", "Tap Load from cloud again to replace this device with the cloud copy.": "Pindutin ulit ang I-load mula sa cloud para palitan ang device na ito ng kopya sa cloud.", "Account created. Check your email to confirm it, then tap Sign in.": "Nagawa na ang account. Tingnan ang email mo para kumpirmahin, tapos pindutin ang Mag-sign in.", "The cloud copy is not valid.": "Hindi valid ang kopya sa cloud.", "Could not reach Supabase. This only works from a page you host yourself, with a working internet connection.": "Hindi maabot ang Supabase. Gumagana lang ito sa page na ikaw mismo ang nag-host, at may gumaganang internet.", "Backup and restore": "Backup at restore", "Keep a copy": "Magtabi ng kopya", "Copy backup": "Kopyahin ang backup", "Restore": "I-restore", "Backup restored.": "Na-restore na ang backup.", "That text is not a valid backup.": "Hindi valid na backup ang text na iyon.", "Backup text is in the box above. Paste it somewhere safe.": "Nasa kahon sa itaas ang backup text. I-paste ito sa ligtas na lugar.", "Backup text": "Backup text", "Backup text appears here, or paste a backup to restore": "Dito lalabas ang backup text, o mag-paste ng backup para i-restore", "Card": "Card", "Sub": "Sub", "Goal": "Goal", "Account": "Account", "Payment plan": "Payment plan", "Total to pay": "Kabuuang babayaran", "Due day": "Due date", "Amount due": "Amount due", "Planned payment": "Planong bayad", "Left unpaid": "Natitirang hindi bayad", "Bills on": "Singil tuwing", "Tracking only. Not included in the card amounts above.": "Pang-track lang. Hindi kasama sa mga halaga ng card sa itaas.", "Saved": "Naipon", "Target": "Target", "To save a month": "Iipunin kada buwan", "Worth": "Halaga", "Estimates only.": "Pagtataya lang.", "Still unpaid": "Hindi pa bayad", "Split your pay between your credit cards for each cut-off, and keep track of your money across banks and wallets.": "Hatiin ang sahod mo sa mga credit card mo kada cut-off, at subaybayan ang pera mo sa mga bangko at wallet.", "Each month keeps its own pay amounts, cards, accounts and goals, saved on this device. Open a new month to carry everything over: installments count down by a month and finished ones drop off. Earlier months stay saved and you can come back to edit them.": "Bawat buwan ay may sariling sahod, cards, accounts at goals na naka-save sa device na ito. Magbukas ng bagong buwan para madala ang lahat: bumababa ng isang buwan ang mga installment at nawawala ang mga tapos na. Nananatiling naka-save ang mga nakaraang buwan at puwede mo itong i-edit.", "Each card is paid on the pay day just before its due date. Use 30 or 31 for an end-of-month pay day. Any extra goes to the card you want to clear first, even if it is due later.": "Binabayaran ang bawat card sa sahod na pinakamalapit bago ang due date nito. Gamitin ang 30 o 31 para sa sahod sa katapusan ng buwan. Ang extra ay mapupunta sa card na gusto mong unahing tapusin, kahit mas huli ang due date nito.", "Your plan is worked out in this currency. Each card takes the currency of its location, and cards from other countries are converted with the rate you type on the card.": "Sa currency na ito kinukuwenta ang plano mo. Ang bawat card ay gumagamit ng currency ng lokasyon nito, at kino-convert ang mga card mula sa ibang bansa gamit ang rate na itinype mo sa card.", "Tap a card to open it. Enter the Total Amount Due and Minimum Amount Due from your latest statement. Installments always count toward both amounts.": "Pindutin ang card para buksan. Ilagay ang Total Amount Due at Minimum Amount Due mula sa pinakabago mong statement. Laging kasama ang mga installment sa dalawang halaga.", "Anything left unpaid carries over to next month and may add interest.": "Ang hindi nabayaran ay madadala sa susunod na buwan at maaaring magdagdag ng interest.", "Add each installment still being billed on this card. They count toward both the amount due and the minimum.": "Idagdag ang bawat installment na sinisingil pa sa card na ito. Kasama ang mga ito sa amount due at sa minimum.", "Add each installment that is still being billed on this card. They count toward both the amount due and the minimum.": "Idagdag ang bawat installment na sinisingil pa sa card na ito. Kasama ang mga ito sa amount due at sa minimum.", "Dates count from today on your device. Amounts come from the Pay cards tab.": "Binibilang ang mga petsa mula ngayon sa device mo. Galing sa tab na Pay cards ang mga halaga.", "How this is worked out: each month uses the total you set aside on both pay days. Minimums are paid first, then extra goes to the card you chose to pay off first. Unpaid balances grow by the card's yearly interest divided by 12. Future minimums keep the same share of the balance as this month's, plus installments, and never fall below 5% of this month's amount due. No new purchases are added. This is an estimate, not your bank's figures.": "Paano ito kinukuwenta: ginagamit kada buwan ang kabuuang inilaan mo sa dalawang sahod. Binabayaran muna ang mga minimum, tapos mapupunta ang extra sa card na pinili mong unahin. Lumalaki ang hindi nabayarang balanse ayon sa yearly interest ng card na hinati sa 12. Ang mga susunod na minimum ay may parehong bahagi ng balanse gaya ngayong buwan, dagdag ang mga installment, at hindi bababa sa 5% ng amount due ngayong buwan. Walang bagong bibilhin na isinasama. Pagtataya lang ito, hindi ang eksaktong numero ng bangko mo.", "For money in another currency or crypto, type its code (USD, USDT, BTC) and enter the rate: how much 1 unit is worth in your main currency. Rates are typed by you and do not update by themselves.": "Para sa pera sa ibang currency o crypto, ilagay ang code nito (USD, USDT, BTC) at ang rate: magkano ang 1 unit sa main currency mo. Ikaw ang nagtatype ng rate at hindi ito awtomatikong nag-a-update.", "Set a target amount and a target date. The page works out how much to save each month. Enter what you plan to save a month to see when you would finish.": "Maglagay ng target na halaga at target na petsa. Kukuwentahin ng page kung magkano ang iipunin kada buwan. Ilagay ang planong ipon kada buwan para makita kung kailan ka matatapos.", "Just for tracking. These amounts are not added to any card's amount due or to your payment plan. Pick the card each one is charged to so you can see what is billed where.": "Pang-track lang ito. Hindi idinadagdag ang mga halagang ito sa amount due ng kahit anong card o sa payment plan mo. Piliin ang card na sinisingilan ng bawat isa para makita kung ano ang sinisingil saan.", "Your entries are saved in this browser only. To move them to another device or keep a safe copy, copy the backup text and paste it into a note. To restore, paste it below and tap Restore.": "Sa browser na ito lang naka-save ang mga ilalagay mo. Para ilipat sa ibang device o magtabi ng ligtas na kopya, kopyahin ang backup text at i-paste sa isang note. Para i-restore, i-paste ito sa ibaba at pindutin ang Restore.", "Keeps your amounts private if someone borrows your device. The PIN is stored only on this device and is a screen lock, not encryption. If you forget it, the only way back in is to erase this device's data, so keep a backup copy.": "Pinoprotektahan ang privacy ng mga halaga mo kung may hihiram ng device mo. Sa device na ito lang naka-store ang PIN at screen lock lang ito, hindi encryption. Kapag nakalimutan mo ito, ang tanging paraan pabalik ay burahin ang datos ng device na ito, kaya magtabi ng backup.", "Makes a one-page summary of the month you are viewing: pay plan, cards, subscriptions, goals and accounts. In the print window you can also choose Save as PDF.": "Gagawa ng one-page na buod ng buwang tinitingnan mo: payment plan, cards, subscriptions, goals at accounts. Sa print window, puwede mo ring piliin ang Save as PDF.", "Saves your planner to your own Supabase project so you can open it on another device. It works only from a copy of the page you host yourself, not from inside claude.ai. You need a Supabase project with the planner_state table, and an account made here. Sync is manual: Save to cloud uploads this device, Load from cloud replaces this device with the cloud copy. The PIN is never uploaded.": "Isi-save ang planner mo sa sarili mong Supabase project para mabuksan sa ibang device. Gumagana lang ito sa kopya ng page na ikaw mismo ang nag-host, hindi sa loob ng claude.ai. Kailangan mo ng Supabase project na may planner_state table, at account na ginawa dito. Manual ang sync: ina-upload ng I-save sa cloud ang device na ito, pinapalitan naman ng I-load mula sa cloud ang device na ito ng kopya sa cloud. Hindi kailanman ina-upload ang PIN."};
+  function tlOrd(x) { return String(x).replace(/(\d+)(?:st|nd|rd|th)/, 'ika-$1'); }
+  var TLR = [
+    [/^Hi, (.+)$/, function (m) { return 'Kumusta, ' + m[1]; }],
+    [/^Due the (\d+)\w*$/, function (m) { return 'Due sa ika-' + m[1]; }],
+    [/^Bills the (\d+)\w*$/, function (m) { return 'Singil sa ika-' + m[1]; }],
+    [/^(\d+)(?:st|nd|rd|th)$/, function (m) { return 'ika-' + m[1]; }],
+    [/^(\d+) installments?$/, function (m) { return m[1] + ' installment'; }],
+    [/^Installment plans \((\d+)\)$/, function (m) { return 'Mga installment plan (' + m[1] + ')'; }],
+    [/^(.+) installments$/, function (m) { return 'Mga installment ng ' + m[1]; }],
+    [/^In (\d+) days$/, function (m) { return 'Sa loob ng ' + m[1] + ' araw'; }],
+    [/^(\d+) months?$/, function (m) { return m[1] + ' buwan'; }],
+    [/^(\d+) months? sooner$/, function (m) { return m[1] + ' buwan na mas maaga'; }],
+    [/^(\d+) months? left\. Save (.+) a month to reach it on time\.$/, function (m) { return m[1] + ' buwan na lang. Mag-ipon ng ' + m[2] + ' kada buwan para maabot ito sa tamang oras.'; }],
+    [/^The target date is here and (.+) is still needed\.$/, function (m) { return 'Narito na ang target na petsa at kulang pa ng ' + m[1] + '.'; }],
+    [/^At (\S+) a month you would finish in (\d+) months? \((.+)\)\.(?: That is on time\.| That is (\d+) months? late\.)?$/, function (m) {
+      var t = 'Sa ' + m[1] + ' kada buwan, matatapos ka sa loob ng ' + m[2] + ' buwan (' + m[3] + ').';
+      if (/That is on time/.test(m[0])) t += ' Nasa tamang oras iyon.';
+      else if (m[4]) t += ' Huli iyon ng ' + m[4] + ' buwan.';
+      return t;
+    }],
+    [/^Short by (.+)$/, function (m) { return 'Kulang ng ' + m[1]; }],
+    [/^Still unpaid: (.+)$/, function (m) { return 'Hindi pa bayad: ' + m[1]; }],
+    [/^Pay (\S*\d\S*) of (\S*\d\S*)$/, function (m) { return 'Bayaran ang ' + m[1] + ' sa ' + m[2]; }],
+    [/^Minimum due (\S*\d\S*)$/, function (m) { return 'Minimum due ' + m[1]; }],
+    [/^Planned payment (\S*\d\S*)$/, function (m) { return 'Planong bayad ' + m[1]; }],
+    [/^Includes installments (\S*\d\S*)$/, function (m) { return 'Kasama ang installments ' + m[1]; }],
+    [/^Pays (.+) in total, (.+) of it interest$/, function (m) { return 'Magbabayad ng ' + m[1] + ' kabuuan, ' + m[2] + ' dito ay interest'; }],
+    [/^Clears (.+)$/, function (m) { return 'Tapos sa ' + m[1]; }],
+    [/^Everything you have across (\d+) accounts?$/, function (m) { return 'Lahat ng pera mo sa ' + m[1] + ' account'; }],
+    [/^(First|Second) pay day(?: \((.+)\))?$/, function (m) { return (m[1] === 'First' ? 'Unang sahod' : 'Ikalawang sahod') + (m[2] ? ' (' + tlOrd(m[2]) + ')' : ''); }],
+    [/^Paid from your (first|second) pay day(?: \((.+)\))?$/, function (m) { return 'Babayaran mula sa ' + (m[1] === 'first' ? 'unang' : 'ikalawang') + ' sahod' + (m[2] ? ' (' + tlOrd(m[2]) + ')' : ''); }],
+    [/^Amount due this month(?: \((.+)\))?$/, function (m) { return 'Amount due ngayong buwan' + (m[1] ? ' (' + m[1] + ')' : ''); }],
+    [/^Minimum due \((.+)\)$/, function (m) { return 'Minimum due (' + m[1] + ')'; }],
+    [/^Rate to (.+)$/, function (m) { return 'Rate sa ' + m[1]; }],
+    [/^1 (\S+) is worth how many (.+)\?$/, function (m) { return 'Ang 1 ' + m[1] + ' ay ilang ' + m[2] + '?'; }],
+    [/^In (.+): amount due (.+), minimum (.+)\.$/, function (m) { return 'Sa ' + m[1] + ': amount due ' + m[2] + ', minimum ' + m[3] + '.'; }],
+    [/^Enter the rate above so amounts convert to (.+)\. Until then they count 1 to 1\.$/, function (m) { return 'Ilagay ang rate sa itaas para ma-convert sa ' + m[1] + ' ang mga halaga. Hanggang doon, 1 sa 1 muna ang bilang.'; }],
+    [/^Add the exchange rate for (.+)\. Until then their amounts count 1 to 1\.$/, function (m) { return 'Ilagay ang exchange rate para sa ' + m[1] + '. Hanggang doon, 1 sa 1 muna ang bilang ng mga halaga nila.'; }],
+    [/^(\S+) is left over because every card is already paid in full\.$/, function (m) { return 'May natirang ' + m[1] + ' dahil bayad na lahat ang mga card.'; }],
+    [/^(\S*\d\S*) of (\S*\d\S*)$/, function (m) { return m[1] + ' mula sa ' + m[2]; }],
+    [/^(\S*\d\S*) \/ month$/, function (m) { return m[1] + ' / buwan'; }],
+    [/^(\S*\d\S*)\/mo$/, function (m) { return m[1] + '/buwan'; }],
+    [/^(.+) \(new\)$/, function (m) { return m[1] + ' (bago)'; }],
+    [/^You are looking at (.+)\.$/, function (m) { return 'Tinitingnan mo ang ' + m[1] + '.'; }],
+    [/^Go to (.+)$/, function (m) { return 'Pumunta sa ' + m[1]; }],
+    [/^Start (.+)$/, function (m) { return 'Simulan ang ' + m[1]; }],
+    [/^Signed in as (.+)\.$/, function (m) { return 'Naka-sign in bilang ' + m[1] + '.'; }],
+    [/^Saved to the cloud at (.+)\.$/, function (m) { return 'Na-save sa cloud nang ' + m[1] + '.'; }],
+    [/^Loaded the cloud copy from (.+)\.$/, function (m) { return 'Na-load ang kopya sa cloud mula ' + m[1] + '.'; }],
+    [/^Could not (save|load) \((\d+)\)\.(.*)$/, function (m) { return 'Hindi ma-' + (m[1] === 'save' ? 'save' : 'load') + ' (' + m[2] + ').' + m[3]; }],
+    [/^Printed (.+)\.$/, function (m) { return 'Pinrint noong ' + m[1] + '.'; }],
+    [/^Estimates only\. Printed (.+)\.$/, function (m) { return 'Pagtataya lang. Pinrint noong ' + m[1] + '.'; }]
+  ];
+  var tlCache = {};
+  function trCore(core) {
+    if (Object.prototype.hasOwnProperty.call(TL, core)) return TL[core];
+    for (var i = 0; i < TLR.length; i++) { var m = TLR[i][0].exec(core); if (m) return TLR[i][1](m); }
+    return core;
+  }
+  function trStr(s) {
+    var lead = s.match(/^\s*/)[0], trail = s.match(/\s*$/)[0], core = s.slice(lead.length, s.length - trail.length);
+    if (!core) return s;
+    if (tlCache[core] !== undefined) return lead + tlCache[core] + trail;
+    var out;
+    var direct = trCore(core);
+    if (direct !== core) out = direct;
+    else if (core.indexOf('·') >= 0) out = core.split(/(\s*·\s*)/).map(function (t, i) { return i % 2 ? t : trStr(t); }).join('');
+    else out = core;
+    tlCache[core] = out;
+    return lead + out + trail;
+  }
+  var i18nRecs = new WeakMap(), i18nUsed = false, i18nBusy = false;
+  var I18N_ATTRS = ['placeholder', 'aria-label', 'data-q', 'title'];
+  function i18nText(n) {
+    var rec = i18nRecs.get(n), v = n.nodeValue;
+    if (rec && v === rec.out) { if (prefs.lang !== 'tl') { n.nodeValue = rec.orig; i18nRecs.delete(n); } return; }
+    if (prefs.lang !== 'tl') return;
+    var out = trStr(v);
+    if (out !== v) { i18nRecs.set(n, { orig: v, out: out }); n.nodeValue = out; i18nUsed = true; }
+  }
+  function i18nAttrs(el) {
+    var recs = i18nRecs.get(el);
+    I18N_ATTRS.forEach(function (a) {
+      var v = el.getAttribute(a);
+      if (v === null) return;
+      var rec = recs && recs[a];
+      if (rec && v === rec.out) { if (prefs.lang !== 'tl') { el.setAttribute(a, rec.orig); delete recs[a]; } return; }
+      if (prefs.lang !== 'tl') return;
+      var out = trStr(v);
+      if (out !== v) { if (!recs) { recs = {}; i18nRecs.set(el, recs); } recs[a] = { orig: v, out: out }; el.setAttribute(a, out); i18nUsed = true; }
+    });
+  }
+  function i18nPass() {
+    if (prefs.lang !== 'tl' && !i18nUsed) return;
+    if (!document.createTreeWalker || i18nBusy) return;
+    i18nBusy = true;
+    try {
+      var w = document.createTreeWalker(document.body, 4), n, texts = [];
+      while ((n = w.nextNode())) {
+        var pe = n.parentNode;
+        if (pe && (pe.nodeName === 'SCRIPT' || pe.nodeName === 'STYLE' || pe.nodeName === 'TEXTAREA')) continue;
+        texts.push(n);
+      }
+      texts.forEach(i18nText);
+      document.body.querySelectorAll('[placeholder],[aria-label],[data-q],[title]').forEach(i18nAttrs);
+      if (prefs.lang !== 'tl') i18nUsed = false;
+    } catch (e) {}
+    i18nBusy = false;
+    if (i18nObs) i18nObs.takeRecords();
+  }
+  var i18nObs = null;
+  if (typeof MutationObserver !== 'undefined' && document.body && document.body.nodeType) {
+    i18nObs = new MutationObserver(function () { if (prefs.lang === 'tl') i18nPass(); });
+    i18nObs.observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: I18N_ATTRS });
+  }
 
   /* ---------- boot ---------- */
   // Logos saved before colours were taken from them get their colour now.
@@ -1467,12 +2462,16 @@ table.sched { border-collapse: collapse; font-size: 0.82rem; width: 100%; min-wi
     });
   }
   function renderAll() {
+    applyTheme(); applyLang();
     $('inst').innerHTML = SUGGEST.map(function (n) { return '<option value="' + esc(n) + '"></option>'; }).join('');
     $('ccys').innerHTML = COUNTRIES.map(function (k) { return k.ccy; }).concat(['USDT', 'BTC', 'ETH']).map(function (n) { return '<option value="' + n + '"></option>'; }).join('');
-    renderCards(); renderFocusOptions(); renderAssetRows();
-    syncTop(); applyTab(); applyHide(); renderHello(); renderResult();
+    renderCards(); renderFocusOptions(); renderAssetRows(); renderGoalRows(); renderSubRows();
+    syncTop(); applyTab(); applyHide(); renderHello(); renderMonthBar(); renderResult();
     ensureTones();
   }
+  if (!state.months[state.month]) state.months[state.month] = snapOf(state);
+  if (lockRec) showLock(); else $('lock').hidden = true;
+  updatePinUi();
   renderAll();
   if (!state.userName && !state.skipName) showWelcome();
 })();
