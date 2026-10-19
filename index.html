@@ -715,18 +715,6 @@ h1 .q { vertical-align: middle; margin-left: 4px; }
       <div class="row-actions"><button id="set-print" type="button" class="primary">Print summary</button></div>
     </div>
 
-    <div class="set-sec">
-      <div class="lbl"><h3>Sync across devices</h3><button type="button" class="q" data-q="Saves your planner to your own Supabase project so you can open it on another device. It works only from a copy of the page you host yourself, not from inside claude.ai. You need a Supabase project with the planner_state table, and an account made here. Sync is manual: Save to cloud uploads this device, Load from cloud replaces this device with the cloud copy. The PIN is never uploaded." aria-label="More info">?</button></div>
-      <div class="fs">
-        <label>Supabase project URL<input id="sy-url" type="url" placeholder="https://xxxx.supabase.co" autocomplete="off"></label>
-        <label>Public key (anon or publishable)<input id="sy-key" type="text" autocomplete="off"></label>
-        <label>Email<input id="sy-email" type="email" autocomplete="email"></label>
-        <label>Password<input id="sy-pass" type="password" autocomplete="current-password"></label>
-        <div class="row-actions wrap"><button id="sy-in" type="button" class="primary">Sign in</button><button id="sy-up" type="button">Create account</button><button id="sy-out" type="button" class="ghost" hidden>Sign out</button></div>
-        <div id="sy-act" class="row-actions wrap" hidden><button id="sy-push" type="button" class="primary">Save to cloud</button><button id="sy-pull" type="button">Load from cloud</button></div>
-        <p id="sy-msg" class="hint"></p>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -2342,8 +2330,7 @@ h1 .q { vertical-align: middle; margin-left: 4px; }
   function idleMsg() { return scanMode === 'local' ? LOCAL_NOTE : ''; }
   function refreshScan() {
     if (!scanChecked || !prefs) return;
-    var sy = prefs.sync;
-    scanMode = smp ? 'claude' : ((sy && sy.token && sy.url) ? 'server' : (inClaudeSpace ? 'none' : 'local'));
+    scanMode = smp ? 'claude' : (inClaudeSpace ? 'none' : 'local');
     scanOk = scanMode !== 'none';
     $('scan-btn').hidden = !scanOk;
     if (!scanCtl) scanMsg(scanMode === 'none' ? NO_OCR + (scanWhy ? ' (' + scanWhy + ')' : '') : idleMsg());
@@ -2497,34 +2484,10 @@ h1 .q { vertical-align: middle; margin-left: 4px; }
       });
     });
   }
-  // Your own server: the photos go to your Supabase function "scan-receipt", which asks the AI service.
-  function serverScan(files) {
-    return Promise.all(files.map(function (f) {
-      return new Promise(function (ok, bad) {
-        var t = setTimeout(function () { bad({ code: 'image_rejected' }); }, 20000);
-        readPicture(f, 1600, false, 'image/jpeg', 0.85, function (url) { clearTimeout(t); ok({ media_type: 'image/jpeg', data: url.split(',')[1] }); });
-      });
-    })).then(function (imgs) {
-      return sbFetch('/functions/v1/scan-receipt', { method: 'POST', body: JSON.stringify({ images: imgs, base: String(state.base || '').toUpperCase() }) });
-    }).then(function (res) {
-      return res.json().catch(function () { return {}; }).then(function (j) {
-        if (!res.ok) throw { code: 'http_' + res.status, server: j && j.error };
-        return j;
-      });
-    });
-  }
   function scanErrText(err) {
     var code = err && err.code, msg = (typeof err === 'string' ? err : (err && err.message)) || '';
     try { console.error('receipt scan failed', scanMode, err); } catch (e0) {}
-    if (/Session ended/i.test(msg) || code === 'http_401') return 'Please sign in again under Sync in Settings.';
-    if (code === 'http_404') return 'The scan function was not found. Check that it is deployed with the name scan-receipt.';
-    if (code === 'http_429') return SCAN_ERR.rate_limited;
-    if (code === 'http_413') return 'The photo is too large. Try a smaller photo.';
-    if (code === 'http_422') return SCAN_ERR.invalid_json;
-    if (code === 'http_403') return 'This account is not allowed to use the scan function.';
-    if (code && /^http_/.test(code)) return 'The scan function failed. Check its logs and that the AI key is set.';
     if (code === 'ocr_load') return 'Could not load the reader. Check your internet connection and try again.';
-    if (/Failed to fetch|NetworkError|Load failed/i.test(msg)) return 'Could not reach your scan function. Check your internet connection.';
     if (SCAN_ERR[code]) return SCAN_ERR[code];
     var det = [scanMode, code, msg].filter(Boolean).join(' / ').slice(0, 160);
     return 'Something went wrong while reading the receipt. Please try again.' + (det ? ' (' + det + ')' : '');
@@ -2538,7 +2501,7 @@ h1 .q { vertical-align: middle; margin-left: 4px; }
     scanBusy(true);
     var job = scanMode === 'claude'
       ? smp.json(SCAN_PROMPT + (state.base || 'the local currency') + '. If the image is not a receipt, reply {"error": "not a receipt"}.', { images: files, signal: ac.signal })
-      : (scanMode === 'server' ? serverScan(files) : localScan(files));
+      : localScan(files);
     job.then(function (d) {
       if (cancelled) { scanMsg(idleMsg()); return; }
       finishScan(d);
@@ -2762,13 +2725,12 @@ h1 .q { vertical-align: middle; margin-left: 4px; }
 
   /* ---------- device settings: language, appearance, PIN lock, sync ---------- */
   var PKEY = 'card-payment-planner-prefs', LKEY = 'card-payment-planner-lock';
-  var prefs = { lang: 'en', theme: 'auto', bg: { mode: 'qs', c1: '#f7cac9', c2: '#92a8d1', img: '' }, icon: '', sync: { url: '', key: '', email: '', token: '', refresh: '', uid: '' } };
+  var prefs = { lang: 'en', theme: 'auto', bg: { mode: 'qs', c1: '#f7cac9', c2: '#92a8d1', img: '' }, icon: '' };
   try {
     var pr = JSON.parse(localStorage.getItem(PKEY) || 'null');
     if (pr && typeof pr === 'object') {
       prefs.lang = pr.lang === 'tl' ? 'tl' : 'en';
       prefs.theme = pr.theme === 'light' || pr.theme === 'dark' ? pr.theme : 'auto';
-      Object.assign(prefs.sync, pr.sync || {});
       if (pr.bg && typeof pr.bg === 'object') {
         if (typeof pr.bg.mode === 'string') prefs.bg.mode = pr.bg.mode;
         ['c1', 'c2'].forEach(function (k) { if (/^#[0-9a-fA-F]{6}$/.test(pr.bg[k] || '')) prefs.bg[k] = pr.bg[k]; });
@@ -2793,7 +2755,7 @@ h1 .q { vertical-align: middle; margin-left: 4px; }
   function openSettings() {
     $('set-lang').value = prefs.lang; $('set-theme').value = prefs.theme;
     syncBgUi();
-    updatePinUi(); updateSyncUi();
+    updatePinUi();
     $('pin-msg').textContent = '';
     $('settings').hidden = false;
   }
@@ -2982,88 +2944,6 @@ h1 .q { vertical-align: middle; margin-left: 4px; }
     buildPrint();
     setTimeout(function () { try { window.print(); } catch (e) {} }, 80);
   }
-
-  /* sync across devices (Supabase REST, your own project) */
-  function syMsg(t) { $('sy-msg').textContent = t; }
-  function updateSyncUi() {
-    var sy = prefs.sync;
-    $('sy-url').value = sy.url || ''; $('sy-key').value = sy.key || ''; $('sy-email').value = sy.email || ''; $('sy-pass').value = '';
-    var on = !!sy.token;
-    $('sy-act').hidden = !on; $('sy-out').hidden = !on;
-    $('sy-in').hidden = on; $('sy-up').hidden = on;
-    if (on) syMsg('Signed in as ' + sy.email + '.');
-    refreshScan();
-  }
-  function syCfg() {
-    var sy = prefs.sync;
-    sy.url = $('sy-url').value.trim().replace(/\/+$/, ''); sy.key = $('sy-key').value.trim(); sy.email = $('sy-email').value.trim();
-    savePrefs();
-    if (!/^https:\/\/.+/.test(sy.url) || !sy.key) { syMsg('Enter your Supabase project URL and public key first.'); return false; }
-    return true;
-  }
-  function sbFetch(path, opt, retried) {
-    var sy = prefs.sync;
-    var headers = { apikey: sy.key, 'Content-Type': 'application/json' };
-    if (sy.token) headers.Authorization = 'Bearer ' + sy.token;
-    Object.keys(opt.headers || {}).forEach(function (k) { headers[k] = opt.headers[k]; });
-    return fetch(sy.url + path, { method: opt.method || 'GET', headers: headers, body: opt.body }).then(function (res) {
-      if (res.status === 401 && sy.refresh && !retried && path.indexOf('/auth/') !== 0) {
-        return fetch(sy.url + '/auth/v1/token?grant_type=refresh_token', { method: 'POST', headers: { apikey: sy.key, 'Content-Type': 'application/json' }, body: JSON.stringify({ refresh_token: sy.refresh }) })
-          .then(function (r2_) { return r2_.ok ? r2_.json() : null; })
-          .then(function (j) {
-            if (!j || !j.access_token) { sy.token = ''; savePrefs(); updateSyncUi(); throw new Error('Session ended. Please sign in again.'); }
-            sy.token = j.access_token; sy.refresh = j.refresh_token || sy.refresh; savePrefs();
-            return sbFetch(path, opt, true);
-          });
-      }
-      return res;
-    });
-  }
-  function syFail(err) { syMsg(err && err.message && !/Failed to fetch|NetworkError|Load failed/i.test(err.message) ? err.message : 'Could not reach Supabase. This only works from a page you host yourself, with a working internet connection.'); }
-  function syAuth(path, extra) {
-    if (!syCfg()) return;
-    var pass = $('sy-pass').value;
-    if (!prefs.sync.email || !pass) { syMsg('Enter your email and password.'); return; }
-    syMsg('Working...');
-    sbFetch(path, { method: 'POST', body: JSON.stringify({ email: prefs.sync.email, password: pass }) }).then(function (res) {
-      return res.json().then(function (j) { return { ok: res.ok, j: j }; });
-    }).then(function (o) {
-      if (!o.ok) { syMsg(o.j.error_description || o.j.msg || o.j.message || 'That did not work.'); return; }
-      if (o.j.access_token) {
-        prefs.sync.token = o.j.access_token; prefs.sync.refresh = o.j.refresh_token || ''; prefs.sync.uid = (o.j.user && o.j.user.id) || '';
-        savePrefs(); updateSyncUi();
-      } else syMsg('Account created. Check your email to confirm it, then tap Sign in.');
-    }).catch(syFail);
-  }
-  $('sy-in').addEventListener('click', function () { syAuth('/auth/v1/token?grant_type=password'); });
-  $('sy-up').addEventListener('click', function () { syAuth('/auth/v1/signup'); });
-  $('sy-out').addEventListener('click', function () {
-    prefs.sync.token = ''; prefs.sync.refresh = ''; prefs.sync.uid = ''; savePrefs(); updateSyncUi(); syMsg('Signed out.');
-  });
-  $('sy-push').addEventListener('click', function () {
-    if (!prefs.sync.uid) { syMsg('Please sign in again.'); return; }
-    syMsg('Saving...');
-    state.months[state.month] = snapOf(state);
-    sbFetch('/rest/v1/planner_state?on_conflict=user_id', { method: 'POST', headers: { Prefer: 'resolution=merge-duplicates,return=minimal' },
-      body: JSON.stringify({ user_id: prefs.sync.uid, data: state, updated_at: new Date().toISOString() }) }).then(function (res) {
-      if (res.ok) syMsg('Saved to the cloud at ' + new Date().toLocaleTimeString() + '.');
-      else return res.text().then(function (t) { syMsg('Could not save (' + res.status + '). Did you create the planner_state table? ' + t.slice(0, 120)); });
-    }).catch(syFail);
-  });
-  var pullArm = false;
-  $('sy-pull').addEventListener('click', function () {
-    if (!prefs.sync.uid) { syMsg('Please sign in again.'); return; }
-    if (!pullArm) { pullArm = true; syMsg('Tap Load from cloud again to replace this device with the cloud copy.'); setTimeout(function () { pullArm = false; }, 6000); return; }
-    pullArm = false; syMsg('Loading...');
-    sbFetch('/rest/v1/planner_state?select=data,updated_at&user_id=eq.' + encodeURIComponent(prefs.sync.uid), {}).then(function (res) {
-      if (!res.ok) return res.text().then(function (t) { syMsg('Could not load (' + res.status + '). ' + t.slice(0, 120)); });
-      return res.json().then(function (rows) {
-        if (!rows.length) { syMsg('Nothing is saved in the cloud yet.'); return; }
-        restoreFrom(rows[0].data);
-        syMsg('Loaded the cloud copy from ' + new Date(rows[0].updated_at).toLocaleString() + '.');
-      });
-    }).catch(function (e) { if (e && e.message === 'bad') syMsg('The cloud copy is not valid.'); else syFail(e); });
-  });
 
   /* ---------- background and home screen icon ---------- */
   // [id, name, colour 1, colour 2, accent (light), accent (dark)]
