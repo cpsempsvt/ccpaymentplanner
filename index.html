@@ -80,14 +80,13 @@ h1 { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.35re
 .strip i:nth-child(5) { background: var(--p8); } .strip i:nth-child(6) { background: var(--p4); }
 .strip i:nth-child(7) { background: var(--p5); } .strip i:nth-child(8) { background: var(--p6); }
 
-.tabs { display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 2px; width: 100%; background: var(--surface); border: 1px solid var(--line); border-radius: 99px; padding: 4px; }
+.tabs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 2px; width: 100%; background: var(--surface); border: 1px solid var(--line); border-radius: 99px; padding: 4px; }
 .tabs button { border: 0; background: transparent; color: var(--muted); border-radius: 99px; padding: 9px 2px; font-weight: 600; font-size: 0.86rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; min-width: 0; }
 .tabs button[aria-selected="true"] { background: var(--accent); color: var(--on-accent); }
 .tabs .l-short { display: none; }
 @media (max-width: 600px) { .tabs .l-full { display: none; } .tabs .l-short { display: inline; } .tabs { padding: 3px; gap: 1px; } .tabs button { font-size: 0.62rem; padding-left: 1px; padding-right: 1px; } }
-@media (max-width: 430px) { .tabs button { font-size: 0.57rem; letter-spacing: -0.01em; } }
-@media (max-width: 380px) { .tabs button { font-size: 0.52rem; } }
-@media (max-width: 340px) { .tabs button { font-size: 0.47rem; } }
+@media (max-width: 380px) { .tabs button { font-size: 0.6rem; } }
+.viewbar { margin-top: 8px; } .viewbar label { display: flex; align-items: center; gap: 8px; font-size: .85rem; color: var(--muted); font-weight: 600; } .viewbar select { flex: 1; min-width: 0; }
 .hbtns { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
 
 .cols { display: grid; gap: 20px; grid-template-columns: minmax(0, 1fr); align-items: start; }
@@ -400,13 +399,11 @@ h1 .q { vertical-align: middle; margin-left: 4px; }
     <div class="tabs" role="tablist" aria-label="Sections">
       <button id="tab-cards" role="tab" type="button" data-tab="cards" aria-selected="true"><span class="l-full">Cards</span><span class="l-short">Cards</span></button>
       <button id="tab-plan" role="tab" type="button" data-tab="plan" aria-selected="false"><span class="l-full">Planning</span><span class="l-short">Planning</span></button>
-      <button id="tab-calc" role="tab" type="button" data-tab="calc" aria-selected="false"><span class="l-full">Payoff table</span><span class="l-short">Table</span></button>
-      <button id="tab-assets" role="tab" type="button" data-tab="assets" aria-selected="false"><span class="l-full">Assets</span><span class="l-short">Assets</span></button>
-      <button id="tab-goals" role="tab" type="button" data-tab="goals" aria-selected="false"><span class="l-full">Goals</span><span class="l-short">Goals</span></button>
-      <button id="tab-subs" role="tab" type="button" data-tab="subs" aria-selected="false"><span class="l-full">Subscriptions</span><span class="l-short">Subs</span></button>
-      <button id="tab-expenses" role="tab" type="button" data-tab="expenses" aria-selected="false"><span class="l-full">Expenses</span><span class="l-short">Expenses</span></button>
+      <button id="tab-money" role="tab" type="button" data-tab="money" aria-selected="false"><span class="l-full">Assets &amp; goals</span><span class="l-short">Assets</span></button>
+      <button id="tab-spend" role="tab" type="button" data-tab="spend" aria-selected="false"><span class="l-full">Spending</span><span class="l-short">Spending</span></button>
       <button id="tab-debts" role="tab" type="button" data-tab="debts" aria-selected="false"><span class="l-full">Loans</span><span class="l-short">Loans</span></button>
     </div>
+    <div id="viewbar" class="viewbar" hidden><label><span id="view-lbl">View</span><select id="view-sel" aria-label="Choose a view"></select></label></div>
   </header>
 
   <div id="panel-cards" class="cols" role="tabpanel" aria-labelledby="tab-cards">
@@ -481,12 +478,12 @@ h1 .q { vertical-align: middle; margin-left: 4px; }
   </div>
 
   <div id="panel-plan" class="plan-wrap" role="tabpanel" aria-labelledby="tab-plan" hidden>
-    <section class="panel" aria-labelledby="due-h">
+    <section id="sec-due" class="panel" aria-labelledby="due-h">
       <div class="panel-head"><div class="lbl"><h2 id="due-h">Due soon</h2><button type="button" class="q" data-q="Dates count from today on your device. Amounts come from the Cards tab." aria-label="More info">?</button></div></div>
       <div id="due-list" class="due-grid"></div>
     </section>
 
-    <section class="panel" aria-labelledby="ms-h" aria-live="polite">
+    <section id="sec-ms" class="panel" aria-labelledby="ms-h" aria-live="polite">
       <div class="panel-head"><div class="lbl"><h2 id="ms-h">Monthly set-aside plan</h2><button type="button" class="q" data-q="Month by month: what you must pay to stay current (the minimums, which drop when installments end) next to what your current plan pays. Below it, pick a number of months to find out how much to set aside each month to be debt-free by then." aria-label="More info">?</button></div></div>
       <div class="ms-ctl"><label>Months to show<select id="ms-n"><option value="3">3 months</option><option value="6">6 months</option><option value="12">12 months</option><option value="24">24 months</option></select></label></div>
       <div id="ms-sum" class="summary"></div>
@@ -497,7 +494,7 @@ h1 .q { vertical-align: middle; margin-left: 4px; }
       <div id="ms-table" class="tbl-wrap"></div>
     </section>
 
-    <section class="panel" aria-labelledby="sch-h" aria-live="polite">
+    <section id="sec-sch" class="panel" aria-labelledby="sch-h" aria-live="polite">
       <div class="panel-head"><div class="lbl"><h2 id="sch-h">Payoff schedule</h2><button type="button" class="q" data-q="How this is worked out: each month uses the total you set aside on both pay days. Minimums are paid first, then extra goes to the card you chose to pay off first. Unpaid balances grow by the card's yearly interest divided by 12. Future minimums keep the same share of the balance as this month's, plus installments, and never fall below 5% of this month's amount due. No new purchases are added. This is an estimate, not your bank's figures." aria-label="More info">?</button></div></div>
       <div id="sch-flag" class="list"></div>
       <div id="sch-sum" class="summary four"></div>
@@ -609,6 +606,27 @@ h1 .q { vertical-align: middle; margin-left: 4px; }
       <div id="x-stack" class="stack" aria-hidden="true"></div>
       <div id="x-brk" class="brk"></div>
       <div id="x-note" class="hint" hidden></div>
+    </section>
+  </div>
+
+  <div id="panel-shop" class="cols" role="tabpanel" aria-labelledby="tab-spend" hidden>
+    <section class="panel" aria-labelledby="sh-h">
+      <div class="panel-head"><div class="lbl"><h2 id="sh-h">Online shopping</h2><button type="button" class="q" data-q="Keep track of things you ordered online: the shop, how much, which card you paid with, and when it should arrive. Mark an order as delivered or returned when it is done.">?</button></div></div>
+      <div class="pp" role="tablist" aria-label="Orders">
+        <button type="button" role="tab" data-sv="open" aria-selected="true"><span>On the way</span><b class="pp-n" id="sv-no">0</b></button>
+        <button type="button" role="tab" data-sv="done" aria-selected="false"><span>Done</span><b class="pp-n" id="sv-nd">0</b></button>
+      </div>
+      <div id="shops" class="list"></div>
+      <div id="shop-empty" class="hint" hidden></div>
+      <div class="row-actions"><button id="add-shop" class="primary" type="button">Add order</button></div>
+    </section>
+
+    <section class="panel" aria-labelledby="shp-h" aria-live="polite">
+      <div class="panel-head"><h2 id="shp-h">Order overview</h2></div>
+      <div id="sh-sum" class="summary"></div>
+      <div id="sh-stack" class="stack" aria-hidden="true"></div>
+      <div id="sh-brk" class="brk"></div>
+      <div id="sh-note" class="hint" hidden></div>
     </section>
   </div>
 
@@ -862,7 +880,7 @@ h1 .q { vertical-align: middle; margin-left: 4px; }
     var gd = new Date(); gd.setFullYear(gd.getFullYear() + 1);
     var gdate = gd.getFullYear() + '-' + ('0' + (gd.getMonth() + 1)).slice(-2) + '-' + ('0' + gd.getDate()).slice(-2);
     return {
-      tab: 'cards', month: monthKey(new Date()), months: {}, qr: {}, expenses: [], debts: [], example: true, sexample: true, aexample: true, gexample: true, hide: false, userName: '', skipName: false,
+      tab: 'cards', month: monthKey(new Date()), months: {}, qr: {}, expenses: [], debts: [], shop: [], view: {}, example: true, sexample: true, aexample: true, gexample: true, hide: false, userName: '', skipName: false,
       pay1: { day: 15, amount: 15000 }, pay2: { day: 30, amount: 25000 },
       cur: '₱', base: 'PHP', strategy: 'smallest', focusId: '',
       cards: [
@@ -904,6 +922,8 @@ h1 .q { vertical-align: middle; margin-left: 4px; }
     if (!s.qr || typeof s.qr !== 'object' || Array.isArray(s.qr)) s.qr = {};
     if (!Array.isArray(s.expenses)) s.expenses = [];
     if (!Array.isArray(s.debts)) s.debts = [];
+    if (!Array.isArray(s.shop)) s.shop = [];
+    if (!s.view || typeof s.view !== 'object') s.view = {};
     s.cards.forEach(function (c) {
       if (c.loc === undefined) {
         c.loc = '';
@@ -916,7 +936,7 @@ h1 .q { vertical-align: middle; margin-left: 4px; }
   fixCards(state);
 
   function bumpUid() {
-    state.cards.concat(state.assets, state.goals || [], state.subs || [], state.expenses || [], state.debts || []).forEach(function (x) {
+    state.cards.concat(state.assets, state.goals || [], state.subs || [], state.expenses || [], state.debts || [], state.shop || []).forEach(function (x) {
       var n = parseInt(String(x.id).replace(/\D/g, ''), 10);
       if (n > uid) uid = n;
       (x.plans || []).forEach(function (p) {
@@ -1449,7 +1469,7 @@ h1 .q { vertical-align: middle; margin-left: 4px; }
     renderAssetTotals();
     renderPlan(r);
     renderGoals();
-    renderSubs(); renderExpenses(); renderDebts();
+    renderSubs(); renderExpenses(); renderDebts(); renderShop();
   }
 
   function aSplit(k) { var a = String(k || '').split('|'); return { c: findCard(a[0]), g: +a[1] === 2 ? 2 : 1 }; }
@@ -1965,15 +1985,43 @@ h1 .q { vertical-align: middle; margin-left: 4px; }
   }
 
   /* ---------- shared UI ---------- */
+  var VIEWS = {
+    plan: [['due', 'Due soon'], ['ms', 'Monthly set-aside plan'], ['sch', 'Payoff schedule'], ['calc', 'Payoff table']],
+    money: [['assets', 'Assets'], ['goals', 'Goals']],
+    spend: [['expenses', 'Expenses'], ['subs', 'Subscriptions'], ['shop', 'Online shopping']]
+  };
+  var PANEL_OF = { due: 'plan', ms: 'plan', sch: 'plan' };
+  function groupOfView(v) {
+    if (v === 'plan') v = 'due';
+    if (v === 'cards' || v === 'debts') return v;
+    for (var g in VIEWS) { if (VIEWS[g].some(function (x) { return x[0] === v; })) return g; }
+    return VIEWS[v] ? v : 'cards';
+  }
   function applyTab() {
-    var t = ['assets', 'plan', 'calc', 'goals', 'subs', 'expenses', 'debts'].indexOf(state.tab) >= 0 ? state.tab : 'cards';
-    if (t === 'subs' && $('panel-subs').hidden) renderSubRows();
-    if (t === 'expenses' && $('panel-expenses').hidden) renderExpRows();
-    if (t === 'debts' && $('panel-debts').hidden) renderDebtRows();
-    ['cards', 'plan', 'calc', 'assets', 'goals', 'subs', 'expenses', 'debts'].forEach(function (n) {
-      $('panel-' + n).hidden = n !== t;
-      $('tab-' + n).setAttribute('aria-selected', String(n === t));
+    var v = state.tab;
+    if (v === 'plan') v = 'due';
+    var g = groupOfView(v);
+    if (VIEWS[g] && !VIEWS[g].some(function (x) { return x[0] === v; })) v = (state.view && state.view[g]) || VIEWS[g][0][0];
+    if (VIEWS[g] && !VIEWS[g].some(function (x) { return x[0] === v; })) v = VIEWS[g][0][0];
+    if (v === 'cards' || v === 'debts') g = v;
+    state.tab = v;
+    if (VIEWS[g]) { state.view = state.view || {}; state.view[g] = v; }
+    var pn = PANEL_OF[v] || v;
+    if (pn === 'subs' && $('panel-subs').hidden) renderSubRows();
+    if (pn === 'expenses' && $('panel-expenses').hidden) renderExpRows();
+    if (pn === 'debts' && $('panel-debts').hidden) renderDebtRows();
+    if (pn === 'shop' && $('panel-shop').hidden) renderShopRows();
+    ['cards', 'plan', 'calc', 'assets', 'goals', 'subs', 'expenses', 'shop', 'debts'].forEach(function (n) {
+      $('panel-' + n).hidden = n !== pn;
     });
+    ['due', 'ms', 'sch'].forEach(function (n) { $('sec-' + n).hidden = !(pn === 'plan' && n === v); });
+    ['cards', 'plan', 'money', 'spend', 'debts'].forEach(function (n) { $('tab-' + n).setAttribute('aria-selected', String(n === g)); });
+    var vb = $('viewbar');
+    if (VIEWS[g]) {
+      $('view-sel').innerHTML = VIEWS[g].map(function (x) { return '<option value="' + x[0] + '"' + (x[0] === v ? ' selected' : '') + '>' + esc(x[1]) + '</option>'; }).join('');
+      $('view-sel').value = v;
+      vb.hidden = false;
+    } else vb.hidden = true;
   }
   function applyHide() {
     document.body.classList.toggle('hide', !!state.hide);
@@ -2042,7 +2090,7 @@ h1 .q { vertical-align: middle; margin-left: 4px; }
     if (kind === 'assets') { state.aexample = false; $('aexample-note').hidden = true; }
     else if (kind === 'goals') { state.gexample = false; $('gexample-note').hidden = true; }
     else if (kind === 'subs') { state.sexample = false; $('sexample-note').hidden = true; }
-    else if (kind === 'expenses' || kind === 'debts') { /* nothing to clear */ }
+    else if (kind === 'expenses' || kind === 'debts' || kind === 'shop') { /* nothing to clear */ }
     else { state.example = false; $('example-note').hidden = true; }
     save();
     renderResult();
@@ -2088,8 +2136,9 @@ h1 .q { vertical-align: middle; margin-left: 4px; }
 
   /* ---------- events: top controls ---------- */
   document.querySelectorAll('[data-tab]').forEach(function (b) {
-    b.addEventListener('click', function () { state.tab = b.dataset.tab; applyTab(); save(); });
+    b.addEventListener('click', function () { var g = b.dataset.tab; state.tab = VIEWS[g] ? ((state.view && state.view[g]) || VIEWS[g][0][0]) : g; applyTab(); save(); });
   });
+  $('view-sel').addEventListener('change', function () { state.tab = $('view-sel').value; applyTab(); save(); });
   $('hide-btn').addEventListener('click', function () { state.hide = !state.hide; applyHide(); save(); });
   function dayVal(v) { var n = parseInt(v, 10) || 0; return Math.max(0, Math.min(31, n)); }
   $('p1day').addEventListener('input', function (e) { state.pay1.day = dayVal(e.target.value); renderCards(); changed('cards'); });
@@ -3170,12 +3219,126 @@ h1 .q { vertical-align: middle; margin-left: 4px; }
     if (el) el.focus();
   });
 
+  /* ---------- online shopping ---------- */
+  var shopView = 'open';
+  var SHOP_ST = [['ordered', 'Ordered'], ['shipped', 'Shipped'], ['delivered', 'Delivered'], ['returned', 'Returned'], ['cancelled', 'Cancelled']];
+  function findShop(id) { return state.shop.filter(function (x) { return x.id === id; })[0]; }
+  function shDone(o) { return o.status === 'delivered' || o.status === 'returned' || o.status === 'cancelled'; }
+  function shBase(o) { var c = String(o.ccy || '').trim().toUpperCase(); return !c || c === String(state.base || '').trim().toUpperCase(); }
+  function shVal(o) { return shBase(o) ? (+o.amount || 0) : (+o.amount || 0) * (+o.rate || 0); }
+  function shFmt(o) { return shBase(o) ? fmt(+o.amount || 0) : String(o.ccy).trim().toUpperCase() + ' ' + nf.format(r2(+o.amount || 0)); }
+  function shName(o) { return String(o.item || '').trim() || String(o.store || '').trim() || 'New order'; }
+  function shStLabel(o) { var m = SHOP_ST.filter(function (x) { return x[0] === o.status; })[0]; return m ? m[1] : 'Ordered'; }
+  function shLate(o) { return !shDone(o) && !!o.eta && o.eta < todayIso(); }
+  function shSub(o) {
+    var p = [shLate(o) ? 'Late' : shStLabel(o)];
+    if (String(o.store || '').trim() && String(o.item || '').trim()) p.push(String(o.store).trim());
+    if (o.eta && !shDone(o)) p.push('Due ' + fmtDate(o.eta));
+    return p.join(' · ');
+  }
+  function shopRow(o, i) {
+    var base = shBase(o);
+    var head = '<span class="badge"><b data-sbadge>' + esc(initials(shName(o))) + '</b></span><span class="fold-main"><span class="fold-name" data-hname>' + esc(shName(o)) + '</span><span class="fold-sub" data-hsub>' + esc(shSub(o)) + '</span></span><span class="fold-amt num" data-hamt></span>';
+    var cardOpts = '<option value="">Not set</option>' + state.cards.map(function (c, k) { return '<option value="' + esc(c.id) + '"' + (c.id === o.card ? ' selected' : '') + '>' + esc(cardName(c, k)) + '</option>'; }).join('');
+    var body =
+      '<div class="nm"><label>What you ordered<input data-f="item" type="text" value="' + esc(o.item) + '" id="n-' + o.id + '"></label>' +
+      '<button type="button" class="ghost danger small" data-del="' + o.id + '">Remove</button></div>' +
+      '<label>Shop<input data-f="store" type="text" value="' + esc(o.store) + '" placeholder="Shopee, Lazada, Amazon"></label>' +
+      '<div class="mid"><label>Amount<input class="num" data-f="amount" type="number" inputmode="decimal" min="0" step="any" value="' + esc(o.amount) + '"></label>' +
+      '<label>Currency code<input data-f="ccy" type="text" maxlength="8" value="' + esc(o.ccy) + '" placeholder="PHP, USD"></label></div>' +
+      '<div class="mid"><label>Rate to ' + esc(state.base || 'main') + '<input class="num" data-f="rate" type="number" inputmode="decimal" min="0" step="any" value="' + esc(base ? 1 : (o.rate || '')) + '"' + (base ? ' disabled' : '') + '></label>' +
+      '<label>Status<select data-f="status">' + SHOP_ST.map(function (x) { return '<option value="' + x[0] + '"' + (x[0] === o.status ? ' selected' : '') + '>' + x[1] + '</option>'; }).join('') + '</select></label></div>' +
+      '<div class="mid"><label>Date ordered<input data-f="date" type="date" value="' + esc(o.date || '') + '"></label>' +
+      '<label>Expected delivery<input data-f="eta" type="date" value="' + esc(o.eta || '') + '"></label></div>' +
+      '<label>Paid with<select data-f="card">' + cardOpts + '</select></label>' +
+      '<label>Tracking number or note<input data-f="note" type="text" value="' + esc(o.note || '') + '" placeholder="optional"></label>';
+    return fold(o.id, pv(i + 2), head, body, !!o.locked);
+  }
+  function renderShopRows() {
+    var list = state.shop.filter(function (o) { return shDone(o) === (shopView === 'done'); });
+    $('shops').innerHTML = list.map(function (o) { return shopRow(o, state.shop.indexOf(o)); }).join('');
+    renderShop();
+  }
+  function renderShop() {
+    var open = 0, done = 0, late = 0, miss = 0, total = 0, by = {}, sumAll = 0;
+    state.shop.forEach(function (o, i) {
+      var ok = shBase(o) || +o.rate > 0;
+      if (shDone(o)) done += 1; else open += 1;
+      if (!ok) miss += 1;
+      if (shLate(o)) late += 1;
+      if (ok && o.status !== 'returned' && o.status !== 'cancelled') {
+        sumAll += shVal(o);
+        { var k = String(o.store || '').trim() || 'Other'; by[k] = (by[k] || 0) + shVal(o); total += shVal(o); }
+      }
+      var row = $('shops').querySelector('[data-id="' + o.id + '"]');
+      if (row) {
+        row.setAttribute('style', '--cc:' + pv(i + 2));
+        row.querySelector('[data-hname]').textContent = shName(o);
+        row.querySelector('[data-hsub]').textContent = shSub(o);
+        row.querySelector('[data-hamt]').textContent = shFmt(o);
+        row.querySelector('[data-sbadge]').textContent = initials(shName(o));
+        var ri = row.querySelector('[data-f="rate"]');
+        if (ri) { if (shBase(o)) { ri.disabled = true; ri.value = 1; } else if (ri.disabled) { ri.disabled = false; ri.value = o.rate || ''; } }
+      }
+    });
+    var transit = 0;
+    state.shop.forEach(function (o) { if (!shDone(o) && (shBase(o) || +o.rate > 0)) transit += shVal(o); });
+    $('sv-no').textContent = open; $('sv-nd').textContent = done;
+    Array.prototype.forEach.call(document.querySelectorAll('[data-sv]'), function (b) { b.setAttribute('aria-selected', b.dataset.sv === shopView ? 'true' : 'false'); });
+    $('sh-sum').innerHTML =
+      '<div class="stat" style="--cc:var(--p1)"><div class="k">On the way</div><div class="v num">' + open + '</div></div>' +
+      '<div class="stat" style="--cc:var(--p4)"><div class="k">Value on the way</div><div class="v num">' + fmt(transit) + '</div></div>' +
+      '<div class="stat" style="--cc:var(--p6)"><div class="k">Total ordered</div><div class="v num">' + fmt(sumAll) + '</div></div>' +
+      '<div class="stat" style="--cc:var(--p2)"><div class="k">Late</div><div class="v num">' + late + '</div></div>';
+    var names = Object.keys(by).sort(function (a, b) { return by[b] - by[a]; }), stack = '', brk = '';
+    names.forEach(function (n, i) {
+      var pct = total > 0 ? by[n] / total * 100 : 0, col = pv(i + 2);
+      stack += '<i style="width:' + pct.toFixed(2) + '%;background:' + col + '"></i>';
+      brk += '<div class="brk-row" style="--cc:' + col + '"><span class="dot"></span><span>' + esc(n) + '</span><span class="amt num">' + esc(fmt(by[n])) + '</span><span class="pct num">' + Math.round(pct) + '%</span></div>';
+    });
+    $('sh-stack').innerHTML = stack;
+    $('sh-brk').innerHTML = brk || '<p class="hint">No orders yet.</p>';
+    $('sh-note').textContent = miss ? 'Type a rate for orders in another currency to include them in the totals.' : '';
+    $('sh-note').hidden = !miss;
+    var vis = shopView === 'done' ? done : open, em = $('shop-empty');
+    em.textContent = vis ? '' : (!state.shop.length ? 'No orders yet. Tap Add order to start.' : (shopView === 'done' ? 'Nothing delivered yet.' : 'No orders on the way.'));
+    em.hidden = !em.textContent;
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('[data-sv]'), function (b) {
+    b.addEventListener('click', function () { shopView = b.dataset.sv; renderShopRows(); });
+  });
+  $('shops').addEventListener('click', function (e) {
+    foldClick(e);
+    var b = e.target.closest ? e.target.closest('button') : null;
+    if (!b || !b.dataset.del) return;
+    state.shop = state.shop.filter(function (x) { return x.id !== b.dataset.del; });
+    renderShopRows(); changed('shop');
+  });
+  function onShopField(e) {
+    var row = e.target.closest('.item'), o = row ? findShop(row.dataset.id) : null, f = e.target.dataset.f;
+    if (!o || !f) return;
+    if (f === 'amount' || f === 'rate') o[f] = parseFloat(e.target.value) || 0;
+    else if (f === 'ccy') o.ccy = e.target.value.toUpperCase();
+    else o[f] = e.target.value;
+    changed('shop');
+    if (f === 'status' && e.type === 'change') { var wasDone = shDone(o); if (wasDone !== (shopView === 'done')) { delete openIds[o.id]; renderShopRows(); } }
+  }
+  $('shops').addEventListener('input', onShopField);
+  $('shops').addEventListener('change', onShopField);
+  $('add-shop').addEventListener('click', function () {
+    var o = { id: nid('o'), item: '', store: '', amount: 0, ccy: state.base || '', rate: 0, status: 'ordered', date: todayIso(), eta: '', card: '', note: '' };
+    state.shop.unshift(o); shopView = 'open'; openIds[o.id] = 1;
+    renderShopRows(); changed('shop');
+    var el = $('n-' + o.id);
+    if (el) el.focus();
+  });
+
   /* ---------- save / edit buttons on every card, account, goal and subscription ---------- */
   document.addEventListener('click', function (e) {
     var b = e.target.closest ? e.target.closest('[data-save]') : null;
     if (!b) return;
     var id = b.getAttribute('data-save');
-    var groups = [['cards', state.cards, renderCards], ['assets', state.assets, renderAssetRows], ['goals', state.goals, renderGoalRows], ['subs', state.subs, renderSubRows], ['expenses', state.expenses, renderExpRows], ['debts', state.debts, renderDebtRows]];
+    var groups = [['cards', state.cards, renderCards], ['assets', state.assets, renderAssetRows], ['goals', state.goals, renderGoalRows], ['subs', state.subs, renderSubRows], ['expenses', state.expenses, renderExpRows], ['debts', state.debts, renderDebtRows], ['shop', state.shop, renderShopRows]];
     for (var i = 0; i < groups.length; i++) {
       var it = groups[i][1].filter(function (x) { return x.id === id; })[0];
       if (!it) continue;
@@ -3550,6 +3713,7 @@ h1 .q { vertical-align: middle; margin-left: 4px; }
   /* ---------- Filipino (Taglish) labels ---------- */
   var TL = {"Pay cards": "Bayad sa cards", "Plan ahead": "Planuhin", "Plan": "Plano", "My assets": "Mga asset ko", "Assets": "Assets", "Goals": "Mga goal", "Subscriptions": "Mga subscription", "Subs": "Subs", "Cards": "Cards", "Add your name": "Ilagay ang pangalan mo", "Change name": "Palitan ang pangalan", "Hide amounts": "Itago ang halaga", "Show amounts": "Ipakita ang halaga", "Settings": "Mga setting", "Lock": "I-lock", "Close": "Isara", "Done": "Tapos na", "Save": "I-save", "Edit": "I-edit", "Remove": "Alisin", "Continue": "Magpatuloy", "Skip for now": "Laktawan muna", "Cancel": "Kanselahin", "Welcome! What should I call you?": "Kumusta! Ano ang itatawag ko sa iyo?", "Change your name": "Palitan ang pangalan mo", "Your name": "Pangalan mo", "Your first name": "Unang pangalan mo", "Earlier month": "Naunang buwan", "Later month": "Susunod na buwan", "Month": "Buwan", "Quick add": "Mabilisang dagdag", "More info": "Dagdag na info", "Delete": "Burahin", "Sections": "Mga seksyon", "Your cards": "Mga card mo", "These are example numbers. Change any field to use your own.": "Halimbawa lang ang mga numerong ito. Palitan ang kahit anong field para gamitin ang sarili mong datos.", "Pay days": "Mga sahod", "First pay day": "Unang sahod", "Second pay day": "Ikalawang sahod", "Day of month": "Araw ng buwan", "Set aside for cards": "Nakalaan para sa cards", "Currency": "Currency", "Main currency code": "Main currency code", "Currency symbol": "Simbolo ng currency", "Which card to pay off first": "Aling card ang unang tatapusin", "Smallest amount due (finishes fastest)": "Pinakamaliit na amount due (pinakamabilis matapos)", "Highest interest rate (costs least)": "Pinakamataas na interest (pinakamura sa huli)", "I will choose": "Ako ang pipili", "Card to pay off": "Card na tatapusin", "Add card": "Magdagdag ng card", "Card name": "Pangalan ng card", "Location": "Lokasyon", "Bank": "Bangko", "Choose location": "Pumili ng lokasyon", "Choose a location first": "Pumili muna ng lokasyon", "Choose bank (optional)": "Pumili ng bangko (optional)", "Other bank": "Ibang bangko", "Add installment plans": "Magdagdag ng installment plans", "Installment plans": "Mga installment plan", "Upload logo": "Mag-upload ng logo", "Change logo": "Palitan ang logo", "Remove logo": "Alisin ang logo", "Due day of month": "Due date (araw ng buwan)", "Pay it with": "Bayaran gamit ang", "By due date": "Ayon sa due date", "Interest % a year": "Interest % kada taon", "New card": "Bagong card", "No due date": "Walang due date", "No due date set": "Walang due date", "Philippines (PHP)": "Pilipinas (PHP)", "Type today's rate": "I-type ang rate ngayon", "Payment split": "Hati ng bayad", "Copy plan": "Kopyahin ang plano", "Copied": "Nakopya", "Select and copy manually": "Piliin at kopyahin nang mano-mano", "Minimums on all cards": "Minimum ng lahat ng cards", "Extra on top of minimums": "Extra bukod sa minimum", "Still unpaid after paying": "Hindi pa bayad pagkatapos magbayad", "Short of the minimums by": "Kulang sa minimum ng", "Total you set aside": "Kabuuang inilaan mo", "Extra": "Extra", "Extra payment": "Extra na bayad", "Paid in full": "Bayad na lahat", "Pay off first": "Unahing tapusin", "Paid": "Bayad", "Minimum": "Minimum", "Minimum due": "Minimum due", "No cards are paid on this pay day.": "Walang card na babayaran sa sahod na ito.", "The amounts you set aside do not cover every minimum. Each pay day pays the smallest minimums in full first, so as many cards as possible stay current. Contact the banks of the cards marked Short about a payment arrangement.": "Hindi sapat ang inilaan mo para sa lahat ng minimum. Sa bawat sahod, inuuna ang pinakamaliliit na minimum para kahit paano ay maraming card ang manatiling updated. Makipag-ugnayan sa bangko ng mga card na may markang Kulang para sa payment arrangement.", "What is it for": "Para saan ito", "Monthly amount": "Buwanang halaga", "Months left": "Buwan na natitira", "Add installment": "Magdagdag ng installment", "Billed each month": "Siningil kada buwan", "Still to pay in total": "Kabuuang babayaran pa", "Last payment in": "Huling bayad sa", "None": "Wala", "No installment plans yet.": "Wala pang installment plan.", "e.g. Phone, 0% interest": "hal. Phone, 0% interest", "e.g. 20": "hal. 20", "e.g. 12": "hal. 12", "Due soon": "Malapit nang due", "Payoff schedule": "Iskedyul ng pagbabayad", "Debt-free by": "Walang utang pagdating ng", "Months to pay off": "Buwan bago matapos", "Interest paid with this plan": "Interest na babayaran sa planong ito", "Saved versus minimums only": "Natipid kumpara sa minimum lang", "Same time": "Parehong tagal", "When each card clears": "Kailan matatapos ang bawat card", "Month-by-month table": "Talahanayan kada buwan", "What you still have to pay at the end of each month, including later installments": "Ang babayaran pa sa katapusan ng bawat buwan, kasama ang mga susunod na installment", "Not within 10 years": "Hindi matatapos sa loob ng 10 taon", "Over 10 years": "Lampas 10 taon", "Still to pay": "Babayaran pa", "Interest": "Interest", "Paid this month": "Binayaran ngayong buwan", "Total": "Kabuuan", "The chart shows the first 60 months.": "Ipinapakita ng chart ang unang 60 buwan.", "Due today": "Due ngayon", "Due tomorrow": "Due bukas", "No cards have an amount due.": "Walang card na may amount due.", "At this pace the cards are not cleared within 10 years. Raise the amount you set aside, or check the interest rates.": "Sa bilis na ito, hindi matatapos ang mga card sa loob ng 10 taon. Dagdagan ang inilaan mo, o suriin ang mga interest rate.", "Some months do not cover every minimum, so this plan may take longer and cost more than shown.": "May mga buwang hindi sapat para sa lahat ng minimum, kaya maaaring mas matagal at mas mahal ang planong ito kaysa sa ipinapakita.", "Add the yearly interest % on each card to include interest in these numbers.": "Ilagay ang yearly interest % ng bawat card para maisama ang interest sa mga numerong ito.", "Stacked bars of how much you still have to pay at the end of each month, one colour per card": "Mga bar ng babayaran pa sa katapusan ng bawat buwan, may sariling kulay ang bawat card", "Banks and wallets": "Mga bangko at wallet", "Bank or wallet name": "Pangalan ng bangko o wallet", "Type": "Uri", "E-wallet": "E-wallet", "Crypto": "Crypto", "Cash": "Cash", "Other": "Iba pa", "Currency code": "Currency code", "Amount": "Halaga", "Add account": "Magdagdag ng account", "Total assets": "Kabuuang assets", "Card dues this month": "Card dues ngayong buwan", "Assets minus card dues": "Assets bawas card dues", "Accounts": "Mga account", "New account": "Bagong account", "Add an account to see the breakdown.": "Magdagdag ng account para makita ang hati.", "These are example accounts and rates. Change any field to use your own.": "Halimbawa lang ang mga account at rate na ito. Palitan ang kahit anong field para gamitin ang sarili mong datos.", "Your goals": "Mga goal mo", "Goal name": "Pangalan ng goal", "Target amount": "Target na halaga", "Saved so far": "Naipon na", "Target date": "Target na petsa", "Planned saving a month": "Planong ipon kada buwan", "Add goal": "Magdagdag ng goal", "Goal progress": "Progreso ng mga goal", "Total of all goals": "Kabuuan ng lahat ng goal", "To save each month": "Iipunin kada buwan", "New goal": "Bagong goal", "Reached": "Naabot na", "No date set": "Walang petsa", "Goal reached.": "Naabot na ang goal.", "Enter a target amount to see your plan.": "Maglagay ng target na halaga para makita ang plano mo.", "Add a target date or a monthly amount to see a plan.": "Maglagay ng target na petsa o buwanang halaga para makita ang plano.", "Add a goal to see your progress.": "Magdagdag ng goal para makita ang progreso mo.", "optional": "optional", "e.g. Emergency fund": "hal. Emergency fund", "This is an example goal. Change any field to use your own.": "Halimbawa lang ang goal na ito. Palitan ang kahit anong field para gamitin ang sarili mong datos.", "Subscription name": "Pangalan ng subscription", "Amount a month": "Halaga kada buwan", "Billing day of month": "Araw ng singil kada buwan", "Charged to": "Sinisingil sa", "Not on a card": "Hindi sa card", "No card": "Walang card", "Add subscription": "Magdagdag ng subscription", "Monthly subscriptions": "Buwanang subscription", "Total each month": "Kabuuan kada buwan", "Cost over a year": "Gastos sa isang taon", "Next charges": "Susunod na singil", "New subscription": "Bagong subscription", "Today": "Ngayon", "Tomorrow": "Bukas", "Add a subscription to see the breakdown.": "Magdagdag ng subscription para makita ang hati.", "Add a billing day to see the next charges.": "Maglagay ng araw ng singil para makita ang susunod na singil.", "These are example subscriptions. Change any field to use your own.": "Halimbawa lang ang mga subscription na ito. Palitan ang kahit anong field para gamitin ang sarili mong datos.", "e.g. Netflix": "hal. Netflix", "Subscription": "Subscription", "Language": "Wika", "Appearance": "Itsura", "Match my device": "Sundin ang device ko", "Light": "Maliwanag", "Dark": "Madilim", "PIN lock": "PIN lock", "New PIN (4 to 6 digits)": "Bagong PIN (4 hanggang 6 na numero)", "Repeat PIN": "Ulitin ang PIN", "Turn on PIN lock": "I-on ang PIN lock", "Lock when I leave this page": "I-lock kapag umalis ako sa page", "Lock now": "I-lock ngayon", "Current PIN": "Kasalukuyang PIN", "Change PIN": "Palitan ang PIN", "Remove PIN": "Alisin ang PIN", "PIN lock is on.": "Naka-on na ang PIN lock.", "Use 4 to 6 digits.": "Gumamit ng 4 hanggang 6 na numero.", "The two PINs do not match.": "Hindi magkapareho ang dalawang PIN.", "Current PIN is wrong.": "Mali ang kasalukuyang PIN.", "PIN changed.": "Napalitan na ang PIN.", "PIN lock is off.": "Naka-off na ang PIN lock.", "Enter your PIN": "Ilagay ang PIN mo", "Wrong PIN. Try again.": "Maling PIN. Subukan ulit.", "Too many tries. Wait 30 seconds.": "Masyadong maraming subok. Maghintay ng 30 segundo.", "Forgot PIN?": "Nakalimutan ang PIN?", "Tap again to erase ALL data on this device and remove the PIN.": "Pindutin ulit para BURAHIN ang LAHAT ng datos sa device na ito at alisin ang PIN.", "Erase and reset": "Burahin at i-reset", "Monthly summary": "Buwanang buod", "Print summary": "I-print ang buod", "Print": "I-print", "Sync across devices": "I-sync sa iba pang device", "Supabase project URL": "Supabase project URL", "Public key (anon or publishable)": "Public key (anon o publishable)", "Email": "Email", "Password": "Password", "Sign in": "Mag-sign in", "Create account": "Gumawa ng account", "Sign out": "Mag-sign out", "Save to cloud": "I-save sa cloud", "Load from cloud": "I-load mula sa cloud", "Enter your Supabase project URL and public key first.": "Ilagay muna ang Supabase project URL at public key mo.", "Enter your email and password.": "Ilagay ang email at password mo.", "Working...": "Pinoproseso...", "Saving...": "Nagse-save...", "Loading...": "Naglo-load...", "Signed out.": "Naka-sign out na.", "Nothing is saved in the cloud yet.": "Wala pang naka-save sa cloud.", "Please sign in again.": "Mag-sign in ulit.", "Tap Load from cloud again to replace this device with the cloud copy.": "Pindutin ulit ang I-load mula sa cloud para palitan ang device na ito ng kopya sa cloud.", "Account created. Check your email to confirm it, then tap Sign in.": "Nagawa na ang account. Tingnan ang email mo para kumpirmahin, tapos pindutin ang Mag-sign in.", "The cloud copy is not valid.": "Hindi valid ang kopya sa cloud.", "Could not reach Supabase. This only works from a page you host yourself, with a working internet connection.": "Hindi maabot ang Supabase. Gumagana lang ito sa page na ikaw mismo ang nag-host, at may gumaganang internet.", "Backup and restore": "Backup at restore", "Keep a copy": "Magtabi ng kopya", "Copy backup": "Kopyahin ang backup", "Restore": "I-restore", "Backup restored.": "Na-restore na ang backup.", "That text is not a valid backup.": "Hindi valid na backup ang text na iyon.", "Backup text is in the box above. Paste it somewhere safe.": "Nasa kahon sa itaas ang backup text. I-paste ito sa ligtas na lugar.", "Backup text": "Backup text", "Backup text appears here, or paste a backup to restore": "Dito lalabas ang backup text, o mag-paste ng backup para i-restore", "Card": "Card", "Sub": "Sub", "Goal": "Goal", "Account": "Account", "Payment plan": "Payment plan", "Total to pay": "Kabuuang babayaran", "Due day": "Due date", "Amount due": "Amount due", "Planned payment": "Planong bayad", "Left unpaid": "Natitirang hindi bayad", "Bills on": "Singil tuwing", "Tracking only. Not included in the card amounts above.": "Pang-track lang. Hindi kasama sa mga halaga ng card sa itaas.", "Saved": "Naipon", "Target": "Target", "To save a month": "Iipunin kada buwan", "Worth": "Halaga", "Estimates only.": "Pagtataya lang.", "Still unpaid": "Hindi pa bayad", "Split your pay between your credit cards for each cut-off, and keep track of your money across banks and wallets.": "Hatiin ang sahod mo sa mga credit card mo kada cut-off, at subaybayan ang pera mo sa mga bangko at wallet.", "Each month keeps its own pay amounts, cards, accounts and goals, saved on this device. Open a new month to carry everything over: installments count down by a month and finished ones drop off. Earlier months stay saved and you can come back to edit them.": "Bawat buwan ay may sariling sahod, cards, accounts at goals na naka-save sa device na ito. Magbukas ng bagong buwan para madala ang lahat: bumababa ng isang buwan ang mga installment at nawawala ang mga tapos na. Nananatiling naka-save ang mga nakaraang buwan at puwede mo itong i-edit.", "Each card is paid on the pay day just before its due date. Use 30 or 31 for an end-of-month pay day. Any extra goes to the card you want to clear first, even if it is due later.": "Binabayaran ang bawat card sa sahod na pinakamalapit bago ang due date nito. Gamitin ang 30 o 31 para sa sahod sa katapusan ng buwan. Ang extra ay mapupunta sa card na gusto mong unahing tapusin, kahit mas huli ang due date nito.", "Your plan is worked out in this currency. Each card takes the currency of its location, and cards from other countries are converted with the rate you type on the card.": "Sa currency na ito kinukuwenta ang plano mo. Ang bawat card ay gumagamit ng currency ng lokasyon nito, at kino-convert ang mga card mula sa ibang bansa gamit ang rate na itinype mo sa card.", "Tap a card to open it. Enter the Total Amount Due and Minimum Amount Due from your latest statement. Installments always count toward both amounts.": "Pindutin ang card para buksan. Ilagay ang Total Amount Due at Minimum Amount Due mula sa pinakabago mong statement. Laging kasama ang mga installment sa dalawang halaga.", "Anything left unpaid carries over to next month and may add interest.": "Ang hindi nabayaran ay madadala sa susunod na buwan at maaaring magdagdag ng interest.", "Add each installment still being billed on this card. They count toward both the amount due and the minimum.": "Idagdag ang bawat installment na sinisingil pa sa card na ito. Kasama ang mga ito sa amount due at sa minimum.", "Add each installment that is still being billed on this card. They count toward both the amount due and the minimum.": "Idagdag ang bawat installment na sinisingil pa sa card na ito. Kasama ang mga ito sa amount due at sa minimum.", "Dates count from today on your device. Amounts come from the Cards tab.": "Binibilang ang mga petsa mula ngayon sa device mo. Galing sa tab na Cards ang mga halaga.", "How this is worked out: each month uses the total you set aside on both pay days. Minimums are paid first, then extra goes to the card you chose to pay off first. Unpaid balances grow by the card's yearly interest divided by 12. Future minimums keep the same share of the balance as this month's, plus installments, and never fall below 5% of this month's amount due. No new purchases are added. This is an estimate, not your bank's figures.": "Paano ito kinukuwenta: ginagamit kada buwan ang kabuuang inilaan mo sa dalawang sahod. Binabayaran muna ang mga minimum, tapos mapupunta ang extra sa card na pinili mong unahin. Lumalaki ang hindi nabayarang balanse ayon sa yearly interest ng card na hinati sa 12. Ang mga susunod na minimum ay may parehong bahagi ng balanse gaya ngayong buwan, dagdag ang mga installment, at hindi bababa sa 5% ng amount due ngayong buwan. Walang bagong bibilhin na isinasama. Pagtataya lang ito, hindi ang eksaktong numero ng bangko mo.", "For money in another currency or crypto, type its code (USD, USDT, BTC) and enter the rate: how much 1 unit is worth in your main currency. Rates are typed by you and do not update by themselves.": "Para sa pera sa ibang currency o crypto, ilagay ang code nito (USD, USDT, BTC) at ang rate: magkano ang 1 unit sa main currency mo. Ikaw ang nagtatype ng rate at hindi ito awtomatikong nag-a-update.", "Set a target amount and a target date. The page works out how much to save each month. Enter what you plan to save a month to see when you would finish.": "Maglagay ng target na halaga at target na petsa. Kukuwentahin ng page kung magkano ang iipunin kada buwan. Ilagay ang planong ipon kada buwan para makita kung kailan ka matatapos.", "Just for tracking. These amounts are not added to any card's amount due or to your payment plan. Pick the card each one is charged to so you can see what is billed where.": "Pang-track lang ito. Hindi idinadagdag ang mga halagang ito sa amount due ng kahit anong card o sa payment plan mo. Piliin ang card na sinisingilan ng bawat isa para makita kung ano ang sinisingil saan.", "Your entries are saved in this browser only. To move them to another device or keep a safe copy, copy the backup text and paste it into a note. To restore, paste it below and tap Restore.": "Sa browser na ito lang naka-save ang mga ilalagay mo. Para ilipat sa ibang device o magtabi ng ligtas na kopya, kopyahin ang backup text at i-paste sa isang note. Para i-restore, i-paste ito sa ibaba at pindutin ang Restore.", "Keeps your amounts private if someone borrows your device. The PIN is stored only on this device and is a screen lock, not encryption. If you forget it, the only way back in is to erase this device's data, so keep a backup copy.": "Pinoprotektahan ang privacy ng mga halaga mo kung may hihiram ng device mo. Sa device na ito lang naka-store ang PIN at screen lock lang ito, hindi encryption. Kapag nakalimutan mo ito, ang tanging paraan pabalik ay burahin ang datos ng device na ito, kaya magtabi ng backup.", "Makes a one-page summary of the month you are viewing: pay plan, cards, subscriptions, goals and accounts. In the print window you can also choose Save as PDF.": "Gagawa ng one-page na buod ng buwang tinitingnan mo: payment plan, cards, subscriptions, goals at accounts. Sa print window, puwede mo ring piliin ang Save as PDF.", "Saves your planner to your own Supabase project so you can open it on another device. It works only from a copy of the page you host yourself, not from inside claude.ai. You need a Supabase project with the planner_state table, and an account made here. Sync is manual: Save to cloud uploads this device, Load from cloud replaces this device with the cloud copy. The PIN is never uploaded.": "Isi-save ang planner mo sa sarili mong Supabase project para mabuksan sa ibang device. Gumagana lang ito sa kopya ng page na ikaw mismo ang nag-host, hindi sa loob ng claude.ai. Kailangan mo ng Supabase project na may planner_state table, at account na ginawa dito. Manual ang sync: ina-upload ng I-save sa cloud ang device na ito, pinapalitan naman ng I-load mula sa cloud ang device na ito ng kopya sa cloud. Hindi kailanman ina-upload ang PIN."};
   function tlOrd(x) { return String(x).replace(/(\d+)(?:st|nd|rd|th)/, 'ika-$1'); }
+  Object.assign(TL, {"Assets & goals": "Assets at goals", "Spending": "Gastos", "Online shopping": "Online shopping", "View": "Tingnan", "Choose a view": "Pumili ng view", "Order overview": "Buod ng orders", "On the way": "Papunta na", "Done": "Tapos na", "Add order": "Magdagdag ng order", "What you ordered": "Ano ang inorder mo", "Shop": "Tindahan", "Expected delivery": "Inaasahang dating", "Date ordered": "Petsa ng order", "Paid with": "Binayaran gamit", "Not set": "Wala pa", "Tracking number or note": "Tracking number o tala", "Value on the way": "Halaga na papunta", "Total ordered": "Kabuuang inorder", "Late": "Huli", "Ordered": "Na-order", "Shipped": "Naipadala", "Delivered": "Na-deliver", "Returned": "Naibalik", "Cancelled": "Kinansela", "No orders yet.": "Wala pang order.", "No orders yet. Tap Add order to start.": "Wala pang order. Pindutin ang Add order.", "Nothing delivered yet.": "Wala pang na-deliver.", "No orders on the way.": "Walang papunta na order."});
   Object.assign(TL, {"+ Add month": "+ Magdagdag ng buwan", "Remove last month": "Alisin ang huling buwan", "How this month is split": "Paghahati ngayong buwan", "Usual budget for cards each month": "Karaniwang budget sa cards kada buwan", "Budget for each month": "Budget sa bawat buwan", "Budget for cards": "Budget sa cards", "Budget": "Budget", "Reset": "I-reset", "Each month starts with the budget above. Type a different amount on any month, for example 10,000 this month and 20,000 next month, and the schedule follows it. Tap Reset on a month to go back to the usual budget.": "Magsisimula ang bawat buwan sa budget sa itaas. Maglagay ng ibang halaga sa kahit anong buwan, halimbawa 10,000 ngayong buwan at 20,000 sa susunod, at susunod ang iskedyul. I-tap ang Reset para bumalik sa karaniwang budget.", "Payoff table": "Talaan ng bayad", "Table": "Talaan", "Budget for cards each month": "Budget sa cards kada buwan", "Pay the cards in this order": "Ayusin ang pagbayad ng cards", "Same as the Cards tab (default)": "Kapareho sa Cards tab (default)", "Smallest amount due first": "Pinakamaliit na due muna", "Highest interest first": "Pinakamataas na interes muna", "The card I chose on the Cards tab first": "Ang card na pinili ko sa Cards tab muna", "Use default": "Gamitin ang default", "Paid off by": "Bayad na pagsapit ng", "Total you pay": "Kabuuang babayaran mo", "Of that, interest": "Dito, interes", "How this month is split": "Paghahati ngayong buwan", "Month by month": "Buwan-buwan", "Card": "Card", "First pay day": "Unang sahod", "Second pay day": "Ikalawang sahod", "Total": "Kabuuan", "When a new month starts": "Kapag nagsimula ang bagong buwan", "Balances start from": "Magsisimula ang balanse sa", "The payment slip, with my edits (default)": "Ang payment slip, kasama ang mga edit ko (default)", "Only cards I marked paid": "Cards lang na minarkahan kong bayad", "Keep the same balances": "Panatilihin ang parehong balanse", "Next month if you follow the plan": "Susunod na buwan kung susundin ang plano", "Left over": "Natira", "Interest": "Interes", "Installments": "Installments", "Monthly set-aside plan": "Buwanang plano ng ilalaan", "Months to show": "Ilang buwan ang ipapakita", "I want to be debt-free in (months)": "Gusto kong walang utang sa loob ng (buwan)", "To stay current this month": "Para manatiling updated ngayong buwan", "The minimums on every card": "Ang minimum ng bawat card", "To stay current": "Para manatiling updated", "Your plan pays": "Babayaran ng plano mo", "Still to pay after": "Matitira pagkatapos", "Month by month: what you must pay to stay current (the minimums, which drop when installments end) next to what your current plan pays. Below it, pick a number of months to find out how much to set aside each month to be debt-free by then.": "Buwan-buwan: ang dapat mong bayaran para manatiling updated (ang mga minimum, na bumababa kapag natapos ang installments) katabi ng binabayaran ng kasalukuyang plano mo. Sa ibaba, pumili ng bilang ng buwan para malaman kung magkano ang ilalaan kada buwan para walang utang pagdating noon.", "Tap Edit on a card to set what you pay it. The other cards adjust to the money that is left.": "I-tap ang Edit sa card para itakda ang babayaran mo. Mag-aadjust ang ibang cards sa matitirang pera.", "Default": "Default", "Edited": "Na-edit", "Amount for this pay day": "Halaga para sa pay day na ito", "Apply": "I-apply", "Use default": "Gamitin ang default", "Close": "Isara", "Payments made": "Mga nabayad na", "Amount paid": "Halagang nabayad", "Add payment": "Magdagdag ng bayad", "No payments yet.": "Wala pang bayad.", "Frame the receipt": "I-frame ang resibo", "Drag the corners so the frame fits just the receipt. A close crop reads much better than a whole photo.": "I-drag ang mga sulok para ang resibo lang ang nasa frame. Mas malinaw ang basa kapag malapit ang crop.", "Scan this part": "I-scan ang bahaging ito", "Use the whole photo": "Gamitin ang buong litrato", "No total line was found, so the total is the sum of the items. Please check it.": "Walang nakitang linya ng total, kaya ang total ay ang kabuuan ng mga item. Pakisuri.", "The photo was hard to read, so check every line. Scan again with a closer frame if it looks wrong.": "Mahirap basahin ang litrato, kaya suriin ang bawat linya. I-scan ulit nang mas malapit ang frame kung mali.", "Paste text": "I-paste ang text", "Add receipt": "Idagdag ang resibo", "No items or total were found in that text.": "Walang nakitang item o kabuuan sa text na iyon.", "On iPad: open the receipt photo, touch and hold the text, tap Copy All, then paste it here.": "Sa iPad: buksan ang litrato ng resibo, pindutin nang matagal ang text, i-tap ang Copy All, tapos i-paste dito.", "Reading photos is not available here. Use Paste text or Add by hand. On your own site the scan button works.": "Hindi available dito ang pagbasa ng litrato. Gamitin ang I-paste ang text o Idagdag nang mano-mano. Gumagana ang scan button sa sarili mong site.", "Receipt language": "Wika ng resibo", "Scanning on this device: it reads the text and adds up the prices, but it does not translate. Check the items afterwards.": "Pag-scan sa device na ito: binabasa nito ang text at sinusuma ang mga presyo, pero hindi ito nagsasalin. Suriin ang mga item pagkatapos.", "Loading the reader (first time only)...": "Nilo-load ang reader (sa unang beses lang)...", "Could not load the reader. Check your internet connection and try again.": "Hindi ma-load ang reader. Suriin ang internet connection mo at subukan ulit.", "Loans": "Utang", "Planning": "Plano", "IOUs": "Utang", "They owe me": "May utang sa akin", "I owe them": "May utang ako", "Unpaid": "Hindi pa bayad", "Overview": "Buod", "Owed to me": "Utang sa akin", "I owe": "Utang ko", "Net": "Net", "Amount I owe": "Halagang utang ko", "Date borrowed": "Petsa ng pangungutang", "Payments made": "Mga nabayad ko", "Still to pay": "Natitirang babayaran", "People you owe": "Mga pinagkakautangan mo", "People who owe you": "Mga may utang sa iyo", "You do not owe anyone right now.": "Wala kang utang kaninuman ngayon.", "You have not added anyone you owe yet. Tap Add person to start.": "Wala ka pang naidagdag na pinagkakautangan. Pindutin ang Magdagdag ng tao para magsimula.", "Keep track of money people owe you and money you owe other people. Pick a side, add the person and the amount, then record each payment. When everything is paid, the entry moves to Settled. This is just for tracking and never changes your card amounts or assets. It stays the same from month to month.": "Subaybayan ang perang inutang sa iyo at ang perang inutang mo sa iba. Pumili ng panig, idagdag ang tao at ang halaga, tapos itala ang bawat bayad. Kapag bayad na lahat, lilipat ang entry sa Bayad na. Pang-track lang ito at hindi nagbabago ang halaga ng cards o assets mo. Pareho lang ito sa bawat buwan.", "Owed_old": "x", "Owed": "Utang", "Add person": "Magdagdag ng tao", "Owing": "May utang", "Settled": "Bayad na", "Who owes you": "Sino ang may utang sa iyo", "Total owed to me": "Kabuuang utang sa akin", "People owing": "Mga may utang", "Collected": "Nakolekta na", "Overdue": "Lagpas na sa due", "Person's name": "Pangalan ng tao", "What it is for": "Para saan ito", "Amount owed": "Halagang inutang", "Date lent": "Petsa ng pagpapautang", "Date it is due": "Petsa ng due", "Payments received": "Mga natanggap na bayad", "Add payment": "Magdagdag ng bayad", "Mark fully paid": "Markahang bayad na lahat", "Paid so far": "Nabayad na", "Still owes": "Natitirang utang", "No payments yet.": "Wala pang bayad.", "New person": "Bagong tao", "Nobody owes you right now.": "Walang may utang sa iyo ngayon.", "Nobody owes you yet. Tap Add person to start.": "Wala pang may utang sa iyo. Pindutin ang Magdagdag ng tao para magsimula.", "No settled entries yet.": "Wala pang bayad na entry.", "Type a rate for amounts in another currency to include them in the total.": "Maglagay ng rate sa halagang ibang currency para maisama sa kabuuan.", "optional": "optional", "Keep track of money other people owe you. Add the person and the amount, then record each payment they make. When they have paid everything, the entry moves to Settled. This is just for tracking and never changes your card amounts or assets. It stays the same from month to month.": "Subaybayan ang perang inutang sa iyo ng ibang tao. Idagdag ang tao at ang halaga, tapos itala ang bawat bayad nila. Kapag nabayaran na lahat, lilipat ang entry sa Bayad na. Pang-track lang ito at hindi nagbabago ang halaga ng cards o assets mo. Pareho lang ito sa bawat buwan.", "Paid by": "Binayad sa pamamagitan ng", "Credit card": "Credit card", "Debit card": "Debit card", "Not set": "Hindi pa nakatakda", "Cash currency": "Currency ng cash", "Choose a card": "Pumili ng card", "Choose an account": "Pumili ng account", "Expenses": "Gastos", "Spend": "Gastos", "Scan receipt": "I-scan ang resibo", "Add by hand": "Idagdag nang mano-mano", "Reading the receipt...": "Binabasa ang resibo...", "Spending this month": "Gastos ngayong buwan", "Spent this month": "Nagastos ngayong buwan", "Receipts": "Mga resibo", "Items": "Mga item", "Item": "Item", "Qty": "Dami", "Price": "Presyo", "Store or shop": "Tindahan", "Date": "Petsa", "Paid with": "Binayad gamit ang", "Total on receipt": "Kabuuan sa resibo", "Add item": "Magdagdag ng item", "Items add up to": "Kabuuan ng mga item", "New receipt": "Bagong resibo", "A photo can be misread, so check the numbers.": "Maaaring mali ang basa sa litrato, kaya suriin ang mga numero.", "Add a receipt to see the breakdown.": "Magdagdag ng resibo para makita ang hati.", "Type a rate on receipts in another currency to include them in the total.": "Maglagay ng rate sa mga resibong ibang currency para maisama sa kabuuan.", "No receipts yet. Scan one to start.": "Wala pang resibo. Mag-scan ng isa para magsimula.", "No receipts yet. Tap Add by hand to start.": "Wala pang resibo. Pindutin ang Idagdag nang mano-mano para magsimula.", "Scanning works inside claude.ai, or on your own site once you set up the scan function and sign in under Sync in Settings. You can still add receipts by hand.": "Gumagana ang pag-scan sa loob ng claude.ai, o sa sarili mong site kapag na-set up mo na ang scan function at nakapag-sign in ka sa Sync sa Settings. Puwede pa ring magdagdag ng resibo nang mano-mano.", "Please sign in again under Sync in Settings.": "Mag-sign in ulit sa Sync sa Settings.", "The scan function was not found. Check that it is deployed with the name scan-receipt.": "Hindi nahanap ang scan function. Tiyaking na-deploy ito na may pangalang scan-receipt.", "The photo is too large. Try a smaller photo.": "Masyadong malaki ang litrato. Subukan ang mas maliit.", "This account is not allowed to use the scan function.": "Hindi pinapayagan ang account na ito na gamitin ang scan function.", "The scan function failed. Check its logs and that the AI key is set.": "Pumalya ang scan function. Tingnan ang logs nito at tiyaking nakalagay ang AI key.", "Could not reach your scan function. Check your internet connection.": "Hindi maabot ang scan function mo. Suriin ang internet connection mo.", "That does not look like a receipt. Try another photo.": "Mukhang hindi ito resibo. Subukan ang ibang litrato.", "Claude was not allowed to read the receipt. Allow it when asked, then try again.": "Hindi pinayagan si Claude na basahin ang resibo. Pumayag kapag tinanong, tapos subukan ulit.", "Claude is not available for this account.": "Hindi available si Claude sa account na ito.", "Too many tries or your Claude usage limit was reached. Try again later.": "Masyadong maraming subok o naabot na ang limit ng Claude mo. Subukan ulit mamaya.", "That image could not be used. Try a clearer photo or a different file.": "Hindi magamit ang larawang iyon. Subukan ang mas malinaw na litrato o ibang file.", "Claude could not read that image. Try another photo.": "Hindi nabasa ni Claude ang larawang iyon. Subukan ang ibang litrato.", "The receipt could not be read clearly. Try a sharper photo.": "Hindi malinaw na nabasa ang resibo. Subukan ang mas matalas na litrato.", "Something went wrong while reading the receipt. Please try again.": "May nangyaring mali sa pagbasa ng resibo. Subukan ulit.", "Take or pick a photo of a receipt, in any language. Claude reads it, translates the items into English and lists them. Each receipt shows only its total here. Tap it to see every item, and fix anything that was misread. Just for tracking: expenses are not added to any card's amount due.": "Kumuha o pumili ng litrato ng resibo, sa kahit anong wika. Babasahin ito ni Claude, isasalin ang mga item sa English at ililista. Kabuuan lang ng bawat resibo ang makikita dito. Pindutin ito para makita ang bawat item, at ayusin ang anumang mali ang basa. Pang-track lang: hindi idinadagdag ang mga gastos sa amount due ng kahit anong card.", "Pending": "Hindi pa bayad", "Mark paid": "Markahan bilang bayad", "Undo": "Ibalik", "No cards marked paid yet.": "Wala pang card na may markang bayad.", "Every card is paid this month.": "Bayad na lahat ng card ngayong buwan.", "QR code": "QR code", "Upload QR": "Mag-upload ng QR", "Change QR": "Palitan ang QR", "Remove QR": "Alisin ang QR", "Upload a screenshot of this account's QR code. Once saved, a QR button appears on the account so you can show it quickly. It is kept only on this device, in your backup, and in your cloud copy if you use sync.": "Mag-upload ng screenshot ng QR code ng account na ito. Kapag na-save, may QR button na lalabas sa account para mabilis mong maipakita. Sa device na ito lang ito itinatabi, sa backup mo, at sa cloud copy kung gumagamit ka ng sync.", "Background": "Background", "Style": "Estilo", "Color 1": "Kulay 1", "Color 2": "Kulay 2", "Choose photo": "Pumili ng litrato", "Remove photo": "Alisin ang litrato", "Home screen icon": "Icon sa home screen", "Choose image": "Pumili ng larawan", "Use default": "Gamitin ang default", "Custom colors": "Sarili kong kulay", "My photo": "Sarili kong litrato", "Plain": "Simple", "Pick a colour style, mix your own two colours, or use one of your photos. A photo is shrunk and kept only on this device.": "Pumili ng estilo ng kulay, gumawa ng sarili mong dalawang kulay, o gumamit ng litrato mo. Pinaliliit ang litrato at sa device na ito lang itinatabi.", "The picture your iPad uses when you tap Share, then Add to Home Screen. Choose your own image or keep the card icon. Set it first, then add the page to your home screen. An icon already on your home screen will not change; remove it and add it again.": "Ito ang larawang gagamitin ng iPad mo kapag pinindot mo ang Share, tapos Add to Home Screen. Pumili ng sarili mong larawan o panatilihin ang card icon. Itakda muna ito, saka idagdag ang page sa home screen. Hindi magbabago ang icon na nasa home screen na; alisin ito at idagdag ulit."});
   var TLR = [
     [/^· (\d+) changed$/, function (m) { return '· ' + m[1] + ' binago'; }],
@@ -3697,7 +3861,7 @@ h1 .q { vertical-align: middle; margin-left: 4px; }
     applyTheme(); applyBg(); applyIcon(); applyLang();
     $('inst').innerHTML = SUGGEST.map(function (n) { return '<option value="' + esc(n) + '"></option>'; }).join('');
     $('ccys').innerHTML = COUNTRIES.map(function (k) { return k.ccy; }).concat(['USDT', 'BTC', 'ETH']).map(function (n) { return '<option value="' + n + '"></option>'; }).join('');
-    renderCards(); renderFocusOptions(); renderAssetRows(); renderGoalRows(); renderSubRows(); renderExpRows(); renderDebtRows();
+    renderCards(); renderFocusOptions(); renderAssetRows(); renderGoalRows(); renderSubRows(); renderExpRows(); renderDebtRows(); renderShopRows();
     syncTop(); applyTab(); applyHide(); renderHello(); renderMonthBar(); renderResult();
     ensureTones();
   }
